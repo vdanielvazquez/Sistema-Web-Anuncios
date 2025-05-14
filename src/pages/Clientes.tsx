@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios'; // Asegúrate de importar AxiosResponse
 import '../css/cliente.css';
 
 interface Cliente {
@@ -36,8 +36,8 @@ const Clientes = () => {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/clientes`);
-        setClientes(response.data);
+        const response: AxiosResponse<Cliente[]> = await axios.get(`${API_URL}/api/clientes`);
+        setClientes(response.data); // Ahora TypeScript sabe que es un Cliente[]
       } catch (error) {
         console.error('Error al obtener clientes:', error);
       } finally {
@@ -78,7 +78,7 @@ const Clientes = () => {
 
       setFormData({ nombre: '', telefono: '', correo: '' });
       setShowModalClienteN(false);
-      setClientes((prevClientes) => [...prevClientes, response.data]);  // Actualización más eficiente
+      setClientes((prevClientes) => [...prevClientes, response.data]); // Actualización más eficiente
       alert('Cliente agregado correctamente');
     } catch (error) {
       console.error('Error al guardar cliente:', error);
