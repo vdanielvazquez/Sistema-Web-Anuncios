@@ -37,15 +37,18 @@ const Clientes = () => {
   // Obtener clientes al cargar
   useEffect(() => {
     const fetchClientes = async () => {
-      try {
-       const response = await axios.get<Cliente[]>(`${API_URL}/api/clientes`);
-       console.log('Respuesta clientes:', response.data);
-      setClientes(response.data);
-      } catch (error) {
-        console.error('Error al obtener clientes:', error);
-      } finally {
-        setLoading(false);
-      }
+
+        const response = await axios.get(`${API_URL}/api/clientes`);
+        console.log('Respuesta clientes:', response.data);
+      if (Array.isArray(response.data)) {
+          setClientes(response.data); // caso A
+        } else if (Array.isArray(response.data.clientes)) {
+          setClientes(response.data.clientes); // caso B
+        } else {
+          console.error('La respuesta no contiene un arreglo válido:', response.data);
+          setClientes([]);
+        }
+       
     };
     fetchClientes();
   }, []);
