@@ -29,24 +29,20 @@ const DatosCliente = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Obtener datos del cliente
-        const clienteRes = await axios.get(`${API_URL}/api/clientes/${id}`);
-        // const clienteRes = await axios.get(`http://localhost:3001/api/clientes/${id}`);
-      setCliente(clienteRes.data as Cliente);
+   const fetchData = async () => {
+  try {
+    const clienteRes = await axios.get(`${API_URL}/api/clientes/${id}`);
+    setCliente(clienteRes.data as Cliente);
 
+    const negociosRes = await axios.get<Negocio[]>(`${API_URL}/api/negocios/negocios/${id}`);
+    setNegocios(negociosRes.data);
+  } catch (error) {
+    console.error('Error al obtener datos del cliente o sus negocios:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
-        // Obtener negocios del cliente
-        const negociosRes = await axios.get(`${API_URL}/api/negocios/negocios/${id}`);
-        // const negociosRes = await axios.get(`http://localhost:3001/api/negocios/negocios/${id}`);
-        setNegocios(negociosRes.data);
-      } catch (error) {
-        console.error('Error al obtener datos del cliente o sus negocios:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchData();
   }, [id]);
