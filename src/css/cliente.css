@@ -1,0 +1,17 @@
+.divclientes{
+  margin-left: 100px;
+  margin-right: 100px;
+}
+button.btn-outline-success {
+    height: 50px;
+    width: 150px;
+    margin: 0px 0px 15px 0px;
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+button.btn-outline-success:hover {
+    background-color: #28a745;
+    color: white;
+}
+
