@@ -1,14 +1,38 @@
-import  { useState } from 'react';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../css/cliente.css';
-
+import { useState, useEffect } from 'react';
+import { getClientes, createCliente } from '../api/api';
+import type { Cliente } from '../api/api';
 
 const Clientes = () => {
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModalClienteN, setShowModalClienteN] = useState(false);
-  const [loading] = useState(false);
+  const [nuevoCliente, setNuevoCliente] = useState<Cliente>({
+    id: 0,
+    nombre: '',
+    telefono: '',
+    correo: '',
+  });
 
-  
+  // Cargar clientes desde la API al montar el componente
+  useEffect(() => {
+    const fetchClientes = async () => {
+      const data = await getClientes();
+      setClientes(data);
+      setLoading(false);
+    };
+    fetchClientes();
+  }, []);
+
+  // Manejar envío de formulario para crear cliente
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const clienteCreado = await createCliente(nuevoCliente);
+    if (clienteCreado) {
+      setClientes([...clientes, clienteCreado]);
+      setShowModalClienteN(false);
+      setNuevoCliente({ id: 0, nombre: '', telefono: '', correo: '' });
+    }
+  };
 
   return (
     <div className="divprincipal">
@@ -34,42 +58,52 @@ const Clientes = () => {
               </tr>
             </thead>
             <tbody>
-              
+              {clientes.map((cliente) => (
+                <tr key={cliente.id}>
+                  <td>{cliente.nombre}</td>
+                  <td>{cliente.telefono}</td>
+                  <td>{cliente.correo}</td>
+                  <td>
+                    <button className="btn btn-warning">Editar</button>
+                    <button className="btn btn-danger">Eliminar</button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         )}
       </div>
 
-      {/* Modal */}
+      {/* Modal para agregar nuevo cliente */}
       {showModalClienteN && (
         <div className="modal show fade d-block" tabIndex={-1}>
           <div className="modal-dialog">
             <div className="modal-content">
-              <form >
+              <form onSubmit={handleSubmit}>
                 <div className="modal-header">
                   <h5 className="modal-title">Nuevo Cliente</h5>
                   <button type="button" className="btn-close" onClick={() => setShowModalClienteN(false)} />
                 </div>
                 <div className="modal-body">
-                  
                   <div className="mb-3">
                     <label htmlFor="nombre" className="form-label">Nombre</label>
-                    <input type="text" className="form-control" name="nombre"  required />
+                    <input type="text" className="form-control" name="nombre" value={nuevoCliente.nombre}
+                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })} required />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="telefono" className="form-label">Teléfono</label>
-                    <input type="text" className="form-control" name="telefono"  required />
+                    <input type="text" className="form-control" name="telefono" value={nuevoCliente.telefono}
+                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, telefono: e.target.value })} required />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="correo" className="form-label">Correo</label>
-                    <input type="email" className="form-control" name="correo" required />
+                    <input type="email" className="form-control" name="correo" value={nuevoCliente.correo}
+                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, correo: e.target.value })} required />
                   </div>
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" onClick={() => setShowModalClienteN(false)}>Cancelar</button>
-                  <button type="submit" className="btn btn-primary" >
-                   
-                  </button>
+                  <button type="submit" className="btn btn-primary">Guardar Cliente</button>
                 </div>
               </form>
             </div>
