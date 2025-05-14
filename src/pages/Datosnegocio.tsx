@@ -4,7 +4,21 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+
+interface Categoria {
+  id_categoria: number;
+  nombre: string;
+}
+
+interface Subcategoria {
+  id_subcategoria: number;
+  nombre: string;
+  id_categoria: number;
+}
+
 const DatosNegocio = () => {
+
+
   const API_URL = 'https://backend-anuncios.onrender.com';
 
   const { id } = useParams();
@@ -23,42 +37,33 @@ const DatosNegocio = () => {
   const [showModalGaleria, setShowModalGaleria] = useState(false);
   const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
 
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
 
-  const [categorias, setCategorias] = useState([]);
-  const [subcategorias, setSubcategorias] = useState([]); 
 
 
   
   useEffect(() => {
-    axios.get(`${API_URL}/api/categorias`)
-      .then(res => {
-        console.log(res.data);  // Verifica qué datos recibes
-        setCategorias(res.data);
+  axios.get<Categoria[]>(`${API_URL}/api/categorias`)
+    .then(res => {
+      setCategorias(res.data);
+    })
+    .catch(error => console.error('Error al obtener categorías:', error));
+}, []);
+
+  
+ useEffect(() => {
+  if (editForm.id_categoria) {
+    axios.get<Subcategoria[]>(`${API_URL}/api/subcategorias/categoria/${editForm.id_categoria}`)
+      .then(response => {
+        setSubcategorias(response.data);
       })
-      .catch(error => console.error('Error al obtener categorías:', error));
-  }, []);
-  
-  useEffect(() => {
-    if (editForm.id_categoria) {
-      axios.get(`${API_URL}/api/subcategorias/categoria/${editForm.id_categoria}`)
-        .then(response => {
-          console.log("Código de estado:", response.status);
-          console.log("Subcategorías:", response.data);
-          setSubcategorias(response.data); // Establecer las subcategorías
-        })
-        .catch(error => {
-          if (error.response) {
-            console.error("Respuesta de error:", error.response.data);
-            console.error("Código de estado:", error.response.status);
-          } else if (error.request) {
-            console.error("No se recibió respuesta:", error.request);
-          } else {
-            console.error("Error de configuración:", error.message);
-          }
-        });
-    }
-  }, [editForm.id_categoria]); // Este useEffect se dispara cuando el id_categoria cambia
-  
+      .catch(error => {
+        console.error("Error al obtener subcategorías:", error);
+      });
+  }
+}, [editForm.id_categoria]);
+
 
     //mostrar img
     const fetchNegocio = async () => {

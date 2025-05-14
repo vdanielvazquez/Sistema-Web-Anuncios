@@ -68,27 +68,31 @@ setClientes(response.data);
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    if (!validateForm()) return;
-    setLoading(true);
+  if (!validateForm()) return;
+  setLoading(true);
 
-    try {
-      const response = await axios.post(`${API_URL}/api/clientes`, formData);
-      console.log('Cliente guardado:', response.data);
+  try {
+    // ✅ Tipar correctamente la respuesta como Cliente
+    const response = await axios.post<Cliente>(`${API_URL}/api/clientes`, formData);
+    console.log('Cliente guardado:', response.data);
 
-      setFormData({ nombre: '', telefono: '', correo: '' });
-      setShowModalClienteN(false);
-      setClientes((prevClientes) => [...prevClientes, response.data]); // Actualización más eficiente
-      alert('Cliente agregado correctamente');
-    } catch (error) {
-      console.error('Error al guardar cliente:', error);
-      alert('Hubo un error al guardar el cliente');
-    } finally {
-      setLoading(false);
-    }
-  };
+    setFormData({ nombre: '', telefono: '', correo: '' });
+    setShowModalClienteN(false);
+
+    // ✅ TypeScript ya reconoce que response.data es Cliente
+    setClientes((prevClientes) => [...prevClientes, response.data]);
+    
+    alert('Cliente agregado correctamente');
+  } catch (error) {
+    console.error('Error al guardar cliente:', error);
+    alert('Hubo un error al guardar el cliente');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="divprincipal">

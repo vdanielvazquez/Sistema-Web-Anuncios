@@ -11,6 +11,10 @@ interface Subcategoria {
   descripcion: string;
   idcategoria: number;
 }
+interface ApiResponse<T> {
+  data: T;
+}
+
 const Ajustes: React.FC = () => {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
@@ -35,27 +39,24 @@ const Ajustes: React.FC = () => {
   }, []);
 
   const fetchCategorias = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/categorias`); // render
-      // const response = await axios.get('http://localhost:3001/api/categorias'); //local
-      console.log("Respuesta de la API:", response.data);  // Verifica la estructura de la respuesta
-      setCategorias(response.data.data);  // Accede correctamente a 'data'
-    } catch (error) {
-      console.error('Error al obtener categorías:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const fetchSubcategorias = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/subcategorias`); //render
-      //const response = await axios.get('http://localhost:3001/api/subcategorias'); //local
-      setSubcategorias(response.data.data);
-    } catch (error) {
-      console.error('Error al obtener subcategorías:', error);
-    }
-  };
+  try {
+    const response = await axios.get<ApiResponse<Categoria[]>>(`${API_URL}/api/categorias`);
+    setCategorias(response.data.data);
+  } catch (error) {
+    console.error('Error al obtener categorías:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+const fetchSubcategorias = async () => {
+  try {
+    const response = await axios.get<ApiResponse<Subcategoria[]>>(`${API_URL}/api/subcategorias`);
+    setSubcategorias(response.data.data);
+  } catch (error) {
+    console.error('Error al obtener subcategorías:', error);
+  }
+};
 
   const handleGuardar = async () => {
     try {
