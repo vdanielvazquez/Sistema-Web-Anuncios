@@ -5,10 +5,9 @@ import Navbar from '../src/pages/navbar';
 
 import Negocios from '../src/pages/Negocios';
 import Clientes from './pages/Clientes';
-import ClienteNuevo from './pages/clientenuevo';
 import NuevoNegocio from './pages/nuevonegocio';
-import DatosCliente from './pages/datoscliente';    
-import DatosNegocio from './pages/datosnegocio';
+import DatosCliente from './pages/Datoscliente';    
+import DatosNegocio from './pages/Datosnegocio';
 import Ajustes from './pages/ajustes';
 
 function App() {
@@ -25,7 +24,7 @@ function App() {
           <Route path="/negocios" element={<Negocios />} />
           <Route path="/negocios" element={<Negocios />} />
           <Route path="/clientes" element={<Clientes />} />
-          <Route path="/clientenuevo" element={<ClienteNuevo />} />
+          
           <Route path="/nuevonegocio" element={<NuevoNegocio />} />
           <Route path="/cliente/:id" element={<DatosCliente />} />
           <Route path="/datosnegocio/:idcliente" element={<DatosNegocio />} />
