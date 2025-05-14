@@ -48,7 +48,7 @@ const NuevoNegocio = () => {
     idestado: null,
     idmunicipio: null,
   });
-  const API_URL = 'https://backend-anuncios.onrender.com';
+  const API_URL = 'https://sistemawebpro.com';
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);

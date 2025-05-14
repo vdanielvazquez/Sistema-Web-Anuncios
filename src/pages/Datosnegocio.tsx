@@ -19,7 +19,7 @@ interface Subcategoria {
 const DatosNegocio = () => {
 
 
-  const API_URL = 'https://backend-anuncios.onrender.com';
+  const API_URL = 'https://sistemawebpro.com';
 
   const { id } = useParams();
   const [negocio, setNegocio] = useState<any>(null);

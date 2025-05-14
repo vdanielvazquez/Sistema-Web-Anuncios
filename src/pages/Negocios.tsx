@@ -24,7 +24,7 @@ interface Negocio {
 
 const Negocios = () => {
 
-  const API_URL = 'https://backend-anuncios.onrender.com';
+  const API_URL = 'https://sistemawebpro.com';
   const [busqueda, setBusqueda] = useState<string>('');
   const [negocios, setNegocios] = useState<Negocio[]>([]);
   const [negociosFiltrados, setNegociosFiltrados] = useState<Negocio[]>([]);

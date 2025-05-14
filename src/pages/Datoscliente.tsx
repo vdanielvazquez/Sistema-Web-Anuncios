@@ -20,7 +20,8 @@ interface Negocio {
 const DatosCliente = () => {
 
   
-  const API_URL = 'https://backend-anuncios.onrender.com';
+  const API_URL = 'https://sistemawebpro.com';
+
 
   
   const { id } = useParams();

@@ -31,7 +31,7 @@ const Ajustes: React.FC = () => {
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [tipoMensaje, setTipoMensaje] = useState<'success' | 'danger'>('success');
   
-  const API_URL = 'https://backend-anuncios.onrender.com';
+  const API_URL = 'https://sistemawebpro.com';
 
   useEffect(() => {
     fetchCategorias();
