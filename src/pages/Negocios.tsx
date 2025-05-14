@@ -36,6 +36,7 @@ useEffect(() => {
   const fetchNegocios = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/negocios`);
+      console.log('Respuesta de negocios:', response.data);
       const data = response.data;
 
       if (Array.isArray(data)) {
