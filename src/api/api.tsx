@@ -24,7 +24,7 @@ export const getClientes = async (): Promise<Cliente[]> => {
 // Crear un nuevo cliente
 export const createCliente = async (clienteData: Cliente): Promise<Cliente | null> => {
   try {
-    const response = await axios.post(`${API_URL}/clientes`, clienteData);
+    const response = await axios.post<Cliente>(`${API_URL}/clientes`, clienteData); // 👈 Define response type
     return response.data;
   } catch (error) {
     console.error('Error al crear cliente:', error);
