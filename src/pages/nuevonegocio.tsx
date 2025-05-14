@@ -42,70 +42,62 @@ interface Subcategoria {
 
 const NuevoNegocio = () => {
   const [formData, setFormData] = useState<FormData>({
-    Nombre_comercial:'',
+    Nombre_comercial: '',
     telefono: '',
     idcliente: null,
     idestado: null,
     idmunicipio: null,
   });
   const API_URL = 'https://backend-anuncios.onrender.com';
-  const [clientes, setClientes] = useState<Cliente[]>([]);
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
-
   const [estados, setEstados] = useState<Estado[]>([]);
   const [municipios, setMunicipios] = useState<Municipio[]>([]);
-  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 19.4326, lng: -99.1332 });
-
-  //const [setSelectedMunicipio] = useState<Municipio | null>(null);
   const [clienteInput, setClienteInput] = useState<string>('');
   const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (formData.idcategoria) { 
+    if (formData.idcategoria) {
       axios.get(`${API_URL}/api/subcategorias/categoria/${formData.idcategoria}`)
-      .then(res => {
-        if (res.data.success && Array.isArray(res.data.data)) {
-          setSubcategorias(res.data.data);
-        } else {
-          console.error('Formato de subcategorías inválido', res.data);
-          setSubcategorias([]);
-        }
-      })
-      .catch(err => console.error('Error al obtener subcategorías:', err));
+        .then((res) => {
+          const data = res.data as { success: boolean; data: Subcategoria[] };
+          if (data.success && Array.isArray(data.data)) {
+            setSubcategorias(data.data);
+          } else {
+            console.error('Formato de subcategorías inválido', res.data);
+            setSubcategorias([]);
+          }
+        })
+        .catch(err => console.error('Error al obtener subcategorías:', err));
     }
   }, [formData.idcategoria]);
 
   useEffect(() => {
     axios.get(`${API_URL}/api/clientes`)
-    //axios.get('http://localhost:3001/api/clientes') //local
-      .then(res => setClientes(res.data))
+      .then((res) => {
+        const data = res.data as { success: boolean; data: Cliente[] };
+        if (data.success && Array.isArray(data.data)) {
+          setFilteredClientes(data.data);
+        }
+      })
       .catch(err => console.error('Error al obtener clientes:', err));
 
     axios.get(`${API_URL}/api/ubicacion/estados`)
-    //axios.get('http://localhost:3001/api/ubicacion/estados')//local
-      .then(res => setEstados(res.data))
+      .then((res) => {
+        const data = res.data as { success: boolean; data: Estado[] };
+        if (data.success && Array.isArray(data.data)) {
+          setEstados(data.data);
+        }
+      })
       .catch(err => console.error('Error al obtener estados:', err));
-  }, []);
 
-  useEffect(() => {
-    if (formData.idestado) {
-      axios.get(`${API_URL}/api/ubicacion/municipios/${formData.idestado}`)
-      //axios.get(`http://localhost:3001/api/ubicacion/municipios/${formData.idestado}`)//local
-        .then(res => setMunicipios(res.data))
-        .catch(err => console.error('Error al obtener municipios:', err));
-    }
-  }, [formData.idestado]);
-
-  useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
-    //axios.get('http://localhost:3001/api/categorias')//local
-      .then(res => {
-        // Aquí aseguramos que la respuesta contiene la propiedad `data` y que es un array
-        if (res.data.success && Array.isArray(res.data.data)) {
-          setCategorias(res.data.data);
+      .then((res) => {
+        const data = res.data as { success: boolean; data: Categoria[] };
+        if (data.success && Array.isArray(data.data)) {
+          setCategorias(data.data);
         } else {
           console.error('La respuesta no contiene categorías válidas');
         }
@@ -113,18 +105,29 @@ const NuevoNegocio = () => {
       .catch(err => console.error('Error al obtener categorias:', err));
   }, []);
 
+  useEffect(() => {
+    if (formData.idestado) {
+      axios.get(`${API_URL}/api/ubicacion/municipios/${formData.idestado}`)
+        .then((res) => {
+          const data = res.data as { success: boolean; data: Municipio[] };
+          if (data.success && Array.isArray(data.data)) {
+            setMunicipios(data.data);
+          }
+        })
+        .catch(err => console.error('Error al obtener municipios:', err));
+    }
+  }, [formData.idestado]);
+
   const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = parseInt(e.target.value);
     const municipio = municipios.find(m => m.idmunicipio === id);
     if (municipio) {
-      //setSelectedMunicipio(municipio);
       setFormData(prev => ({
         ...prev,
         idmunicipio: municipio.idmunicipio,
         latitud: municipio.latitud,
         longitud: municipio.longitud,
       }));
-      setMapCenter({ lat: municipio.latitud, lng: municipio.longitud });
     }
   };
 
@@ -138,12 +141,10 @@ const NuevoNegocio = () => {
     const { name, value } = e.target;
     setFormData(prev => {
       const updatedData = { ...prev, [name]: name.startsWith('id') ? Number(value) : value };
-      console.log(updatedData.idcategoria);  // Verifica si el idcategoria cambia
       return updatedData;
     });
   };
 
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const {
@@ -157,8 +158,7 @@ const NuevoNegocio = () => {
       latitud,
       longitud,
     } = formData;
-  
-    // Validar campos obligatorios
+
     const missingFields = [];
     if (!Nombre_comercial) missingFields.push("Nombre del negocio");
     if (!telefono) missingFields.push("Teléfono");
@@ -166,17 +166,15 @@ const NuevoNegocio = () => {
     if (!idestado) missingFields.push("Estado");
     if (!idmunicipio) missingFields.push("Municipio");
     if (!idcategoria) missingFields.push("Categoría");
-    //if (!idsubcategoria) missingFields.push("Subcategoría");
-  
+
     if (missingFields.length > 0) {
       alert(`Por favor completa los siguientes campos: ${missingFields.join(", ")}`);
       return;
     }
-  
+
     setLoading(true);
     try {
       await axios.post(`${API_URL}/api/negocios`, {
-        //await axios.post('http://localhost:3001/api/negocios', {//local
         Nombre_comercial,
         telefono,
         idcliente,
@@ -187,10 +185,8 @@ const NuevoNegocio = () => {
         latitud,
         longitud,
       });
-  
+
       alert('Negocio registrado correctamente.');
-  
-      // Limpiar formulario
       setFormData({
         Nombre_comercial: '',
         telefono: '',
@@ -202,9 +198,7 @@ const NuevoNegocio = () => {
         latitud: undefined,
         longitud: undefined,
       });
-  
       setClienteInput('');
-      //setSelectedMunicipio(null);
     } catch (err) {
       console.error('Error al registrar negocio:', err);
       alert('Hubo un error al guardar el negocio');
@@ -212,21 +206,24 @@ const NuevoNegocio = () => {
       setLoading(false);
     }
   };
-  
-
 
   return (
     <div className="containernegocio mt-5">
-      <div className='d-flex flexnegocion'>
-        <div className='divnegocion'>
+      <div className="d-flex flexnegocion">
+        <div className="divnegocion">
           <form onSubmit={handleSubmit}>
             <h2>Nuevo negocio</h2>
             <div className="row">
-
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="clienteInput" className="form-label">Representante Legal</label>
-                <input type="text" className="form-control" id="clienteInput" value={clienteInput}
-                  onChange={(e) => {setClienteInput(e.target.value); setFormData(prev => ({ ...prev, idcliente: null }));}} required />
+                <input
+                  type="text"
+                  className="form-control"
+                  id="clienteInput"
+                  value={clienteInput}
+                  onChange={(e) => { setClienteInput(e.target.value); setFormData(prev => ({ ...prev, idcliente: null })); }}
+                  required
+                />
                 {filteredClientes.length > 0 && (
                   <ul className="list-group position-absolute w-100" style={{ zIndex: 1000 }}>
                     {filteredClientes.map(cliente => (
@@ -240,20 +237,42 @@ const NuevoNegocio = () => {
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="nombre" className="form-label">Nombre del Negocio</label>
-                <input type="text" className="form-control" id="Nombre_comercial" name="Nombre_comercial" value={formData.Nombre_comercial} onChange={handleChange} required />
+                <input
+                  type="text"
+                  className="form-control"
+                  id="Nombre_comercial"
+                  name="Nombre_comercial"
+                  value={formData.Nombre_comercial}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="telefono" className="form-label">Teléfono</label>
-                <input type="tel" className="form-control" id="telefono" name="telefono" value={formData.telefono} onChange={handleChange} required />
+                <input
+                  type="tel"
+                  className="form-control"
+                  id="telefono"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-
             </div>
 
             <div className="row">
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="idestado" className="form-label">Estado</label>
-                <select className="form-select" id="idestado" name="idestado" value={formData.idestado ?? ''} onChange={handleChange} required>
+                <select
+                  className="form-select"
+                  id="idestado"
+                  name="idestado"
+                  value={formData.idestado ?? ''}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">Seleccione un estado</option>
                   {estados.map(estado => (
                     <option key={estado.idestado} value={estado.idestado}>
@@ -265,7 +284,14 @@ const NuevoNegocio = () => {
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="idmunicipio" className="form-label">Municipio</label>
-                <select className="form-select" id="idmunicipio" name="idmunicipio" value={formData.idmunicipio ?? ''} onChange={handleMunicipioChange} required>
+                <select
+                  className="form-select"
+                  id="idmunicipio"
+                  name="idmunicipio"
+                  value={formData.idmunicipio ?? ''}
+                  onChange={handleMunicipioChange}
+                  required
+                >
                   <option value="">Seleccione un municipio</option>
                   {municipios.map(municipio => (
                     <option key={municipio.idmunicipio} value={municipio.idmunicipio}>
@@ -275,49 +301,52 @@ const NuevoNegocio = () => {
                 </select>
               </div>
 
-              <div className="col-xl-2 col-md-6 col-sm-12 col-12 mb-3">
-                <label htmlFor="longitud" className="form-label">Longitud</label>
-                <input type="text" className="form-control" id="longitud" name="longitud" value={formData.longitud ?? ''} readOnly />
-              </div>
-
-              <div className="col-xl-2 col-md-6 col-sm-12 col-12 mb-3">
-                <label htmlFor="latitud" className="form-label">Latitud</label>
-                <input type="text" className="form-control" id="latitud" name="latitud" value={formData.latitud ?? ''} readOnly />
-              </div>
-            </div>
-            <div className="row">
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="idcategoria" className="form-label">Categoría</label>
-                <select className="form-select"  id="idcategoria" name="idcategoria"onChange={handleChange}  value={formData.idcategoria ?? ''}  required >
+                <select
+                  className="form-select"
+                  id="idcategoria"
+                  name="idcategoria"
+                  value={formData.idcategoria ?? ''}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">Seleccione una categoría</option>
-                  {categorias.map((categoria) => (
+                  {categorias.map(categoria => (
                     <option key={categoria.idcategoria} value={categoria.idcategoria}>
                       {categoria.descripcion}
                     </option>
                   ))}
                 </select>
+              </div>
             </div>
-            {subcategorias.length > 0 && (
-              <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
-                <label htmlFor="idsubcategoria" className="form-label">Subcategoría</label>
-                <select  className="form-select"  id="idsubcategoria"  name="idsubcategoria" value={formData.idsubcategoria ?? ''} onChange={handleChange}  required>
-                  <option value="">Seleccione una subcategoría</option>
-                  {subcategorias.map((sub) => (
-                    <option key={sub.idsubcategoria} value={sub.idsubcategoria}>
-                      {sub.descripcion}
-                    </option>
-                  ))}
-                </select>
-              </div> )}
-            </div>
-            <div className="mb-3 mt-3">
-              <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-                {loading ? 'Guardando...' : 'Guardar'}
-              </button>
-            </div>
+
+            {formData.idcategoria && (
+              <div className="row">
+                <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
+                  <label htmlFor="idsubcategoria" className="form-label">Subcategoría</label>
+                  <select
+                    className="form-select"
+                    id="idsubcategoria"
+                    name="idsubcategoria"
+                    value={formData.idsubcategoria ?? ''}
+                    onChange={handleChange}
+                  >
+                    <option value="">Seleccione una subcategoría</option>
+                    {subcategorias.map(subcategoria => (
+                      <option key={subcategoria.idsubcategoria} value={subcategoria.idsubcategoria}>
+                        {subcategoria.descripcion}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? 'Guardando...' : 'Registrar negocio'}
+            </button>
           </form>
-
-
         </div>
       </div>
     </div>
