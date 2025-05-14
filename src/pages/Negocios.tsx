@@ -17,7 +17,7 @@ const Negocios = () => {
         {/* Filtros */}
         <div className="row mb-4">
           <div className="col-12 col-md-4 mb-3">
-            <input className="form-control fs-5"  type="search"  placeholder="Buscar negocio por nombre" aria-label="Buscar"  value={busqueda}  onChange={(e) => setBusqueda(e.target.value)}  />
+            <input className="form-control fs-5"  type="search"  placeholder="Buscar negocio por nombre" aria-label="Buscar" />
           </div>
         </div>
         {/* Cards */}
