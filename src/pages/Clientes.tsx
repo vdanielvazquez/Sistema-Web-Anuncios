@@ -19,7 +19,7 @@ interface FormData {
   correo: string;
 }
 
-const API_URL = 'https://backend-anuncios.onrender.com';
+const API_URL = 'https://sistemawebpro.com';
 
 const Clientes = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
