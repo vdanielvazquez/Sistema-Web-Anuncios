@@ -33,9 +33,7 @@ const Negocios = () => {
                 </div>
               </div>
             </div>
-       
             <p className="text-center">No hay negocios registrados aún.</p>
-       
         </div>
       </div>
     </div>

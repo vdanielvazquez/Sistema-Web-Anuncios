@@ -39,7 +39,8 @@ const Clientes = () => {
     const fetchClientes = async () => {
       try {
        const response = await axios.get<Cliente[]>(`${API_URL}/api/clientes`);
-setClientes(response.data);
+       console.log('Respuesta clientes:', response.data);
+      setClientes(response.data);
       } catch (error) {
         console.error('Error al obtener clientes:', error);
       } finally {
