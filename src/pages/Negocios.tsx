@@ -32,11 +32,19 @@ const Negocios = () => {
 
   const navigate = useNavigate();
   // Obtener los negocios desde el backend
- useEffect(() => {
+useEffect(() => {
   const fetchNegocios = async () => {
     try {
-      const response = await axios.get<Negocio[]>(`${API_URL}/api/negocios`);
-      setNegocios(response.data);
+      const response = await axios.get(`${API_URL}/api/negocios`);
+      const data = response.data;
+
+      if (Array.isArray(data)) {
+        setNegocios(data);
+      } else {
+        console.error('La respuesta no es un arreglo:', data);
+        setNegocios([]);
+      }
+
     } catch (error) {
       console.error('Error al obtener negocios:', error);
     }
@@ -44,6 +52,7 @@ const Negocios = () => {
 
   fetchNegocios();
 }, []);
+
 
   // Filtrar por nombre al escribir
   useEffect(() => {
