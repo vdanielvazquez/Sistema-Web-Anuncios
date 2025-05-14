@@ -13,13 +13,15 @@ export interface Cliente {
 // Obtener lista de clientes
 export const getClientes = async (): Promise<Cliente[]> => {
   try {
-    const response = await axios.get<Cliente[]>(`${API_URL}/clientes`); // 👈 Define response type for Axios
-    return response.data;
+    const response = await axios.get<Cliente[]>(`${API_URL}/clientes`);
+    console.log("Clientes obtenidos:", response.data); // Debugging
+    return Array.isArray(response.data) ? response.data : []; // 👈 Siempre devuelve un array
   } catch (error) {
     console.error('Error al obtener clientes:', error);
     return [];
   }
 };
+
 
 
 // Crear un nuevo cliente

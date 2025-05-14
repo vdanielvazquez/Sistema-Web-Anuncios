@@ -17,6 +17,9 @@ const Clientes = () => {
   useEffect(() => {
     const fetchClientes = async () => {
       const data = await getClientes();
+      console.log("Datos obtenidos de la API:", data); // 👀 Verifica qué llega
+      setClientes(data);
+      setLoading(false);
       setClientes(data);
       setLoading(false);
     };
@@ -58,17 +61,17 @@ const Clientes = () => {
               </tr>
             </thead>
             <tbody>
-              {clientes.map((cliente) => (
-                <tr key={cliente.id}>
-                  <td>{cliente.nombre}</td>
-                  <td>{cliente.telefono}</td>
-                  <td>{cliente.correo}</td>
-                  <td>
-                    <button className="btn btn-warning">Editar</button>
-                    <button className="btn btn-danger">Eliminar</button>
-                  </td>
-                </tr>
-              ))}
+              {Array.isArray(clientes) && clientes.map((cliente) => (
+              <tr key={cliente.id}>
+                <td>{cliente.nombre}</td>
+                <td>{cliente.telefono}</td>
+                <td>{cliente.correo}</td>
+                <td>
+                  <button className="btn btn-warning">Editar</button>
+                  <button className="btn btn-danger">Eliminar</button>
+                </td>
+              </tr>
+            ))}
             </tbody>
           </table>
         )}
