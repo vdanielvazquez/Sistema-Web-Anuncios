@@ -1,7 +1,10 @@
+import axios from 'axios';
+
 import { useState, useEffect } from 'react';
-import { getClientes, createCliente } from '../api/api';
+import { getClientes} from '../api/api';
 import type { Cliente } from '../api/api';
 
+const API_URL = 'https://sistemawebpro.com/api';
 const Clientes = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,22 +23,30 @@ const Clientes = () => {
       console.log("Datos obtenidos de la API:", data); // 👀 Verifica qué llega
       setClientes(data);
       setLoading(false);
-      setClientes(data);
-      setLoading(false);
     };
     fetchClientes();
   }, []);
 
   // Manejar envío de formulario para crear cliente
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const clienteCreado = await createCliente(nuevoCliente);
-    if (clienteCreado) {
-      setClientes([...clientes, clienteCreado]);
+ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault(); // 👈 Previene el envío automático del formulario
+  
+  try {
+    const response = await axios.post(`${API_URL}/clientes`, nuevoCliente, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    console.log("Cliente creado:", response.data); // 👀 Depuración
+
+    if (response.data) {
+      setClientes([...clientes, response.data]);
       setShowModalClienteN(false);
       setNuevoCliente({ id: 0, nombre: '', telefono: '', correo: '' });
     }
-  };
+  } catch (error) {
+    console.error('Error al crear cliente:', error);
+  }
+};
 
   return (
     <div className="divprincipal">
