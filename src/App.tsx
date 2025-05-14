@@ -3,12 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import '../src/css/App.css';
 import Navbar from '../src/pages/navbar';
 
-import Negocios from '../src/pages/Negocios';
 import Clientes from './pages/Clientes';
-import NuevoNegocio from './pages/nuevonegocio';
-import DatosCliente from './pages/Datoscliente';    
-import DatosNegocio from './pages/Datosnegocio';
-import Ajustes from './pages/ajustes';
 
 function App() {
   return (
@@ -21,15 +16,7 @@ function App() {
           {/* Definimos las rutas dentro de Routes */}
           {/* <Route path="/" element={<Inicio />} /> */}
           <Route path="/" element={<Clientes />} />
-          <Route path="/negocios" element={<Negocios />} />
-          <Route path="/negocios" element={<Negocios />} />
           <Route path="/clientes" element={<Clientes />} />
-          
-          <Route path="/nuevonegocio" element={<NuevoNegocio />} />
-          <Route path="/cliente/:id" element={<DatosCliente />} />
-          <Route path="/datosnegocio/:idcliente" element={<DatosNegocio />} />
-          <Route path="/negocio/:id" element={<DatosNegocio />} />
-          <Route path="/ajustes" element={<Ajustes />} />
         </Routes>
       </Router>
     </div>
