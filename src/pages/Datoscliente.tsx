@@ -34,7 +34,8 @@ const DatosCliente = () => {
         // Obtener datos del cliente
         const clienteRes = await axios.get(`${API_URL}/api/clientes/${id}`);
         // const clienteRes = await axios.get(`http://localhost:3001/api/clientes/${id}`);
-        setCliente(clienteRes.data);
+      setCliente(clienteRes.data as Cliente);
+
 
         // Obtener negocios del cliente
         const negociosRes = await axios.get(`${API_URL}/api/negocios/negocios/${id}`);

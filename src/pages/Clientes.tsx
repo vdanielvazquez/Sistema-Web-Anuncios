@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-import axios, { AxiosResponse } from 'axios'; // Asegúrate de importar AxiosResponse
+import axios from 'axios'; // Asegúrate de importar AxiosResponse
+
+
 import '../css/cliente.css';
 
 interface Cliente {
@@ -36,8 +38,8 @@ const Clientes = () => {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response: AxiosResponse<Cliente[]> = await axios.get(`${API_URL}/api/clientes`);
-        setClientes(response.data); // Ahora TypeScript sabe que es un Cliente[]
+       const response = await axios.get<Cliente[]>(`${API_URL}/api/clientes`);
+setClientes(response.data);
       } catch (error) {
         console.error('Error al obtener clientes:', error);
       } finally {
