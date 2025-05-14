@@ -78,7 +78,7 @@ const Clientes = () => {
 
       setFormData({ nombre: '', telefono: '', correo: '' });
       setShowModalClienteN(false);
-      setClientes([...clientes, response.data]);
+      setClientes((prevClientes) => [...prevClientes, response.data]);  // Actualización más eficiente
       alert('Cliente agregado correctamente');
     } catch (error) {
       console.error('Error al guardar cliente:', error);
