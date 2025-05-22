@@ -4,7 +4,7 @@ import '../src/css/App.css';
 import Navbar from '../src/pages/navbar';
 
 import Clientes from './pages/Clientes';
-import Negocios from './pages/negocios';
+import Negocios from './pages/Negocios';
 import NuevoNegocio from './pages/NuevoNegocio';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
           {/* <Route path="/" element={<Inicio />} /> */}
           <Route path="/" element={<Clientes />} />
           <Route path="/clientes" element={<Clientes />} />
-          <Route path='/negocios' element={<Negocios/>}/>
+          <Route path='/Negocios' element={<Negocios/>}/>
           <Route path='/NuevoNegocio' element={<NuevoNegocio/>}/>
         </Routes>
       </Router>
