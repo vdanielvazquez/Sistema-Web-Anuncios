@@ -1,0 +1,38 @@
+.containernegocio{
+  
+  display: flex;
+  justify-content: center; 
+  background-color: rgba(169, 169, 169, 0.5);
+}
+.flexnegocion{
+  min-height: 100vh;
+  justify-content: center;
+  padding: 100px;
+
+}
+.divnegocion{
+  margin-left: 150px;
+  margin-right: 150px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 8px;
+  width: 100%;
+  padding: 15px;
+  margin: 50px;
+  max-height: 750px;
+}
+.formnegocio {
+  margin-top: 20pt;
+  max-width: 1800px;
+  width: 80%;
+  background-color: rgba(212, 212, 212, 0.918);
+  border-radius: 10px; 
+
+}
+
+@media (max-width: 750px) {
+  form {
+    width: 100%; 
+   padding-left: 10%;
+   padding-right: 10%;
+  }
+}

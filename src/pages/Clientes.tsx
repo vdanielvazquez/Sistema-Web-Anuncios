@@ -50,7 +50,7 @@ const Clientes = () => {
 
   return (
     <div className="divprincipal">
-      <h2 className="text-center my-4">Listado de Clientes</h2>
+      <h2 className="text-center mt-5">Listado de Clientes</h2>
       <div className="divclientes mx-5">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <input className="form-control w-50 me-3" type="search" placeholder="Buscar" />
