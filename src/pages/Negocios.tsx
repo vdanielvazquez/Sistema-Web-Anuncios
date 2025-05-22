@@ -22,7 +22,7 @@ interface Negocio {
 }
 const Negocios = () => {
 
-  const API_URL = 'https://sistemawebpro.com/';
+  const API_URL = 'https://sistemawebpro.com';
 
 
 

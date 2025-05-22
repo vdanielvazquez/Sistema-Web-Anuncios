@@ -73,7 +73,7 @@ const NuevoNegocio = () => {
     idmunicipio: null,
   });
 
-  const API_URL = 'https://sistemawebpro.com/';
+  const API_URL = 'https://sistemawebpro.com';
   const [clientes, setClientes] = useState<Cliente[]>([]);
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
@@ -258,9 +258,6 @@ const NuevoNegocio = () => {
 
             <form onSubmit={handleSubmit}>
                  <h2>Nuevo negocio</h2>
-           
-     
-           
             <div className="row">
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
