@@ -106,9 +106,10 @@ const cardsData = [
                 <td>{cliente.nombre}</td>
                 <td>{cliente.telefono}</td>
                 <td>{cliente.correo}</td>
-                <td>{new Date(cliente.correo).toLocaleDateString()}</td>
+                <td>{cliente.correo}</td>
+                
                 <td>10</td>
-                <td>{cliente.correo ? "Activo" : "Inactivo"}</td>
+                <td>{cliente.correo}</td>
                 <td>
                   <div className="form-check form-switch">
                     <input 
