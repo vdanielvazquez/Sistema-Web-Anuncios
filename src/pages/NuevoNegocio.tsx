@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "leaflet/dist/leaflet.css";
 import "../css/nuevonegocio.css"
+import { useMap } from 'react-leaflet';
 
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
@@ -64,8 +65,19 @@ const MapClickHandler = ({ setFormData }: { setFormData: React.Dispatch<React.Se
 
   return null;
 };
+
+const MapCenterUpdater = ({ center }: { center: { lat: number; lng: number } }) => {
+  const map = useMap();
+  useEffect(() => {
+    map.setView([center.lat, center.lng], 13);
+  }, [center, map]);
+
+  return null;
+};
+
+
 const NuevoNegocio = () => {
-  const mapRef = useRef<L.Map | null>(null); // Esto está fuera del componente. 
+ 
   const [formData, setFormData] = useState<FormData>({
     Nombre_comercial:'',
     telefono: '',
@@ -145,9 +157,6 @@ const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 
   if (municipio?.latitud !== undefined && municipio?.longitud !== undefined) {
     setMapCenter({ lat: municipio.latitud, lng: municipio.longitud });
-    if (mapRef.current) {
-      mapRef.current.setView([municipio.latitud, municipio.longitud], 13);
-    }
   }
 };
 
@@ -362,23 +371,22 @@ const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
            {formData.idestado && formData.idmunicipio && (
             <div className="mb-3">
                 <label className="form-label">Ubicación aproximada</label>
-                <MapContainer  center={mapCenter}  zoom={13}  style={{ height: "600px", width: "100%" }}  whenReady={() => {
-                  if (mapRef.current) {
-                    // Ya tienes acceso al mapa creado
-                  }
-                }}
-  ref={mapRef}>
-
+                <MapContainer
+  center={mapCenter}
+  zoom={13}
+  style={{ height: "600px", width: "100%" }}
+>
   <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <MapClickHandler setFormData={setFormData} />
-               {formData.latitud !== undefined && formData.longitud !== undefined && (
-                  <Marker position={[formData.latitud, formData.longitud]} 
-                />)}
+    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  />
+  <MapCenterUpdater center={mapCenter} />
+  <MapClickHandler setFormData={setFormData} />
+  {formData.latitud !== undefined && formData.longitud !== undefined && (
+    <Marker position={[formData.latitud, formData.longitud]} />
+  )}
+</MapContainer>
 
-                </MapContainer>
             </div>
             )}
             </form>
