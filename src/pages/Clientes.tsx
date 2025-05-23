@@ -15,7 +15,7 @@ const Clientes = () => {
     telefono: '',
     correo: '',
     activo: true,
-    Fecha_de_alta:'',
+     Fecha_de_alta: new Date().toISOString() 
   });
 
   // Cargar clientes desde la API al montar el componente
