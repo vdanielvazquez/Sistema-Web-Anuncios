@@ -14,6 +14,7 @@ const Clientes = () => {
     nombre: '',
     telefono: '',
     correo: '',
+    activo: true,
   });
 
   // Cargar clientes desde la API al montar el componente
@@ -41,7 +42,7 @@ const Clientes = () => {
     if (response.data) {
       setClientes([...clientes, response.data]);
       setShowModalClienteN(false);
-      setNuevoCliente({ id: 0, nombre: '', telefono: '', correo: '' });
+      setNuevoCliente({ id: 0, nombre: '', telefono: '', correo: '',activo: true });
     }
   } catch (error) {
     console.error('Error al crear cliente:', error);
@@ -77,11 +78,11 @@ const Clientes = () => {
               <tr key={cliente.id}>
                 <td>{cliente.nombre}</td>
                 <td>{cliente.telefono}</td>
-                
+                 <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
                 <td>{cliente.correo}</td>
                 <td>
-                  <button className="btn btn-warning">Editar</button>
-                  <button className="btn btn-danger">Detalles</button>
+                  <button className="btn btn-warning mx-2">Editar</button>
+                  <button className="btn btn-danger mx-2">Detalles</button>
                 </td>
               </tr>
             ))}
