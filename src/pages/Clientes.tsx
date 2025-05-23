@@ -32,11 +32,12 @@ const Clientes = () => {
   // Manejar envío de formulario para crear cliente
  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault(); // 👈 Previene el envío automático del formulario
-  
+  console.log("Datos enviados:", nuevoCliente);
   try {
     const response = await axios.post(`${API_URL}/clientes`, nuevoCliente, {
       headers: { 'Content-Type': 'application/json' }
     });
+
 
     console.log("Cliente creado:", response.data); // 👀 Depuración
 
