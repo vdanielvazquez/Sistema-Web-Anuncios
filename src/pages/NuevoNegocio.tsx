@@ -138,14 +138,19 @@ const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
   const id = parseInt(e.target.value);
   const municipio = municipios.find(m => m.idmunicipio === id);
 
-if (municipio?.latitud !== undefined && municipio?.longitud !== undefined) {
-  setMapCenter({ lat: municipio.latitud, lng: municipio.longitud });
-  if (mapRef.current) {
-    mapRef.current.setView([municipio.latitud, municipio.longitud], 13);
-  }
-}
+  setFormData(prev => ({
+    ...prev,
+    idmunicipio: id, // <-- Esto actualiza el estado correctamente
+  }));
 
+  if (municipio?.latitud !== undefined && municipio?.longitud !== undefined) {
+    setMapCenter({ lat: municipio.latitud, lng: municipio.longitud });
+    if (mapRef.current) {
+      mapRef.current.setView([municipio.latitud, municipio.longitud], 13);
+    }
+  }
 };
+
 
 
   const handleClienteSelect = (cliente: Cliente) => {
