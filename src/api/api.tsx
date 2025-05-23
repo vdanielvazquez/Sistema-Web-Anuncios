@@ -8,7 +8,8 @@ export interface Cliente {
   nombre: string;
   telefono: string;
   correo: string;
-  activo:true;
+  activo:boolean;
+  Fecha_de_alta:string;
 }
 
 // Obtener lista de clientes

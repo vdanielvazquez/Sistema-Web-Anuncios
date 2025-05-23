@@ -15,6 +15,7 @@ const Clientes = () => {
     telefono: '',
     correo: '',
     activo: true,
+    Fecha_de_alta:'',
   });
 
   // Cargar clientes desde la API al montar el componente
@@ -42,12 +43,37 @@ const Clientes = () => {
     if (response.data) {
       setClientes([...clientes, response.data]);
       setShowModalClienteN(false);
-      setNuevoCliente({ id: 0, nombre: '', telefono: '', correo: '',activo: true });
+      setNuevoCliente({ id: 0, nombre: '', telefono: '', correo: '',activo: true,Fecha_de_alta:'' });
     }
   } catch (error) {
     console.error('Error al crear cliente:', error);
   }
 };
+
+//actualizar estado
+const handleToggle = async (id: number, currentState: boolean) => {
+  try {
+    const newState = !currentState; // Alternar el estado
+    const response = await axios.put(`${API_URL}/clientes/${id}`, { activo: newState });
+
+    if (response.status === 200) {
+      console.log(`Estado actualizado a: ${newState ? "Activo" : "Inactivo"}`);
+
+      // Usar una función dentro de `setClientes` para asegurarse de trabajar con el estado más reciente
+      setClientes(prevClientes =>
+        prevClientes.map(cliente =>
+          cliente.id === id ? { ...cliente, activo: newState } : cliente
+        )
+      );
+    } else {
+      console.error("Error al actualizar el estado");
+    }
+  } catch (error) {
+    console.error("Error en la petición:", error);
+  }
+};
+
+
 
   return (
     <div className="divprincipal">
@@ -69,7 +95,10 @@ const Clientes = () => {
                 <th>Cliente</th>
                 <th>Teléfono</th>
                 <th>Email</th>
+                <th>Fecha de Alta</th>
+                <th>Número de Negocios</th>
                 <th>Estado</th>
+                <th>Activo</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -78,8 +107,20 @@ const Clientes = () => {
               <tr key={cliente.id}>
                 <td>{cliente.nombre}</td>
                 <td>{cliente.telefono}</td>
-                 <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
                 <td>{cliente.correo}</td>
+                <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
+               <td>
+                <div className="form-check form-switch">
+                  <input 
+                    className="form-check-input" 
+                    type="checkbox" 
+                    id={`switch-${cliente.id}`} 
+                    checked={cliente.activo} 
+                    onChange={() => handleToggle(cliente.id, cliente.activo)}
+                  />
+                  <label className="form-check-label" htmlFor={`switch-${cliente.id}`}></label>
+                </div>
+                </td>
                 <td>
                   <button className="btn btn-warning mx-2">Editar</button>
                   <button className="btn btn-danger mx-2">Detalles</button>
