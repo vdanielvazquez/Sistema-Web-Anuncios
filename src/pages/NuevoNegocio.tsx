@@ -133,19 +133,24 @@ const NuevoNegocio = () => {
       .catch(err => console.error('Error al obtener categorias:', err));
   }, []);
 
-  const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = parseInt(e.target.value);
-    const municipio = municipios.find(m => m.idmunicipio === id);
-    if (municipio) {
-      setFormData(prev => ({
-        ...prev,
-        idmunicipio: municipio.idmunicipio,
-        latitud: municipio.latitud,
-        longitud: municipio.longitud,
-      }));
+const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const id = parseInt(e.target.value);
+  const municipio = municipios.find(m => m.idmunicipio === id);
+
+  if (municipio) {
+    setFormData(prev => ({
+      ...prev,
+      idmunicipio: municipio.idmunicipio,
+      latitud: municipio?.latitud !== undefined ? municipio.latitud : prev.latitud,
+      longitud: municipio?.longitud !== undefined ? municipio.longitud : prev.longitud,
+    }));
+
+    if (municipio?.latitud !== undefined && municipio?.longitud !== undefined) {
       setMapCenter({ lat: municipio.latitud, lng: municipio.longitud });
     }
-  };
+  }
+};
+
 
   const handleClienteSelect = (cliente: Cliente) => {
     setFormData(prev => ({ ...prev, idcliente: cliente.idcliente }));
@@ -356,15 +361,16 @@ const NuevoNegocio = () => {
            {formData.idestado && formData.idmunicipio && (
             <div className="mb-3">
                 <label className="form-label">Ubicación aproximada</label>
-                <MapContainer center={mapCenter} zoom={13} style={{ height: "600px", width: "100%" }}>
+               <MapContainer center={mapCenter} zoom={13} style={{ height: "600px", width: "100%" }}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <MapClickHandler setFormData={setFormData} />
-                {formData.latitud && formData.longitud && (
-                    <Marker position={[formData.latitud, formData.longitud]} />
-                )}
+               {formData.latitud !== undefined && formData.longitud !== undefined && (
+                  <Marker position={[formData.latitud, formData.longitud]} 
+                />)}
+
                 </MapContainer>
             </div>
             )}
