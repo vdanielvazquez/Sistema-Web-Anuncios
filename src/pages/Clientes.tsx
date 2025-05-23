@@ -108,7 +108,7 @@ const handleToggle = async (id: number, currentState: boolean) => {
                 <td>{cliente.nombre}</td>
                 <td>{cliente.telefono}</td>
                 <td>{cliente.correo}</td>
-                <td>{cliente.Fecha_de_alta}</td>
+                <td>{new Date(cliente.Fecha_de_alta).toLocaleDateString()}</td>
                 <td>10</td>
                 <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
                <td>
