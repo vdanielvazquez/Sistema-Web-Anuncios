@@ -73,11 +73,31 @@ const handleToggle = async (id: number, currentState: boolean) => {
   }
 };
 
-
+const cardsData = [
+  { img: "https://via.placeholder.com/100", title: "10", description: "Total de Clientes" },
+  { img: "https://via.placeholder.com/100", title: "8", description: "Clientes Activos" },
+  { img: "https://via.placeholder.com/100", title: "2", description: "Clientes Inactivos" },
+  { img: "https://via.placeholder.com/100", title: "Título 4", description: "Descripción 4" },
+];
 
   return (
     <div className="divprincipal">
       <h2 className="text-center mt-5">Listado de Clientes</h2>
+       <div className="container mt-4">
+      <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
+        {cardsData.map((card, index) => (
+          <div className="col" key={index}>
+            <div className="card d-flex flex-row align-items-center p-3">
+              <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
+              <div className="ms-3">
+                <h5 className="card-title">{card.title}</h5>
+                <p className="card-text">{card.description}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
       <div className="divclientes mx-5">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <input className="form-control w-50 me-3" type="search" placeholder="Buscar" />
@@ -89,42 +109,49 @@ const handleToggle = async (id: number, currentState: boolean) => {
         {loading ? (
           <p>Cargando...</p>
         ) : (
-          <table className="table table-bordered table-striped">
-            <thead className="thead-dark">
-              <tr>
-                <th>Cliente</th>
-                <th>Teléfono</th>
-                <th>Email</th>
-                <th>Fecha de Alta</th>
-                <th>Número de Negocios</th>
-                <th>Estado</th>
-                <th>Activo</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(clientes) && clientes.map((cliente) => (
-              <tr key={cliente.id}>
+        <table className="table table-bordered table-striped">
+          <thead className="thead-dark text-center">
+            <tr>
+              <th className="col-auto">Cliente</th>
+              <th className="col-auto">Teléfono</th>
+              <th className="col-auto">Email</th>
+              <th className="col-auto">Fecha de Alta</th>
+              <th className="col-auto">Número de Negocios</th>
+              <th className="col-auto">Estado</th>
+              <th className="col-auto">Activo</th>
+              <th className="col-auto">Acciones</th>
+            </tr>
+          </thead>
+           <tbody>
+            {Array.isArray(clientes) && clientes.map((cliente) => (
+              <tr key={cliente.id} className="text-center align-middle">
                 <td>{cliente.nombre}</td>
                 <td>{cliente.telefono}</td>
                 <td>{cliente.correo}</td>
                 <td>{new Date(cliente.Fecha_de_alta).toLocaleDateString()}</td>
                 <td>10</td>
-                <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
-               <td>
-                <div className="form-check form-switch">
-                  <input   className="form-check-input"   type="checkbox"   id={`switch-${cliente.id}`}   checked={cliente.activo}  onChange={() => handleToggle(cliente.id, cliente.activo)}  />
-                  <label className="form-check-label" htmlFor={`switch-${cliente.id}`}></label>
-                </div>
+                <td>{cliente.activo ? "Activo" : "Inactivo"}</td>
+                <td>
+                  <div className="form-check form-switch">
+                    <input 
+                      className="form-check-input" 
+                      type="checkbox" 
+                      id={`switch-${cliente.id}`} 
+                      checked={cliente.activo}  
+                      onChange={() => handleToggle(cliente.id, cliente.activo)}  
+                    />
+                    <label className="form-check-label" htmlFor={`switch-${cliente.id}`}></label>
+                  </div>
                 </td>
                 <td>
-                  <button className="btn btn-warning mx-2">Editar</button>
-                  <button className="btn btn-danger mx-2">Detalles</button>
+                  <button className="btn btn-warning mx-1">Editar</button>
+                  <button className="btn btn-danger mx-1">Detalles</button>
                 </td>
               </tr>
             ))}
             </tbody>
           </table>
+
         )}
       </div>
 
