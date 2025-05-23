@@ -55,7 +55,7 @@ const cardsData = [
   { img: "https://via.placeholder.com/100", title: "10", description: "Total de Clientes" },
   { img: "https://via.placeholder.com/100", title: "8", description: "Clientes Activos" },
   { img: "https://via.placeholder.com/100", title: "2", description: "Clientes Inactivos" },
-  { img: "https://via.placeholder.com/100", title: "Título 4", description: "Descripción 4" },
+  { img: "https://via.placeholder.com/100", title: "Título 4", description: "Descripción 4o" },
 ];
 
   return (
