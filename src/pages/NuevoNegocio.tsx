@@ -152,11 +152,40 @@ const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 
   setFormData(prev => ({
     ...prev,
-    idmunicipio: id, // <-- Esto actualiza el estado correctamente
+    idmunicipio: id,
   }));
 
-  if (municipio?.latitud !== undefined && municipio?.longitud !== undefined) {
-    setMapCenter({ lat: municipio.latitud, lng: municipio.longitud });
+  if (municipio && formData.idestado) {
+    const estadoNombre = estados.find(est => est.idestado === formData.idestado)?.estado;
+    if (estadoNombre) {
+      geocodeLocation(estadoNombre, municipio.municipio);
+    }
+  }
+};
+
+
+const geocodeLocation = async (estado: string, municipio: string) => {
+  try {
+    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+      params: {
+        q: `${municipio}, ${estado}, México`,
+        format: 'json',
+        limit: 1,
+      },
+    });
+
+    if (response.data.length > 0) {
+      const { lat, lon } = response.data[0];
+      const latNum = parseFloat(lat);
+      const lonNum = parseFloat(lon);
+
+      setMapCenter({ lat: latNum, lng: lonNum });
+      setFormData(prev => ({ ...prev, latitud: latNum, longitud: lonNum }));
+    } else {
+      console.warn('Ubicación no encontrada');
+    }
+  } catch (error) {
+    console.error('Error al geocodificar ubicación:', error);
   }
 };
 
