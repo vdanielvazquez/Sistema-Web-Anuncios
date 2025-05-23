@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "leaflet/dist/leaflet.css";
 import "../css/nuevonegocio.css"
@@ -65,6 +65,7 @@ const MapClickHandler = ({ setFormData }: { setFormData: React.Dispatch<React.Se
   return null;
 };
 const NuevoNegocio = () => {
+  const mapRef = useRef<L.Map | null>(null); // Esto está fuera del componente. 
   const [formData, setFormData] = useState<FormData>({
     Nombre_comercial:'',
     telefono: '',
@@ -137,18 +138,13 @@ const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
   const id = parseInt(e.target.value);
   const municipio = municipios.find(m => m.idmunicipio === id);
 
-  if (municipio) {
-    setFormData(prev => ({
-      ...prev,
-      idmunicipio: municipio.idmunicipio,
-      latitud: municipio?.latitud !== undefined ? municipio.latitud : prev.latitud,
-      longitud: municipio?.longitud !== undefined ? municipio.longitud : prev.longitud,
-    }));
-
-    if (municipio?.latitud !== undefined && municipio?.longitud !== undefined) {
-      setMapCenter({ lat: municipio.latitud, lng: municipio.longitud });
-    }
+if (municipio?.latitud !== undefined && municipio?.longitud !== undefined) {
+  setMapCenter({ lat: municipio.latitud, lng: municipio.longitud });
+  if (mapRef.current) {
+    mapRef.current.setView([municipio.latitud, municipio.longitud], 13);
   }
+}
+
 };
 
 
@@ -361,8 +357,14 @@ const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
            {formData.idestado && formData.idmunicipio && (
             <div className="mb-3">
                 <label className="form-label">Ubicación aproximada</label>
-               <MapContainer center={mapCenter} zoom={13} style={{ height: "600px", width: "100%" }}>
-                <TileLayer
+                <MapContainer  center={mapCenter}  zoom={13}  style={{ height: "600px", width: "100%" }}  whenReady={() => {
+                  if (mapRef.current) {
+                    // Ya tienes acceso al mapa creado
+                  }
+                }}
+  ref={mapRef}>
+
+  <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
