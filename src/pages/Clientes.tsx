@@ -68,6 +68,7 @@ const Clientes = () => {
                 <th>Cliente</th>
                 <th>Teléfono</th>
                 <th>Email</th>
+                <th>Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -76,10 +77,11 @@ const Clientes = () => {
               <tr key={cliente.id}>
                 <td>{cliente.nombre}</td>
                 <td>{cliente.telefono}</td>
+                
                 <td>{cliente.correo}</td>
                 <td>
                   <button className="btn btn-warning">Editar</button>
-                  <button className="btn btn-danger">Eliminar</button>
+                  <button className="btn btn-danger">Detalles</button>
                 </td>
               </tr>
             ))}
