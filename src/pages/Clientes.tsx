@@ -17,7 +17,15 @@ const Clientes = () => {
     activo: true,
     Fecha_de_alta:'',
   });
+// Estado para paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const clientesPorPagina = 5;
+  const totalPages = Math.ceil(clientes.length / clientesPorPagina);
+  const indexOfLastCliente = currentPage * clientesPorPagina;
+  const indexOfFirstCliente = indexOfLastCliente - clientesPorPagina;
+  const clientesActuales = clientes.slice(indexOfFirstCliente, indexOfLastCliente);
 
+ 
   // Cargar clientes desde la API al montar el componente
   useEffect(() => {
     const fetchClientes = async () => {
@@ -72,14 +80,18 @@ const handleToggle = async (id: number, currentState: boolean) => {
     console.error("Error en la petición:", error);
   }
 };
-
+// Función para cambiar de página
+  const paginate = (pageNumber: number) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 const cardsData = [
   { img: "https://via.placeholder.com/100", title: "10", description: "Total de Clientes" },
   { img: "https://via.placeholder.com/100", title: "8", description: "Clientes Activos" },
   { img: "https://via.placeholder.com/100", title: "2", description: "Clientes Inactivos" },
   { img: "https://via.placeholder.com/100", title: "Título 4", description: "Descripción 4" },
 ];
-
   return (
     <div className="divprincipal">
       <h2 className="text-center mt-5">Listado de Clientes</h2>
@@ -109,6 +121,7 @@ const cardsData = [
         {loading ? (
           <p>Cargando...</p>
         ) : (
+       <>
         <table className="table table-bordered table-striped">
           <thead className="thead-dark text-center">
             <tr>
@@ -123,7 +136,7 @@ const cardsData = [
             </tr>
           </thead>
            <tbody>
-            {Array.isArray(clientes) && clientes.map((cliente) => (
+           {Array.isArray(clientesActuales) && clientesActuales.map((cliente) => (
               <tr key={cliente.id} className="text-center align-middle">
                 <td>{cliente.nombre}</td>
                 <td>{cliente.telefono}</td>
@@ -151,10 +164,18 @@ const cardsData = [
             ))}
             </tbody>
           </table>
-
+            {/* Paginación */}
+            <div className="d-flex justify-content-center mt-3">
+              {totalPages > 1 &&
+                [...Array(totalPages).keys()].map(num => (
+                  <button key={num + 1} className={`btn mx-1 ${num + 1 === currentPage ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => paginate(num + 1)}>
+                    {num + 1}
+                  </button>
+                ))}
+            </div>
+          </>
         )}
       </div>
-
       {/* Modal para agregar nuevo cliente */}
       {showModalClienteN && (
         <div className="modal show fade d-block" tabIndex={-1}>
