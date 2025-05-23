@@ -6,6 +6,7 @@ import Navbar from '../src/pages/navbar';
 import Clientes from './pages/Clientes';
 import Negocios from './pages/Negocios';
 import NuevoNegocio from './pages/NuevoNegocio';
+import Ajustes from './pages/Ajustes';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/clientes" element={<Clientes />} />
           <Route path='/Negocios' element={<Negocios/>}/>
           <Route path='/NuevoNegocio' element={<NuevoNegocio/>}/>
+           <Route path='/Ajustes' element={<Ajustes/>}/>
         </Routes>
       </Router>
     </div>
