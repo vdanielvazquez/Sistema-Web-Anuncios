@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import ReactPaginate from 'react-paginate';
 
 interface Categoria {
   idcategoria: number;
@@ -11,12 +12,20 @@ interface Subcategoria {
   descripcion: string;
   idcategoria: number;
 }
+
 const Ajustes: React.FC = () => {
+  const [currentPageCategorias, setCurrentPageCategorias] = useState(0);
+  const [currentPageSubcategorias, setCurrentPageSubcategorias] = useState(0);
+  const itemsPerPage = 3;
+
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
 
-  const [loading, setLoading] = useState(true);
+  // Datos provisionales para evitar error de variables no definidas
+  const [suscripciones] = useState<{ id: number; dias: number }[]>([]);
   
+  const [loading, setLoading] = useState(true);
+
   const [showModalCategoria, setShowModalCategoria] = useState(false);
   const [showModalSubcategoria, setShowModalSubcategoria] = useState(false);
 
@@ -26,8 +35,28 @@ const Ajustes: React.FC = () => {
 
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [tipoMensaje, setTipoMensaje] = useState<'success' | 'danger'>('success');
-  
+
   const API_URL = 'https://sistemawebpro.com';
+
+  // Paginación categorías
+  const displayedCategorias = categorias.slice(
+    currentPageCategorias * itemsPerPage,
+    (currentPageCategorias + 1) * itemsPerPage
+  );
+
+  // Paginación subcategorías
+  const displayedSubcategorias = subcategorias.slice(
+    currentPageSubcategorias * itemsPerPage,
+    (currentPageSubcategorias + 1) * itemsPerPage
+  );
+
+  const handlePageClickCategorias = (event: { selected: number }) => {
+    setCurrentPageCategorias(event.selected);
+  };
+
+  const handlePageClickSubcategorias = (event: { selected: number }) => {
+    setCurrentPageSubcategorias(event.selected);
+  };
 
   useEffect(() => {
     fetchCategorias();
@@ -37,18 +66,17 @@ const Ajustes: React.FC = () => {
   const fetchCategorias = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/categorias`);
-      console.log("Respuesta de la API:", response.data);  // Verifica la estructura de la respuesta
-      setCategorias(response.data.data);  // Accede correctamente a 'data'
+      setCategorias(response.data.data);
     } catch (error) {
       console.error('Error al obtener categorías:', error);
     } finally {
       setLoading(false);
     }
   };
-  
+
   const fetchSubcategorias = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/subcategorias`); //render
+      const response = await axios.get(`${API_URL}/api/subcategorias`);
       setSubcategorias(response.data.data);
     } catch (error) {
       console.error('Error al obtener subcategorías:', error);
@@ -74,7 +102,6 @@ const Ajustes: React.FC = () => {
     setTimeout(() => setMensaje(null), 3000);
   };
 
-
   const handleGuardarSubcategoria = async () => {
     if (categoriaSeleccionada === undefined) {
       setMensaje('Por favor, selecciona una categoría');
@@ -83,7 +110,7 @@ const Ajustes: React.FC = () => {
     }
 
     try {
-      await axios.post(`${API_URL}/api/subcategorias`,  {
+      await axios.post(`${API_URL}/api/subcategorias`, {
         descripcion: nuevaSubcategoria,
         idcategoria: categoriaSeleccionada,
       });
@@ -102,11 +129,10 @@ const Ajustes: React.FC = () => {
     setTimeout(() => setMensaje(null), 3000);
   };
 
-
   return (
-    <div className="container-fluid mt-5">
-     < div className="div-ajustes">
-        <h2 className="text-center mb-4">Ajustes</h2>
+    <div className="divprincipal">
+      <div className="div-ajustes">
+        <h2 className="text-center mt-5">Ajustes</h2>
 
         {mensaje && (
           <div className={`alert alert-${tipoMensaje}`} role="alert">
@@ -114,7 +140,8 @@ const Ajustes: React.FC = () => {
           </div>
         )}
 
-        <div className="d-flex">
+        <div className="d-flex flex-wrap justify-content-between">
+          {/* Categorías */}
           <div className="col-xl-3 col-md-6 col-sm-12 col-12 mb-3">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalCategoria(true)}>
               Nueva Categoría
@@ -123,7 +150,9 @@ const Ajustes: React.FC = () => {
               <thead className="thead-dark">
                 <tr>
                   <th>Nombre</th>
-                  <th className="text-center" style={{ width: '100px' }}>Acción</th>
+                  <th className="text-center" style={{ width: '100px' }}>
+                    Acción
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -132,7 +161,7 @@ const Ajustes: React.FC = () => {
                     <td colSpan={2}>Cargando...</td>
                   </tr>
                 ) : (
-                  categorias.map((cat) => (
+                  displayedCategorias.map((cat) => (
                     <tr key={cat.idcategoria}>
                       <td>{cat.descripcion}</td>
                       <td className="d-flex justify-content-center" style={{ width: '100px' }}>
@@ -143,8 +172,21 @@ const Ajustes: React.FC = () => {
                 )}
               </tbody>
             </table>
+            <ReactPaginate
+              previousLabel={"← Anterior"}
+              nextLabel={"Siguiente →"}
+              breakLabel={"..."}
+              pageCount={Math.ceil(categorias.length / itemsPerPage)}
+              onPageChange={handlePageClickCategorias}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+              pageRangeDisplayed={2}
+              marginPagesDisplayed={1}
+              forcePage={currentPageCategorias}
+            />
           </div>
-          {/* subcategoria */}
+
+          {/* Subcategorías */}
           <div className="col-xl-3 col-md-6 col-sm-12 col-12 mb-3">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalSubcategoria(true)}>
               Nueva SubCategoría
@@ -153,11 +195,11 @@ const Ajustes: React.FC = () => {
               <thead className="thead-dark">
                 <tr>
                   <th>Nombre</th>
-                  <th className="text-center" style={{ width: '100px' }}>Acción</th>
+                  <th>Categoría</th>
                 </tr>
               </thead>
               <tbody>
-              {subcategorias.map((subcat) => (
+                {displayedSubcategorias.map((subcat) => (
                   <tr key={subcat.idsubcategoria}>
                     <td>{subcat.descripcion}</td>
                     <td>{categorias.find((cat) => cat.idcategoria === subcat.idcategoria)?.descripcion}</td>
@@ -165,7 +207,47 @@ const Ajustes: React.FC = () => {
                 ))}
               </tbody>
             </table>
+            <ReactPaginate
+              previousLabel={"← Anterior"}
+              nextLabel={"Siguiente →"}
+              breakLabel={"..."}
+              pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
+              onPageChange={handlePageClickSubcategorias}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+              pageRangeDisplayed={2}
+              marginPagesDisplayed={1}
+              forcePage={currentPageSubcategorias}
+            />
           </div>
+
+          {/* Suscripciones */}
+          <div className="col-xl-3 col-md-6 col-sm-12 col-12 mb-3">
+            <button className="btn btn-primary mb-3">Nueva Suscripción</button>
+            <table className="table table-bordered table-striped">
+              <thead className="thead-dark">
+                <tr>
+                  <th>Descripcion</th>
+                  <th>Número de Negocios</th>
+                </tr>
+              </thead>
+              <tbody>
+                {suscripciones.length === 0 ? (
+                  <tr>
+                    <td>No hay suscripciones</td>
+                    <td>10</td>
+                  </tr>
+                ) : (
+                  suscripciones.map((sus) => (
+                    <tr key={sus.id}>
+                      <td>{sus.dias}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
         </div>
 
         {/* Modal para nueva categoría */}
@@ -209,12 +291,14 @@ const Ajustes: React.FC = () => {
                   <button type="button" className="btn-close" onClick={() => setShowModalSubcategoria(false)} />
                 </div>
                 <div className="modal-body">
-                <select
+                  <select
                     className="form-control mb-3"
-                    value={categoriaSeleccionada}
-                    onChange={(e) => setCategoriaSeleccionada(Number(e.target.value))}
+                    value={categoriaSeleccionada ?? ''}
+                    onChange={(e) =>
+                      setCategoriaSeleccionada(e.target.value ? Number(e.target.value) : undefined)
+                    }
                   >
-                    <option value={undefined}>Seleccione una categoría</option>
+                    <option value="">Seleccione una categoría</option>
                     {categorias.map((cat) => (
                       <option key={cat.idcategoria} value={cat.idcategoria}>
                         {cat.descripcion}
