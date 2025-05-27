@@ -1,81 +1,106 @@
 import axios from 'axios';
-
 import { useState, useEffect } from 'react';
-import { getClientes} from '../api/api';
-import type { Cliente } from '../api/api';
 
 const API_URL = 'https://sistemawebpro.com/api';
+
+interface Cliente {
+  idcliente: number;
+  nombre: string;
+  telefono: string;
+  correo: string;
+}
+
 const Clientes = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModalClienteN, setShowModalClienteN] = useState(false);
-  const [nuevoCliente, setNuevoCliente] = useState<Cliente>({
-    id: 0,
+  const [nuevoCliente, setNuevoCliente] = useState({
     nombre: '',
     telefono: '',
-    correo: '', 
+    correo: '',
   });
 
-  // Cargar clientes desde la API al montar el componente
   useEffect(() => {
     const fetchClientes = async () => {
       const data = await getClientes();
-      console.log("Datos obtenidos de la API:", data); // 👀 Verifica qué llega
+      console.log("Datos obtenidos de la API:", data);
       setClientes(data);
       setLoading(false);
     };
     fetchClientes();
   }, []);
 
-  // Manejar envío de formulario para crear cliente
- const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault(); // 👈 Previene el envío automático del formulario
-  console.log("Datos enviados:", nuevoCliente);
-  try {
-    const response = await axios.post(`${API_URL}/clientes`, nuevoCliente, {
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-
-    console.log("Cliente creado:", response.data); // 👀 Depuración
-
-    if (response.data) {
-      setClientes([...clientes, response.data]);
-      setShowModalClienteN(false);
-      setNuevoCliente({ id: 0, nombre: '', telefono: '', correo: ''});
+  const getClientes = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/clientes`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener clientes:', error);
+      return [];
     }
-  } catch (error) {
-    console.error('Error al crear cliente:', error);
-  }
-};
+  };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("Datos enviados:", nuevoCliente);
+    try {
+      const response = await axios.post(`${API_URL}/clientes`, nuevoCliente, {
+        headers: { 'Content-Type': 'application/json' },
+      });
 
+      console.log("Cliente creado:", response.data);
 
-const cardsData = [
-  { img: "https://via.placeholder.com/100", title: "10", description: "Total de Clientes" },
-  { img: "https://via.placeholder.com/100", title: "8", description: "Clientes Activos" },
-  { img: "https://via.placeholder.com/100", title: "2", description: "Clientes Inactivos" },
-  { img: "https://via.placeholder.com/100", title: "Título 4", description: "Descripción 4o" },
-];
+      if (response.data) {
+        const nuevo = response.data;
+        setClientes([
+          ...clientes,
+          {
+            idcliente: nuevo.idcliente,
+            nombre: nuevo.nombre,
+            telefono: nuevo.telefono,
+            correo: nuevo.correo,
+          },
+        ]);
+        setShowModalClienteN(false);
+        setNuevoCliente({ nombre: '', telefono: '', correo: '' });
+      }
+    } catch (error) {
+      console.error('Error al crear cliente:', error);
+    }
+  };
+
+  const abrirDetalles = (id: number) => {
+    const url = `/clientes/${id}`; // Cambia esto según tu ruta
+    window.open(url, '_blank');
+  };
+
+  const cardsData = [
+    { img: "https://via.placeholder.com/100", title: clientes.length.toString(), description: "Total de Clientes" },
+    { img: "https://via.placeholder.com/100", title: "8", description: "Clientes Activos" },
+    { img: "https://via.placeholder.com/100", title: "2", description: "Clientes Inactivos" },
+    { img: "https://via.placeholder.com/100", title: "Título 4", description: "Descripción 4" },
+  ];
 
   return (
     <div className="divprincipal">
       <h2 className="text-center mt-5">Listado de Clientes</h2>
-       <div className="container mt-4">
-      <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
-        {cardsData.map((card, index) => (
-          <div className="col" key={index}>
-            <div className="card d-flex flex-row align-items-center p-3">
-              <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
-              <div className="ms-3">
-                <h5 className="card-title">{card.title}</h5>
-                <p className="card-text">{card.description}</p>
+
+      <div className="container mt-4">
+        <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
+          {cardsData.map((card, index) => (
+            <div className="col" key={index}>
+              <div className="card d-flex flex-row align-items-center p-3">
+                <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
+                <div className="ms-3">
+                  <h5 className="card-title">{card.title}</h5>
+                  <p className="card-text">{card.description}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+
       <div className="divclientes mx-5">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <input className="form-control w-50 me-3" type="search" placeholder="Buscar" />
@@ -87,52 +112,54 @@ const cardsData = [
         {loading ? (
           <p>Cargando...</p>
         ) : (
-        <table className="table table-bordered table-striped">
-          <thead className="thead-dark text-center">
-            <tr>
-              <th className="col-auto">Cliente</th>
-              <th className="col-auto">Teléfono</th>
-              <th className="col-auto">Email</th>
-              <th className="col-auto">Fecha de Alta</th>
-              <th className="col-auto">Número de Negocios</th>
-              <th className="col-auto">Estado</th>
-              <th className="col-auto">Activo</th>
-              <th className="col-auto">Acciones</th>
-            </tr>
-          </thead>
-           <tbody>
-            {Array.isArray(clientes) && clientes.map((cliente) => (
-              <tr key={cliente.id} className="text-center align-middle">
-                <td>{cliente.nombre}</td>
-                <td>{cliente.telefono}</td>
-                <td>{cliente.correo}</td>
-                <td>{cliente.correo}</td>
-                
-                <td>10</td>
-                <td>{cliente.correo}</td>
-                <td>
-                  <div className="form-check form-switch">
-                    <input 
-                      className="form-check-input" 
-                      type="checkbox" 
-                     
-                    />
-                    <label className="form-check-label" htmlFor={`switch-${cliente.id}`}></label>
-                  </div>
-                </td>
-                <td>
-                  <button className="btn btn-warning mx-1">Editar</button>
-                  <button className="btn btn-danger mx-1">Detalles</button>
-                </td>
+          <table className="table table-bordered table-striped">
+            <thead className="thead-dark text-center">
+              <tr>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Fecha de Alta</th>
+                <th>Número de Negocios</th>
+                <th>Estado</th>
+                <th>Activo</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-      </tbody>
-    </table>
-
+            </thead>
+            <tbody>
+              {clientes.map((cliente) => (
+                <tr key={cliente.idcliente} className="text-center align-middle">
+                  <td>{cliente.nombre}</td>
+                  <td>{cliente.telefono}</td>
+                  <td>{cliente.correo}</td>
+                  <td>{new Date().toLocaleDateString()}</td>
+                  <td>0</td>
+                  <td>Activo</td>
+                  <td>
+                    <div className="form-check form-switch">
+                      <input
+                        id={`switch-${cliente.idcliente}`}
+                        className="form-check-input"
+                        type="checkbox"
+                      />
+                      <label className="form-check-label" htmlFor={`switch-${cliente.idcliente}`}></label>
+                    </div>
+                  </td>
+                  <td>
+                    <button className="btn btn-warning mx-1">Editar</button>
+                    <button
+                      className="btn btn-danger mx-1"
+                      onClick={() => abrirDetalles(cliente.idcliente)}
+                    >
+                      Detalles
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 
-      {/* Modal para agregar nuevo cliente */}
       {showModalClienteN && (
         <div className="modal show fade d-block" tabIndex={-1}>
           <div className="modal-dialog">
@@ -144,19 +171,34 @@ const cardsData = [
                 </div>
                 <div className="modal-body">
                   <div className="mb-3">
-                    <label htmlFor="nombre" className="form-label">Nombre</label>
-                    <input type="text" className="form-control" name="nombre" value={nuevoCliente.nombre}
-                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })} required />
+                    <label className="form-label">Nombre</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={nuevoCliente.nombre}
+                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })}
+                      required
+                    />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="telefono" className="form-label">Teléfono</label>
-                    <input type="text" className="form-control" name="telefono" value={nuevoCliente.telefono}
-                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, telefono: e.target.value })} required />
+                    <label className="form-label">Teléfono</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={nuevoCliente.telefono}
+                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, telefono: e.target.value })}
+                      required
+                    />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="correo" className="form-label">Correo</label>
-                    <input type="email" className="form-control" name="correo" value={nuevoCliente.correo}
-                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, correo: e.target.value })} required />
+                    <label className="form-label">Correo</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={nuevoCliente.correo}
+                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, correo: e.target.value })}
+                      required
+                    />
                   </div>
                 </div>
                 <div className="modal-footer">
