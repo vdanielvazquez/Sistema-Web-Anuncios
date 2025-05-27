@@ -8,6 +8,8 @@ interface Cliente {
   nombre: string;
   telefono: string;
   correo: string;
+  fecha_de_alta: string;
+  activo: boolean;
 }
 
 const Clientes = () => {
@@ -39,7 +41,20 @@ const Clientes = () => {
       return [];
     }
   };
+const fetchClientes = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/clientes`);
+      console.log("Datos obtenidos de la API:", response.data);
+      setClientes(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error al obtener clientes:', error);
+    }
+  };
 
+  useEffect(() => {
+    fetchClientes();
+  }, []);
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("Datos enviados:", nuevoCliente);
@@ -51,16 +66,7 @@ const Clientes = () => {
       console.log("Cliente creado:", response.data);
 
       if (response.data) {
-        const nuevo = response.data;
-        setClientes([
-          ...clientes,
-          {
-            idcliente: nuevo.idcliente,
-            nombre: nuevo.nombre,
-            telefono: nuevo.telefono,
-            correo: nuevo.correo,
-          },
-        ]);
+        await fetchClientes(); // actualiza la lista desde el backend
         setShowModalClienteN(false);
         setNuevoCliente({ nombre: '', telefono: '', correo: '' });
       }
@@ -131,9 +137,9 @@ const Clientes = () => {
                   <td>{cliente.nombre}</td>
                   <td>{cliente.telefono}</td>
                   <td>{cliente.correo}</td>
-                  <td>{new Date().toLocaleDateString()}</td>
-                  <td>0</td>
-                  <td>Activo</td>
+                  <td>{new Date(cliente.fecha_de_alta).toLocaleDateString('es-MX')}</td>
+                  <td>0</td> {/* Aquí puedes mostrar los negocios si los tienes */}
+                  <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
                   <td>
                     <div className="form-check form-switch">
                       <input
