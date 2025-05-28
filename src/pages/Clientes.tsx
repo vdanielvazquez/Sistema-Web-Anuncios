@@ -113,7 +113,7 @@ const fetchClientes = async () => {
       <h2 className="text-center mt-5">Listado de Clientes</h2>
 
       <div className="container mt-4">
-        <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
+        <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-3">
           {cardsData.map((card, index) => (
             <div className="col" key={index}>
               <div className="card d-flex flex-row align-items-center p-3 mb-3">
