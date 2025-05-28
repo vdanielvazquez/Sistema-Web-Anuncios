@@ -4,6 +4,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+
+
+import usuarioTotal from "../assets/usuario-total.png";
+import usuarioActivo from "../assets/usuario-activo.png";
+import usuarioInactivo from "../assets/usuario-inactivo.png";
+
 interface Negocio {
   idnegocio: number;
   nombre_comercial: string;
@@ -65,12 +71,34 @@ const Negocios = () => {
   const handleClick = () => {
     navigate('/nuevonegocio');
   };
-
+  const totalClientes = negocios.length;
+  const clientesActivos = negocios.filter(negocios => negocios.activo).length;
+  const clientesInactivos = totalClientes - clientesActivos;
+  const cardsData = [
+    { img:usuarioTotal, title: negocios.length.toString(), description: "Total de Clientes" },
+    { img: usuarioActivo, title:clientesActivos.toString(), description: "Clientes Activos" },
+    { img: usuarioInactivo, title: clientesInactivos.toString(), description: "Clientes Inactivos" },
+    { img: usuarioTotal, title: "Título 4", description: "Descripción 4" },
+  ];
   return (
     <div className="divprincipal">
       <div className="div-custom">
         <h2 className="text-center mt-5">Listado de Negocios</h2>
-
+          <div className="container mt-4">
+              <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
+                 {cardsData.map((card, index) => (
+                  <div className="col" key={index}>
+                        <div className="card d-flex flex-row align-items-center p-3 mb-3">
+                          <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
+                          <div className="ms-3 text-center">
+                            <h5 className="card-title">{card.title}</h5>
+                            <p className="card-text">{card.description}</p>
+                          </div>
+                      </div>
+                    </div>
+                  ))}
+               </div>
+          </div>
         {/* Botón para registrar nuevo negocio */}
         <button className="btn btn-primary position-fixed bottom-0 end-0 m-5" onClick={handleClick} style={{ zIndex: 1050 }}>
           Nuevo negocio
