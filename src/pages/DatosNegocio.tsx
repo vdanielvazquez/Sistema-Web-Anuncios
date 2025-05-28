@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import '../css/datosnegocio.css';
 
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -168,9 +169,9 @@ const reemplazarImagen = async () => {
   if (!negocio) return <p>Cargando...</p>;
 
   return (
-    <div className="container-fluid  mt-5">
+    <div className="divprincipal">
       <div className='div-datos-negocio'>
-      <h2 className="text-center mb-4">Detalles del Negocio</h2>
+      <h2 className="text-center mt-5">Detalles del Negocio</h2>
       <div className="row">
         <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
           <div className="card">
