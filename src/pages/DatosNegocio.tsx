@@ -170,7 +170,7 @@ const reemplazarImagen = async () => {
 
   return (
     <div className="divprincipal">
-      <div className='div-datos-negocio'>
+      <div className='container'>
       <h2 className="text-center mt-5">Detalles del Negocio</h2>
       <div className="row">
         <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">

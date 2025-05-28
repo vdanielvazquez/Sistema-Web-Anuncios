@@ -68,7 +68,7 @@ const DatosCliente = () => {
                 <h4 className="card-title">{cliente.nombre}</h4>
                 <p className="card-text"><strong>Teléfono: </strong> {cliente.telefono}</p>
                 <p className="card-text"><strong>Email: </strong> {cliente.correo}</p>
-                <p className="card-text"><strong>Email: </strong> {cliente.activo  ? 'Activo' : 'Inactivo'}</p>
+                <p className="card-text"><strong>Estado: </strong> {cliente.activo  ? 'Activo' : 'Inactivo'}</p>
                 <a className="btn btn-primary">Editar</a>
                 </div>
             </div>
