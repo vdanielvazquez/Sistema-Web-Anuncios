@@ -97,10 +97,14 @@ const fetchClientes = async () => {
     navigate(`/DatosCliente/${id}`); // Ajusta la ruta según tu configuración
   };
 
+  const totalClientes = clientes.length;
+  const clientesActivos = clientes.filter(cliente => cliente.activo).length;
+  const clientesInactivos = totalClientes - clientesActivos;
+
   const cardsData = [
     { img:usuarioTotal, title: clientes.length.toString(), description: "Total de Clientes" },
-    { img: usuarioActivo, title: "8", description: "Clientes Activos" },
-    { img: usuarioInactivo, title: "2", description: "Clientes Inactivos" },
+    { img: usuarioActivo, title:clientesActivos.toString(), description: "Clientes Activos" },
+    { img: usuarioInactivo, title: clientesInactivos.toString(), description: "Clientes Inactivos" },
     { img: usuarioTotal, title: "Título 4", description: "Descripción 4" },
   ];
 
