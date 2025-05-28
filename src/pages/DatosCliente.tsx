@@ -74,20 +74,13 @@ const DatosCliente = () => {
         <div className="row">
             {negocios.length > 0 ? (
             negocios.map((negocio) => (
-                <div key={negocio.idnegocio} className="col-md-4 mb-4">
+                <div key={negocio.idnegocio} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
                 <div className="card">
-                    <img
-                    src={
-                        negocio.portada
-                        ? `${API_URL}/${negocio.idnegocio}/${negocio.portada}`
-                        : 'default-image.jpg'  // Si no tiene portada, muestra una imagen por defecto
-                    }
-                    className="card-img-top"
-                    alt="Negocio"
-                    />
+                    <img src={  negocio.portada  ? `${API_URL}/${negocio.idnegocio}/${negocio.portada}`  : 'default-image.jpg'  // Si no tiene portada, muestra una imagen por defecto
+                    } className="card-img-top"  alt="Negocio" />
                     <div className="card-body">
                     <p>Nombre Comercial<h3>{negocio.nombre_comercial}</h3></p>
-                    <p>Estatus<h3>{negocio.telefono}</h3></p>
+                    <p>Estatuss<h3>{negocio.telefono}</h3></p>
                     <a href={`/negocio/${negocio.idnegocio}`} className="btn btn-primary">Ver más</a>
                     </div>
                 </div>
