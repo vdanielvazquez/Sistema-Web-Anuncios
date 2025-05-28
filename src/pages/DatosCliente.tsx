@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
 interface Cliente {
   idcliente: number;
@@ -85,7 +86,7 @@ const DatosCliente = () => {
                     <div className="card-body">
                     <p>Nombre Comercial<h3>{negocio.nombre_comercial}</h3></p>
                     <p>Estado<h3>{negocio.activo  ? 'Activo' : 'Inactivo'}</h3></p>
-                    <a href={`/DatosNegocio/${negocio.idnegocio}`} className="btn btn-primary">Ver más</a>
+                    <Link to={`/DatosNegocio/${negocio.idnegocio}`} className="btn btn-primary">Ver más</Link>
                     </div>
                 </div>
                 </div>
