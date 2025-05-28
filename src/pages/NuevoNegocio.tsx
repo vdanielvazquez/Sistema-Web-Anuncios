@@ -401,22 +401,22 @@ const geocodeLocation = async (estado: string, municipio: string) => {
             <div className="mb-3">
                 <label className="form-label">Ubicación aproximada</label>
                 <MapContainer
-  center={mapCenter}
-  zoom={13}
-  style={{ height: "1000px", width: "600px" }}
->
- <TileLayer
-  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-/>
+                center={mapCenter}
+                zoom={13}
+                style={{ height: "1000px", width: "600px" }}
+              >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
 
 
-  <MapCenterUpdater center={mapCenter} />
-  <MapClickHandler setFormData={setFormData} />
-  {formData.latitud !== undefined && formData.longitud !== undefined && (
-    <Marker position={[formData.latitud, formData.longitud]} />
-  )}
-</MapContainer>
+                <MapCenterUpdater center={mapCenter} />
+                <MapClickHandler setFormData={setFormData} />
+                {formData.latitud !== undefined && formData.longitud !== undefined && (
+                  <Marker position={[formData.latitud, formData.longitud]} />
+                )}
+              </MapContainer>
 
             </div>
             )}
