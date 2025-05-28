@@ -36,7 +36,7 @@ interface FormData {
   idcliente: number | null;
   idestado: number | null;
   idmunicipio: number | null;
-  idcategoria?: number | null;
+  categoria?: number | null;
   idsubcategoria?: number | null;
   latitud?: number;
   longitud?: number;
@@ -102,8 +102,8 @@ const NuevoNegocio = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (formData.idcategoria) { 
-      axios.get(`${API_URL}/api/subcategorias/categoria/${formData.idcategoria}`)
+    if (formData.categoria) { 
+      axios.get(`${API_URL}/api/subcategorias/categoria/${formData.categoria}`)
       .then(res => {
         if (res.data.success && Array.isArray(res.data.data)) {
           setSubcategorias(res.data.data);
@@ -114,7 +114,7 @@ const NuevoNegocio = () => {
       })
       .catch(err => console.error('Error al obtener subcategorías:', err));
     }
-  }, [formData.idcategoria]);
+  }, [formData.categoria]);
 
   useEffect(() => {
     axios.get(`${API_URL}/api/clientes`)
@@ -222,7 +222,7 @@ const geocodeLocation = async (estado: string, municipio: string) => {
     const { name, value } = e.target;
     setFormData(prev => {
       const updatedData = { ...prev, [name]: name.startsWith('id') ? Number(value) : value };
-      console.log(updatedData.idcategoria);  // Verifica si el idcategoria cambia
+      console.log(updatedData.categoria);  // Verifica si el idcategoria cambia
       return updatedData;
     });
   };
@@ -236,7 +236,7 @@ const geocodeLocation = async (estado: string, municipio: string) => {
       Nombre_comercial,
       telefono,
       idmunicipio,
-      idcategoria,
+      categoria,
       idsubcategoria,
       latitud,
       longitud,
@@ -249,7 +249,7 @@ const geocodeLocation = async (estado: string, municipio: string) => {
     if (!idcliente) missingFields.push("Representante Legal");
     if (!idestado) missingFields.push("Estado");
     if (!idmunicipio) missingFields.push("Municipio");
-    if (!idcategoria) missingFields.push("Categoría");
+    if (!categoria) missingFields.push("Categoría");
    
     if (missingFields.length > 0) {
       alert(`Por favor completa los siguientes campos: ${missingFields.join(", ")}`);
@@ -264,7 +264,7 @@ const geocodeLocation = async (estado: string, municipio: string) => {
         idcliente,
         idestado,
         idmunicipio,
-        idcategoria,
+        categoria,
         idsubcategoria,
         latitud,
         longitud,
@@ -279,7 +279,7 @@ const geocodeLocation = async (estado: string, municipio: string) => {
         idcliente: null,
         idestado: null,
         idmunicipio: null,
-        idcategoria: null,
+        categoria: null,
         idsubcategoria: null,
         latitud: undefined,
         longitud: undefined,
@@ -369,7 +369,7 @@ const geocodeLocation = async (estado: string, municipio: string) => {
             <div className="row">
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="idcategoria" className="form-label">Categoría</label>
-                <select className="form-select"  id="idcategoria" name="idcategoria"onChange={handleChange}  value={formData.idcategoria ?? ''}  required >
+                <select className="form-select"  id="idcategoria" name="idcategoria"onChange={handleChange}  value={formData.categoria ?? ''}  required >
                   <option value="">Seleccione una categoría</option>
                   {categorias.map((categoria) => (
                     <option key={categoria.idcategoria} value={categoria.idcategoria}>
