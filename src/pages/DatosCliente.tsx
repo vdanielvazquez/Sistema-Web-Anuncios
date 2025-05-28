@@ -8,6 +8,7 @@ interface Cliente {
   nombre: string;
   correo: string;
   telefono: string;
+   activo: boolean;
 }
 
 interface Negocio {
@@ -15,14 +16,16 @@ interface Negocio {
   nombre_comercial: string;
   telefono: string;
   portada: string; 
+   activo: boolean;
 }
 
 const DatosCliente = () => {
 
   
-    const API_URL = 'https://sistemawebpro.com';
+  const API_URL = 'https://sistemawebpro.com';
 
-  
+  const [showModalClienteEdit, setShowModalClienteEdit] = useState(false);
+
   const { id } = useParams();
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [negocios, setNegocios] = useState<Negocio[]>([]);
@@ -61,16 +64,17 @@ const DatosCliente = () => {
             <div className="col-md-4">
             <div className="card">
                 <div className="card-body">
-                <h5 className="card-title">{cliente.nombre}</h5>
+                <h4 className="card-title">{cliente.nombre}</h4>
                 <p className="card-text"><strong>Teléfono: </strong> {cliente.telefono}</p>
                 <p className="card-text"><strong>Email: </strong> {cliente.correo}</p>
+                <p className="card-text"><strong>Email: </strong> {cliente.activo  ? 'Activo' : 'Inactivo'}</p>
                 <a className="btn btn-primary">Editar</a>
                 </div>
             </div>
             </div>
         </div>
 
-        <h3 className="text-center mt-5">Negocios de {cliente.nombre}</h3>
+        <h2 className="text-center mt-5">Negocios de {cliente.nombre}</h2>
         <div className="row">
             {negocios.length > 0 ? (
             negocios.map((negocio) => (
@@ -80,8 +84,8 @@ const DatosCliente = () => {
                     } className="card-img-top"  alt="Negocio" />
                     <div className="card-body">
                     <p>Nombre Comercial<h3>{negocio.nombre_comercial}</h3></p>
-                    <p>Estatuss<h3>{negocio.telefono}</h3></p>
-                    <a href={`/negocio/${negocio.idnegocio}`} className="btn btn-primary">Ver más</a>
+                    <p>Estado<h3>{negocio.activo  ? 'Activo' : 'Inactivo'}</h3></p>
+                    <a href={`/DatosNegocio/${negocio.idnegocio}`} className="btn btn-primary">Ver más</a>
                     </div>
                 </div>
                 </div>
@@ -91,6 +95,54 @@ const DatosCliente = () => {
             )}
         </div>
         </div>
+
+        {showModalClienteEdit && (
+        <div className="modal show fade d-block" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <form >
+                <div className="modal-header">
+                  <h5 className="modal-title">Nuevo Cliente</h5>
+                  <button type="button" className="btn-close" onClick={() => setShowModalClienteEdit(false)} />
+                </div>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="form-label">Nombre</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={cliente.nombre}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Teléfono</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={cliente.telefono}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Correo</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={cliente.correo}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowModalClienteEdit(false)}>Cancelar</button>
+                  <button type="submit" className="btn btn-primary">Guardar cambios</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

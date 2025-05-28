@@ -8,6 +8,7 @@ import Negocios from './pages/Negocios';
 import NuevoNegocio from './pages/NuevoNegocio';
 import Ajustes from './pages/Ajustes';
 import DatosCliente from './pages/DatosCliente';
+import DatosNegocio from './pages/DatosNegocio';
 
 function App() {
   return (
@@ -23,8 +24,9 @@ function App() {
           <Route path="/clientes" element={<Clientes />} />
           <Route path='/Negocios' element={<Negocios/>}/>
           <Route path='/NuevoNegocio' element={<NuevoNegocio/>}/>
-           <Route path='/Ajustes' element={<Ajustes/>}/>
-            <Route path="/DatosCliente/:id" element={<DatosCliente />} />
+          <Route path='/Ajustes' element={<Ajustes/>}/>
+          <Route path="/DatosCliente/:id" element={<DatosCliente />} />
+          <Route path="/DatosNegocio/:id" element={<DatosCliente />} />
         </Routes>
       </Router>
     </div>
