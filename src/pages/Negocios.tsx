@@ -75,10 +75,9 @@ const Negocios = () => {
   const clientesActivos = negocios.filter(negocios => negocios.activo).length;
   const clientesInactivos = totalClientes - clientesActivos;
   const cardsData = [
-    { img:usuarioTotal, title: negocios.length.toString(), description: "Total de Clientes" },
-    { img: usuarioActivo, title:clientesActivos.toString(), description: "Clientes Activos" },
-    { img: usuarioInactivo, title: clientesInactivos.toString(), description: "Clientes Inactivos" },
-    { img: usuarioTotal, title: "Título 4", description: "Descripción 4" },
+    { img:usuarioTotal, title: negocios.length.toString(), description: "Total de Negocios" },
+    { img: usuarioActivo, title:clientesActivos.toString(), description: "Negocios Activos" },
+    { img: usuarioInactivo, title: clientesInactivos.toString(), description: "Negocios Inactivos" },
   ];
   return (
     <div className="divprincipal">
