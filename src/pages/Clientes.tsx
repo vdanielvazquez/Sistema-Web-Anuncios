@@ -105,7 +105,7 @@ const fetchClientes = async () => {
     { img:usuarioTotal, title: clientes.length.toString(), description: "Total de Clientes" },
     { img: usuarioActivo, title:clientesActivos.toString(), description: "Clientes Activos" },
     { img: usuarioInactivo, title: clientesInactivos.toString(), description: "Clientes Inactivos" },
-    { img: usuarioTotal, title: "Título 4", description: "Descripción 4" },
+   
   ];
 
   return (
