@@ -112,8 +112,8 @@ const Negocios = () => {
         {/* Cards */}
         <div className="row">
           {(negociosFiltrados.length > 0 ? negociosFiltrados : negocios).map(negocio => (
-            <div key={negocio.idnegocio} className="col-xl-4 col-md-4 col-sm-6 col-12 mb-3" style={{ margin: 20 }}>
-              <div className="card-portada h-100">
+            <div key={negocio.idnegocio} className="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3" style={{ margin: 20 }}>
+              <div className="card-portada h-100  text-center">
               <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`  : noimagen}  className="card-img-top rounded-4"  alt="Negocio" />
                  <div className="card-body">
                   <h5 className="card-title">{negocio.nombre_comercial }</h5>
