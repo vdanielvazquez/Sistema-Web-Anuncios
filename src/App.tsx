@@ -26,7 +26,7 @@ function App() {
           <Route path='/NuevoNegocio' element={<NuevoNegocio/>}/>
           <Route path='/Ajustes' element={<Ajustes/>}/>
           <Route path="/DatosCliente/:id" element={<DatosCliente />} />
-          <Route path="/DatosNegocio/:id" element={<DatosCliente />} />
+          <Route path="/DatosNegocio/:id" element={<DatosNegocio />} />
         </Routes>
       </Router>
     </div>
