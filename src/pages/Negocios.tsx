@@ -114,7 +114,7 @@ const Negocios = () => {
           {(negociosFiltrados.length > 0 ? negociosFiltrados : negocios).map(negocio => (
             <div key={negocio.idnegocio} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3" style={{ margin: 20 }}>
               <div className="card-portada h-100">
-              <img src={ negocio.portada ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}` : noimagen } className="card-img-top rounded-4" alt="Negocio"/>
+              <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`  : noimagen}  className="card-img-top rounded-4"  alt="Negocio" />
                  <div className="card-body">
                   <h5 className="card-title">{negocio.nombre_comercial }</h5>
                   <button className="btn btn-primary d-block mx-auto"onClick={() => navigate(`/negocio/${negocio.idnegocio}`)}> Ver más</button>
