@@ -7,6 +7,7 @@ import Clientes from './pages/Clientes';
 import Negocios from './pages/Negocios';
 import NuevoNegocio from './pages/NuevoNegocio';
 import Ajustes from './pages/Ajustes';
+import DatosCliente from './pages/DatosCliente';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path='/Negocios' element={<Negocios/>}/>
           <Route path='/NuevoNegocio' element={<NuevoNegocio/>}/>
            <Route path='/Ajustes' element={<Ajustes/>}/>
+            <Route path="/DatosCliente/:id" element={<DatosCliente />} />
         </Routes>
       </Router>
     </div>

@@ -1,5 +1,10 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import usuarioTotal from "../assets/usuario-total.png";
+import usuarioActivo from "../assets/usuario-activo.png";
+import usuarioInactivo from "../assets/usuario-inactivo.png";
+
 
 const API_URL = 'https://sistemawebpro.com/api';
 
@@ -75,16 +80,28 @@ const fetchClientes = async () => {
     }
   };
 
+  const handleToggleActivo = async (id: number, estadoActual: boolean) => {
+    try {
+      await axios.put(`${API_URL}/clientes/${id}/activo`, {
+        activo: !estadoActual,
+      });
+      fetchClientes(); // actualiza la lista
+    } catch (error) {
+      console.error('Error al actualizar estado del cliente:', error);
+    }
+  };
+
+ const navigate = useNavigate();
+
   const abrirDetalles = (id: number) => {
-    const url = `/clientes/${id}`; // Cambia esto según tu ruta
-    window.open(url, '_blank');
+    navigate(`/DatosCliente/${id}`); // Ajusta la ruta según tu configuración
   };
 
   const cardsData = [
-    { img: "https://via.placeholder.com/100", title: clientes.length.toString(), description: "Total de Clientes" },
-    { img: "https://via.placeholder.com/100", title: "8", description: "Clientes Activos" },
-    { img: "https://via.placeholder.com/100", title: "2", description: "Clientes Inactivos" },
-    { img: "https://via.placeholder.com/100", title: "Título 4", description: "Descripción 4" },
+    { img:usuarioTotal, title: clientes.length.toString(), description: "Total de Clientes" },
+    { img: usuarioActivo, title: "8", description: "Clientes Activos" },
+    { img: usuarioInactivo, title: "2", description: "Clientes Inactivos" },
+    { img: usuarioTotal, title: "Título 4", description: "Descripción 4" },
   ];
 
   return (
@@ -95,9 +112,9 @@ const fetchClientes = async () => {
         <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
           {cardsData.map((card, index) => (
             <div className="col" key={index}>
-              <div className="card d-flex flex-row align-items-center p-3">
+              <div className="card d-flex flex-row align-items-center p-3 mb-3">
                 <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
-                <div className="ms-3">
+                <div className="ms-3 text-center">
                   <h5 className="card-title">{card.title}</h5>
                   <p className="card-text">{card.description}</p>
                 </div>
@@ -142,22 +159,13 @@ const fetchClientes = async () => {
                   <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
                   <td>
                     <div className="form-check form-switch">
-                      <input
-                        id={`switch-${cliente.idcliente}`}
-                        className="form-check-input"
-                        type="checkbox"
-                      />
+                      <input  id={`switch-${cliente.idcliente}`}   className="form-check-input"  type="checkbox" checked={cliente.activo} onChange={() => handleToggleActivo(cliente.idcliente, cliente.activo)} />
                       <label className="form-check-label" htmlFor={`switch-${cliente.idcliente}`}></label>
                     </div>
                   </td>
                   <td>
                     <button className="btn btn-warning mx-1">Editar</button>
-                    <button
-                      className="btn btn-danger mx-1"
-                      onClick={() => abrirDetalles(cliente.idcliente)}
-                    >
-                      Detalles
-                    </button>
+                   <button className="btn btn-info mx-1" onClick={() => abrirDetalles(cliente.idcliente)}> Detalles</button>
                   </td>
                 </tr>
               ))}
