@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+import noimagen from "../assets/no-img.avif";
 import { ModalPortada,ModalGaleria,  ModalInfoNegocio,  ModalEditarImagen,} from '../pages/ModalesDatosNegocio'; 
 
 const DatosNegocio = () => {
@@ -174,7 +175,7 @@ const reemplazarImagen = async () => {
           <div className="card">
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
-            <img src={ negocio.portada ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}` : 'default-image.jpg' } className="card-img-top rounded-4" alt="Negocio"/> 
+            <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`  : noimagen}  className="card-img-top rounded-4"  alt="Negocio" />  
             </div>
             <div className="card-footer">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
@@ -218,9 +219,7 @@ const reemplazarImagen = async () => {
       </div>
       <div className="gallery">
       <h2 className="text-center mb-4 titulo2">Galería</h2>
-      <button className="btn btn-primary mb-3"  onClick={() => setShowModalGaleria(true)}>
-              Agregar fotos
-            </button>
+      <button className="btn btn-primary mb-3"  onClick={() => setShowModalGaleria(true)}> Agregar fotos </button>
       <div className="row">
       {negocio.imagenes?.map((img: string, index: number) => {
   const filename = img.split('/').pop(); // extraer el nombre del archivo
