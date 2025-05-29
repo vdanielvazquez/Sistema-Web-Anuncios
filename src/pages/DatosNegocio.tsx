@@ -64,10 +64,23 @@ const DatosNegocio = () => {
   
 
     //mostrar img
+    /*
     const fetchNegocio = async () => {
       try {
        
         const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
+        setNegocio(response.data);
+        setEditForm(response.data);
+      } catch (error) {
+        console.error('Error al obtener el negocio:', error);
+      }
+    };
+    */
+
+    //mostrar img
+    const fetchNegocio = async () => {
+      try { 
+        const response = await axios.get(`${API_URL}/api/negocio-detalle/${id}`);
         setNegocio(response.data);
         setEditForm(response.data);
       } catch (error) {
@@ -192,6 +205,15 @@ const reemplazarImagen = async () => {
           {i === 1 && (
             <>
               <p><strong>Descripción:</strong> {negocio.descripcion}</p>
+              <p><strong>Categorías:</strong></p>
+                <ul>
+                {negocio.categorias?.map((item: any, index: number) => (
+                    <li key={index}>
+                    {item.categoria} - {item.subcategoria}
+                    </li>
+                ))}
+                </ul>
+
               <p><strong>Categoría:</strong> {negocio.categoria}</p>
               <p><strong>Sub Categoría:</strong> {negocio.subcategoria}</p>
               <p><strong>Telefono:</strong> {negocio.telefono}</p>

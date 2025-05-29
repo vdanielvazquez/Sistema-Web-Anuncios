@@ -1,6 +1,7 @@
 .cardN {
   display: flex;
   flex-direction: column;
+  background-color: beige;
 }
 
 .card-bodyN {
