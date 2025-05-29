@@ -170,53 +170,64 @@ const reemplazarImagen = async () => {
     <div className="divprincipal">
       <div className='container'>
       <h2 className="text-center mt-5">Detalles del Negocio</h2>
-      <div className="row">
-        <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
-          <div className="card">
-            <h2 className="card-title">Portada</h2>
-            <div className="card-body">
-            <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`  : noimagen}  className="card-img-top rounded-4"  alt="Negocio" />  
-            </div>
-            <div className="card-footer">
-            <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
-              Editar Portada
-            </button>
-            </div>
-          </div>
-        </div>
-        <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
-          <div className="card">
-          <h2 className="card-title">{negocio.nombre_comercial}</h2>
-            <div className="card-body">
+      <div className="row d-flex">
+        {[...Array(3)].map((_, i) => (
+            <div key={i} className="col-12 col-md-4 d-flex flex-column mb-3">
+            <div className="cardN flex-grow-1 d-flex flex-column">
+                <h2 className="card-title text-center">{
+                i === 0 ? 'Portada' : 
+                i === 1 ? negocio.nombre_comercial : 
+                'Ubicación'
+                }</h2>
+                <div className="card-bodyN flex-grow-1">
+                {i === 0 && (
+                    <img
+                    src={negocio.portada && negocio.portada.trim() !== '' 
+                        ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}` 
+                        : noimagen}  
+                    className="card-img-top rounded-4"  
+                    alt="Negocio" 
+                    />
+                )}
+          {i === 1 && (
+            <>
               <p><strong>Descripción:</strong> {negocio.descripcion}</p>
               <p><strong>Categoría:</strong> {negocio.categoria}</p>
               <p><strong>Sub Categoría:</strong> {negocio.subcategoria}</p>
               <p><strong>Telefono:</strong> {negocio.telefono}</p>
               <p><strong>Fecha de alta:</strong> {new Date(negocio.fecha_de_alta).toLocaleDateString()}</p>
               <p><strong>Estado:</strong> {negocio.activo ? 'Activo' : 'Inactivo'}</p>
-            </div>
-            <div className="card-footer">
-            <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
-                Editar Informacion
-              </button>
-            </div>
-          </div>
+            </>
+          )}
+          {i === 2 && (
+            <>
+              <p><strong>Estado:</strong> {negocio.Estado}</p>
+              <p><strong>Municipio:</strong> {negocio.Municipio}</p>
+            </>
+          )}
         </div>
-        <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
-          <div className="card">
-          <h2 className="card-title">Ubicacion</h2>
-            <div className="card-body">
-            <p><strong>Estado:</strong> {negocio.Estado}</p>
-            <p><strong>Municipio:</strong> {negocio.Municipio}</p>
+        <div className="card-footerN text-center">
+                    {i === 0 && (
+                        <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
+                        Editar Portada
+                        </button>
+                    )}
+                    {i === 1 && (
+                        <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
+                        Editar Información
+                        </button>
+                    )}
+                    {i === 2 && (
+                        <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
+                        Editar Ubicación
+                        </button>
+                    )}
+                    </div>
+                </div>
+                </div>
+            ))}
             </div>
-            <div className="card-footer">
-             <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
-                Editar Ubicacion
-              </button>
-             </div>
-          </div>
-        </div>
-      </div>
+
       <div className="gallery">
       <h2 className="text-center mb-4 titulo2">Galería</h2>
       <button className="btn btn-primary mb-3"  onClick={() => setShowModalGaleria(true)}> Agregar fotos </button>

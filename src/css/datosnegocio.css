@@ -1,0 +1,12 @@
+.cardN {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-bodyN {
+  flex-grow: 1;
+}
+
+.card-footerN {
+  text-align: center;
+}
