@@ -206,13 +206,13 @@ const reemplazarImagen = async () => {
             <>
               <p><strong>Descripción:</strong> {negocio.descripcion}</p>
               <p><strong>Categorías:</strong></p>
-                <ul>
-                {negocio.categorias?.map((item: any, index: number) => (
-                    <li key={index}>
-                    {item.categoria} - {item.subcategoria}
-                    </li>
-                ))}
-                </ul>
+            <ul>
+            {negocio.categorias?.map((item: any, index: number) => (
+                <li key={index}>
+                {item.categoria} - {item.subcategoria}
+                </li>
+            ))}
+            </ul>
 
               <p><strong>Categoría:</strong> {negocio.categoria}</p>
               <p><strong>Sub Categoría:</strong> {negocio.subcategoria}</p>
