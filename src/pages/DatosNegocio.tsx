@@ -206,7 +206,7 @@ const reemplazarImagen = async () => {
             </>
           )}
         </div>
-        <div className="card-footerN text-center">
+        <div className="card-footer N text-center">
                     {i === 0 && (
                         <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
                         Editar Portada
