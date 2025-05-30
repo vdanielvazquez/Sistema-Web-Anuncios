@@ -115,7 +115,7 @@ const Negocios = () => {
             <div key={negocio.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" style={{ margin: 5 }}>
               <div className="card-portada h-100  text-center">
               <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`  : noimagen} 
-              style={{ width: '100%', height: '200px', objectFit: 'cover' }}  className="card-img-top rounded-4"  alt="Negocio" />
+              style={{ width: '90%', height: '200px', objectFit: 'cover' }}  className="card-img-top rounded-4"  alt="Negocio" />
                  <div className="card-body">
                   <h5 className="card-title">{negocio.nombre_comercial }</h5>
                 <button  className="btn btn-primary d-block mx-auto"  onClick={() => navigate(`/DatosNegocio/${negocio.idnegocio}`)}> Ver más </button>    </div>

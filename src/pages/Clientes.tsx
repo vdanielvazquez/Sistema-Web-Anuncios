@@ -5,9 +5,6 @@ import usuarioTotal from "../assets/usuario-total.png";
 import usuarioActivo from "../assets/usuario-activo.png";
 import usuarioInactivo from "../assets/usuario-inactivo.png";
 
-
-const API_URL = 'https://sistemawebpro.com/api';
-
 interface Cliente {
   idcliente: number;
   nombre: string;
@@ -17,9 +14,14 @@ interface Cliente {
   activo: boolean;
 }
 
+const API_URL = 'https://sistemawebpro.com/api';
+
 const Clientes = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
+  const [busqueda, setBusqueda] = useState('');
+  const [clientesFiltrados, setClientesFiltrados] = useState<Cliente[] | null>(null);
+  const [paginaActual, setPaginaActual] = useState(1);
   const [showModalClienteN, setShowModalClienteN] = useState(false);
   const [nuevoCliente, setNuevoCliente] = useState({
     nombre: '',
@@ -27,29 +29,13 @@ const Clientes = () => {
     correo: '',
   });
 
-  useEffect(() => {
-    const fetchClientes = async () => {
-      const data = await getClientes();
-      console.log("Datos obtenidos de la API:", data);
-      setClientes(data);
-      setLoading(false);
-    };
-    fetchClientes();
-  }, []);
+  const clientesPorPagina = 10;
+  const navigate = useNavigate();
 
-  const getClientes = async () => {
+  // Obtener clientes
+  const fetchClientes = async () => {
     try {
       const response = await axios.get(`${API_URL}/clientes`);
-      return response.data;
-    } catch (error) {
-      console.error('Error al obtener clientes:', error);
-      return [];
-    }
-  };
-const fetchClientes = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/clientes`);
-      console.log("Datos obtenidos de la API:", response.data);
       setClientes(response.data);
       setLoading(false);
     } catch (error) {
@@ -60,18 +46,35 @@ const fetchClientes = async () => {
   useEffect(() => {
     fetchClientes();
   }, []);
+
+  // Filtrar clientes por búsqueda
+  const handleBuscar = () => {
+    const texto = busqueda.toLowerCase().trim();
+    if (texto === '') {
+      setClientesFiltrados(null);
+      return;
+    }
+
+    const filtrados = clientes.filter(cliente =>
+      cliente.nombre.toLowerCase().includes(texto) ||
+      cliente.telefono.toLowerCase().includes(texto) ||
+      cliente.correo.toLowerCase().includes(texto)
+    );
+
+    setClientesFiltrados(filtrados);
+    setPaginaActual(1);
+  };
+
+  // Crear cliente
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Datos enviados:", nuevoCliente);
     try {
       const response = await axios.post(`${API_URL}/clientes`, nuevoCliente, {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      console.log("Cliente creado:", response.data);
-
       if (response.data) {
-        await fetchClientes(); // actualiza la lista desde el backend
+        await fetchClientes();
         setShowModalClienteN(false);
         setNuevoCliente({ nombre: '', telefono: '', correo: '' });
       }
@@ -80,33 +83,43 @@ const fetchClientes = async () => {
     }
   };
 
+  // Cambiar estado activo/inactivo
   const handleToggleActivo = async (id: number, estadoActual: boolean) => {
     try {
       await axios.put(`${API_URL}/clientes/${id}/activo`, {
         activo: !estadoActual,
       });
-      fetchClientes(); // actualiza la lista
+      fetchClientes();
     } catch (error) {
       console.error('Error al actualizar estado del cliente:', error);
     }
   };
 
- const navigate = useNavigate();
-
+  // Abrir detalles
   const abrirDetalles = (id: number) => {
-    navigate(`/DatosCliente/${id}`); // Ajusta la ruta según tu configuración
+    navigate(`/DatosCliente/${id}`);
   };
 
+  // Datos para tarjetas
   const totalClientes = clientes.length;
   const clientesActivos = clientes.filter(cliente => cliente.activo).length;
   const clientesInactivos = totalClientes - clientesActivos;
 
   const cardsData = [
-    { img:usuarioTotal, title: clientes.length.toString(), description: "Total de Clientes" },
-    { img: usuarioActivo, title:clientesActivos.toString(), description: "Clientes Activos" },
+    { img: usuarioTotal, title: totalClientes.toString(), description: "Total de Clientes" },
+    { img: usuarioActivo, title: clientesActivos.toString(), description: "Clientes Activos" },
     { img: usuarioInactivo, title: clientesInactivos.toString(), description: "Clientes Inactivos" },
-   
   ];
+
+  // Paginación
+  const clientesParaMostrar = clientesFiltrados && clientesFiltrados.length > 0
+    ? clientesFiltrados
+    : clientes;
+
+  const totalPaginas = Math.ceil(clientesParaMostrar.length / clientesPorPagina);
+  const indexUltimoCliente = paginaActual * clientesPorPagina;
+  const indexPrimerCliente = indexUltimoCliente - clientesPorPagina;
+  const clientesPaginados = clientesParaMostrar.slice(indexPrimerCliente, indexUltimoCliente);
 
   return (
     <div className="divprincipal">
@@ -130,22 +143,25 @@ const fetchClientes = async () => {
 
       <div className="divclientes mx-5">
         <div className="d-flex justify-content-between align-items-end mb-3">
-          <div className="me-3">
-            <label htmlFor="busqueda" className="form-label small mb-1">Buscar</label>
-            <input id="busqueda" className="form-control" type="search" placeholder="Buscar" />
+          <div className="me-3" style={{ flexGrow: 1 }}>
+            <label htmlFor="busqueda" className="form-label fw-semibold">Buscar cliente por nombre, teléfono o correo</label>
+            <div className="input-group">
+              <input
+                id="busqueda"
+                className="form-control"
+                type="search"
+                placeholder="Buscar"
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+              />
+              <button className="btn btn-success" onClick={handleBuscar}>Buscar</button>
+            </div>
           </div>
 
-          <div className="d-flex me-3">
-            <button className="btn btn-success me-2">
-              Buscar
-            </button>
-          </div>
-
-          <button className="btn btn-success" onClick={() => setShowModalClienteN(true)}>
+          <button className="btn btn-success ms-2" onClick={() => setShowModalClienteN(true)}>
             Nuevo cliente
           </button>
         </div>
-
 
         {loading ? (
           <p>Cargando...</p>
@@ -164,31 +180,49 @@ const fetchClientes = async () => {
               </tr>
             </thead>
             <tbody>
-              {clientes.map((cliente) => (
+              {clientesPaginados.map((cliente) => (
                 <tr key={cliente.idcliente} className="text-center align-middle">
                   <td>{cliente.nombre}</td>
                   <td>{cliente.telefono}</td>
                   <td>{cliente.correo}</td>
                   <td>{new Date(cliente.fecha_de_alta).toLocaleDateString('es-MX')}</td>
-                  <td>0</td> {/* Aquí puedes mostrar los negocios si los tienes */}
+                  <td>0</td>
                   <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
                   <td>
                     <div className="form-check form-switch">
-                      <input  id={`switch-${cliente.idcliente}`}   className="form-check-input"  type="checkbox" checked={cliente.activo} onChange={() => handleToggleActivo(cliente.idcliente, cliente.activo)} />
-                      <label className="form-check-label" htmlFor={`switch-${cliente.idcliente}`}></label>
+                      <input id={`switch-${cliente.idcliente}`} className="form-check-input" type="checkbox"
+                        checked={cliente.activo}
+                        onChange={() => handleToggleActivo(cliente.idcliente, cliente.activo)} />
                     </div>
                   </td>
                   <td>
                     <button className="btn btn-warning mx-1">Editar</button>
-                   <button className="btn btn-info mx-1" onClick={() => abrirDetalles(cliente.idcliente)}> Detalles</button>
+                    <button className="btn btn-info mx-1" onClick={() => abrirDetalles(cliente.idcliente)}>Detalles</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
+
+        <nav>
+          <ul className="pagination justify-content-center">
+            <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => setPaginaActual(paginaActual - 1)}>Anterior</button>
+            </li>
+            {Array.from({ length: totalPaginas }, (_, i) => (
+              <li key={i} className={`page-item ${paginaActual === i + 1 ? 'active' : ''}`}>
+                <button className="page-link" onClick={() => setPaginaActual(i + 1)}>{i + 1}</button>
+              </li>
+            ))}
+            <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+              <button className="page-link" onClick={() => setPaginaActual(paginaActual + 1)}>Siguiente</button>
+            </li>
+          </ul>
+        </nav>
       </div>
 
+      {/* Modal */}
       {showModalClienteN && (
         <div className="modal show fade d-block" tabIndex={-1}>
           <div className="modal-dialog">
