@@ -129,15 +129,23 @@ const fetchClientes = async () => {
       </div>
 
       <div className="divclientes mx-5">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <input className="form-control w-30 me-3" type="search" placeholder="Buscar" />
-          <button className="btn btn-search">
-            Buscar
-          </button>
+        <div className="d-flex justify-content-between align-items-end mb-3">
+          <div className="me-3">
+            <label htmlFor="busqueda" className="form-label small mb-1">Buscar</label>
+            <input id="busqueda" className="form-control" type="search" placeholder="Buscar" />
+          </div>
+
+          <div className="d-flex align-items-end me-3">
+            <button className="btn btn-success me-2">
+              Buscar
+            </button>
+          </div>
+
           <button className="btn btn-success" onClick={() => setShowModalClienteN(true)}>
             Nuevo cliente
           </button>
         </div>
+
 
         {loading ? (
           <p>Cargando...</p>

@@ -112,7 +112,7 @@ const Negocios = () => {
         {/* Cards */}
         <div className="row">
           {(negociosFiltrados.length > 0 ? negociosFiltrados : negocios).map(negocio => (
-            <div key={negocio.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" style={{ margin: 20 }}>
+            <div key={negocio.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" style={{ margin: 5 }}>
               <div className="card-portada h-100  text-center">
               <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`  : noimagen}  className="card-img-top rounded-4"  alt="Negocio" />
                  <div className="card-body">
