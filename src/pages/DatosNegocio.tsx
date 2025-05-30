@@ -266,7 +266,7 @@ const reemplazarImagen = async () => {
     </div>
   );
 })}
-
+ 
       </div>
       </div>
 

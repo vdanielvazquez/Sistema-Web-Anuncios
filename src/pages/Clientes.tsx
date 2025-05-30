@@ -130,7 +130,10 @@ const fetchClientes = async () => {
 
       <div className="divclientes mx-5">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <input className="form-control w-50 me-3" type="search" placeholder="Buscar" />
+          <input className="form-control w-30 me-3" type="search" placeholder="Buscar" />
+          <button className="btn btn-search">
+            Buscar
+          </button>
           <button className="btn btn-success" onClick={() => setShowModalClienteN(true)}>
             Nuevo cliente
           </button>

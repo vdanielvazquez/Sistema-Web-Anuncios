@@ -84,7 +84,7 @@ const Negocios = () => {
       <div className="div-custom">
         <h2 className="text-center mt-5">Listado de Negocios</h2>
           <div className="container mt-4">
-              <div className="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
+            <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-3">
                  {cardsData.map((card, index) => (
                   <div className="col" key={index}>
                         <div className="card d-flex flex-row align-items-center p-3 mb-3">
@@ -112,7 +112,7 @@ const Negocios = () => {
         {/* Cards */}
         <div className="row">
           {(negociosFiltrados.length > 0 ? negociosFiltrados : negocios).map(negocio => (
-            <div key={negocio.idnegocio} className="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-3" style={{ margin: 20 }}>
+            <div key={negocio.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" style={{ margin: 20 }}>
               <div className="card-portada h-100  text-center">
               <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`  : noimagen}  className="card-img-top rounded-4"  alt="Negocio" />
                  <div className="card-body">
