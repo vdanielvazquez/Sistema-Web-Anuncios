@@ -135,7 +135,7 @@ const fetchClientes = async () => {
             <input id="busqueda" className="form-control" type="search" placeholder="Buscar" />
           </div>
 
-          <div className="d-flex align-items-end me-3">
+          <div className="d-flex me-3">
             <button className="btn btn-success me-2">
               Buscar
             </button>
