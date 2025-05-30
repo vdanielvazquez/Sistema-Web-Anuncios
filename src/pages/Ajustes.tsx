@@ -16,7 +16,7 @@ interface Subcategoria {
 const Ajustes: React.FC = () => {
   const [currentPageCategorias, setCurrentPageCategorias] = useState(0);
   const [currentPageSubcategorias, setCurrentPageSubcategorias] = useState(0);
-  const itemsPerPage = 3;
+  const itemsPerPage = 5;
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
@@ -201,31 +201,37 @@ const Ajustes: React.FC = () => {
             <table className="table table-bordered table-striped mt-4">
               <thead className="thead-dark">
                 <tr>
-                  <th>Nombre</th>
-                  <th>Categoría</th>
+                  <th>Categoria</th>
+                  <th>Subcategoría</th>
                 </tr>
               </thead>
               <tbody>
                 {displayedSubcategorias.map((subcat) => (
                   <tr key={subcat.idsubcategoria}>
-                    <td>{subcat.descripcion}</td>
                     <td>{categorias.find((cat) => cat.idcategoria === subcat.idcategoria)?.descripcion}</td>
+                    <td>{subcat.descripcion}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <ReactPaginate
-              previousLabel={"← Anterior"}
-              nextLabel={"Siguiente →"}
-              breakLabel={"..."}
-              pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
-              onPageChange={handlePageClickSubcategorias}
-              containerClassName={"pagination"}
-              activeClassName={"active"}
-              pageRangeDisplayed={2}
-              marginPagesDisplayed={1}
-              forcePage={currentPageSubcategorias}
-            />
+            previousLabel={<button className="btn btn-outline-primary btn-sm">← Anterior</button>}
+            nextLabel={<button className="btn btn-outline-primary btn-sm">Siguiente →</button>}
+            breakLabel={<span className="px-4">...</span>}
+            pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
+            onPageChange={handlePageClickSubcategorias}
+            containerClassName={"pagination justify-content-center mt-3"}
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName=""
+            nextClassName="page-item"
+            nextLinkClassName=""
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            activeClassName="active"
+            forcePage={currentPageSubcategorias}
+          />
           </div>
 
           {/* Suscripciones */}
