@@ -43,6 +43,8 @@ interface Subcategoria {
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
 
 
+
+
   const obtenerNombreCategoria = (id: number) => {
   if (!Array.isArray(categorias)) return 'Desconocida';
   const cat = categorias.find((c) => c.idcategoria === id);
@@ -104,16 +106,23 @@ const obtenerNombreSubcategoria = (id: number) => {
 
     //mostrar img
 
-    
-    const fetchNegocio = async () => {
-      try { 
-      const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
-        setNegocio(response.data);
-        setEditForm(response.data);
-      } catch (error) {
-        console.error('Error al obtener el negocio:', error);
-      }
-    };
+   const fetchNegocio = async () => {
+  try { 
+    const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
+    const data = response.data;
+
+    // Asegura que sea array
+    if (!Array.isArray(data.imagenes)) {
+      data.imagenes = []; // o intenta parsear si viene como string
+    }
+
+    setNegocio(data);
+    setEditForm(data);
+  } catch (error) {
+    console.error('Error al obtener el negocio:', error);
+  }
+};
+
     
     useEffect(() => {
       fetchNegocio();
