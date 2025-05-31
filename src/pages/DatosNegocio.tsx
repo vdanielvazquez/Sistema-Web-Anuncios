@@ -1,365 +1,188 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
-import '../css/datosnegocio.css';
-
-import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 import noimagen from "../assets/no-img.avif";
-import { ModalPortada,ModalGaleria,  ModalInfoNegocio,  ModalEditarImagen,} from '../pages/ModalesDatosNegocio'; 
+import usuarioTotal from "../assets/usuario-total.png";
+import usuarioActivo from "../assets/usuario-activo.png";
+import usuarioInactivo from "../assets/usuario-inactivo.png";
 
-const DatosNegocio = () => {
-    interface Categoria {
-  idcategoria: number;
-  nombre_categoria: string;
+interface Negocio {
+  idnegocio: number;
+  nombre_comercial: string;
+  descripcion: string;
+  telefono: string;
+  fecha_de_alta: string;
+  activo: boolean;
+  portada: string;
+  imagenes: string[];
+  Estado: string;
+  Municipio: string;
+  id_categoria: number;
+  id_subcategoria: number;
+  categoria?: string;
+  subcategoria?: string;
 }
 
-interface Subcategoria {
-  idsubcategoria: number;
-  nombre_subcategoria: string;
-}
-
-
+const Negocios = () => {
   const API_URL = 'https://sistemawebpro.com';
 
-  const { id } = useParams();
-  const [negocio, setNegocio] = useState<any>(null);
-  const [editForm, setEditForm] = useState<any>({});
+  const [negocios, setNegocios] = useState<Negocio[]>([]);
+  const [negociosFiltrados, setNegociosFiltrados] = useState<Negocio[]>([]);
+  const [terminoBusqueda, setTerminoBusqueda] = useState('');
+  const [paginaActual, setPaginaActual] = useState(1);
+  const negociosPorPagina = 8;
 
-  const [portada, setPortada] = useState<File | null>(null);
-  const [galeria, setGaleria] = useState<File[]>([]);
-
-
-  const [imagenAEditar, setImagenAEditar] = useState<string | null>(null);
-  const [imagenNueva, setImagenNueva] = useState<File | null>(null);
-  const [showModalEditar, setShowModalEditar] = useState(false);
- 
-  const [showModalPortada, setShowModalPortada] = useState(false);
-  const [showModalGaleria, setShowModalGaleria] = useState(false);
-  const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
-
-  const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
-
-
-
-
-  const obtenerNombreCategoria = (id: number) => {
-  if (!Array.isArray(categorias)) return 'Desconocida';
-  const cat = categorias.find((c) => c.idcategoria === id);
-  return cat ? cat.nombre_categoria : 'Desconocida';
-};
-
-const obtenerNombreSubcategoria = (id: number) => {
-  if (!Array.isArray(subcategorias)) return 'Desconocida';
-  const sub = subcategorias.find((s) => s.idsubcategoria === id);
-  return sub ? sub.nombre_subcategoria : 'Desconocida';
-};
-
-
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/categorias`)
-      .then(res => {
-        console.log(res.data);  // Verifica qué datos recibes
-        setCategorias(res.data);
-      })
-      .catch(error => console.error('Error al obtener categorías:', error));
-  }, []);
-  
-  useEffect(() => {
-    if (editForm.id_categoria) {
-      axios.get(`${API_URL}/api/subcategorias/categoria/${editForm.id_categoria}`)
-        .then(response => {
-          console.log("Código de estado:", response.status);
-          console.log("Subcategorías:", response.data);
-          setSubcategorias(response.data); // Establecer las subcategorías
-        })
-        .catch(error => {
-          if (error.response) {
-            console.error("Respuesta de error:", error.response.data);
-            console.error("Código de estado:", error.response.status);
-          } else if (error.request) {
-            console.error("No se recibió respuesta:", error.request);
-          } else {
-            console.error("Error de configuración:", error.message);
-          }
-        });
-    }
-  }, [editForm.id_categoria]); // Este useEffect se dispara cuando el id_categoria cambia
-  
-
-    //mostrar img
-    /*
-    const fetchNegocio = async () => {
+    const fetchNegocios = async () => {
       try {
-       
-        const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
-        setNegocio(response.data);
-        setEditForm(response.data);
+        const response = await axios.get(`${API_URL}/api/negocios`);
+        setNegocios(response.data);
+        setNegociosFiltrados(response.data);
       } catch (error) {
-        console.error('Error al obtener el negocio:', error);
+        console.error('Error al obtener negocios:', error);
       }
     };
-    */
 
-    //mostrar img
+    fetchNegocios();
+  }, []);
 
-  const fetchNegocio = async () => {
-  try { 
-    const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
-    const data = response.data;
-
-    // Validar que 'imagenes' sea un arreglo
-    if (!Array.isArray(data.imagenes)) {
-      try {
-        data.imagenes = JSON.parse(data.imagenes);
-        if (!Array.isArray(data.imagenes)) {
-          data.imagenes = [];
-        }
-      } catch {
-        data.imagenes = [];
-      }
-    }
-
-    setNegocio(data);
-    setEditForm(data);
-  } catch (error) {
-    console.error('Error al obtener el negocio:', error);
-  }
-};
-
-
-    
-    useEffect(() => {
-      fetchNegocio();
-    }, [id]);
-    
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setEditForm({ ...editForm, [e.target.name]: e.target.value });
-  };
-
-//subir fotos
-const subirPortada = async () => {
-  if (!id || !portada) return;
-  const formData = new FormData();
-  formData.append('portada', portada);
-
-  try {
-    await axios.post(`${API_URL}/api/negocios/imagenes/portada/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    alert('Portada subida con éxito');
-    
-    setShowModalPortada(false);
-    fetchNegocio(); // Recargar datos
-  } catch (error) {
-    console.error('Error al subir portada:', error);
-    alert('Error al subir portada');
-  }
-};
-//subir galeria
-const subirGaleria = async () => {
-  if (!id || galeria.length === 0) return;
-  const formData = new FormData();
-  galeria.forEach((file) => formData.append('galeria', file));
-
-  try {
-    await axios.post(`${API_URL}/api/negocios/imagenes/galeria/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    alert('Galería subida con éxito');
-    fetchNegocio(); // Recargar datos
-  } catch (error) {
-    console.error('Error al subir galería:', error);
-    alert('Error al subir galería');
-  }
-};
-//eliminar img
-const eliminarImagen = async (filename: string) => {
-  if (!window.confirm('¿Estás seguro de que deseas eliminar esta imagen?')) return;
-  try {
-    await axios.delete(`${API_URL}/api/negocios/imagenes/${id}/${filename}`);
-    alert('Imagen eliminada correctamente');
-    fetchNegocio(); // recarga galería
-  } catch (error) {
-    console.error('Error al eliminar imagen:', error);
-    alert('Error al eliminar la imagen');
-  }
-};
-//reemplazar img
-const reemplazarImagen = async () => {
-  if (!id || !imagenAEditar || !imagenNueva) return;
-  const formData = new FormData();
-  formData.append('imagen', imagenNueva);
-
-  try {
-    await axios.put(`${API_URL}/api/negocios/imagenes/galeria/${id}/${imagenAEditar}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    alert('Imagen reemplazada correctamente');
-    setShowModalEditar(false);
-    fetchNegocio();
-  } catch (error) {
-    console.error('Error al reemplazar imagen:', error);
-    alert('Error al reemplazar imagen');
-  }
-};
-
-
-//actualizar info
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await axios.put(`${API_URL}/api/negocios/${id}`, editForm);
-      setNegocio(editForm); // actualiza la vista con los nuevos datos
-      alert('Negocio actualizado correctamente');
-    } catch (error) {
-      console.error('Error al actualizar el negocio:', error);
-      alert('Ocurrió un error al actualizar');
+  const handleBuscar = () => {
+    if (terminoBusqueda.trim() !== '') {
+      const filtrados = negocios.filter(n =>
+        n.nombre_comercial.toLowerCase().includes(terminoBusqueda.toLowerCase())
+      );
+      setNegociosFiltrados(filtrados);
+      setPaginaActual(1);
+    } else {
+      setNegociosFiltrados(negocios);
     }
   };
 
-  if (!negocio) return <p>Cargando...</p>;
+  const totalClientes = negocios.length;
+  const clientesActivos = negocios.filter(n => n.activo).length;
+  const clientesInactivos = totalClientes - clientesActivos;
+
+  const cardsData = [
+    { img: usuarioTotal, title: totalClientes.toString(), description: "Total de Negocios" },
+    { img: usuarioActivo, title: clientesActivos.toString(), description: "Negocios Activos" },
+    { img: usuarioInactivo, title: clientesInactivos.toString(), description: "Negocios Inactivos" },
+  ];
+
+  const totalPaginas = Math.ceil(negociosFiltrados.length / negociosPorPagina);
+  const indexInicio = (paginaActual - 1) * negociosPorPagina;
+  const indexFin = indexInicio + negociosPorPagina;
+  const negociosPaginados = negociosFiltrados.slice(indexInicio, indexFin);
 
   return (
-    <div className="divprincipal">
-      <div className='container'>
-      <h2 className="text-center mt-5">Detalles del Negocio</h2>
-      <div className="row d-flex">
-        {[...Array(3)].map((_, i) => (
-            <div key={i} className="col-12 col-md-4 d-flex flex-column mb-3">
-            <div className="cardN flex-grow-1 d-flex flex-column">
-                <h2 className="card-title text-center">{
-                i === 0 ? 'Portada' : 
-                i === 1 ? negocio.nombre_comercial : 
-                'Ubicación'
-                }</h2>
-                <div className="card-bodyN flex-grow-1">
-                {i === 0 && (
-                    <img
-                    src={negocio.portada && negocio.portada.trim() !== '' 
-                        ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}` 
-                        : noimagen}  
-                    className="card-img-top rounded-4"  
-                    alt="Negocio" 
-                    />
-                )}
-          {i === 1 && (
-            <>
-              <p><strong>Descripción:</strong> {negocio.descripcion}</p>
-              <p><strong>Categorías:</strong></p>
+    <div className="divprincipalnegocios">
+      <div className="div-custom">
+        <h2 className="text-center mt-5">Listado de Negocios</h2>
 
-
-              <p><strong>Categoría:</strong> {obtenerNombreCategoria(negocio.id_categoria)}</p>
-              <p><strong>Sub Categoría:</strong> {obtenerNombreSubcategoria(negocio.id_subcategoria)}</p>
-              <p><strong>Telefono:</strong> {negocio.telefono}</p>
-              <p><strong>Fecha de alta:</strong> {new Date(negocio.fecha_de_alta).toLocaleDateString()}</p>
-              <p><strong>Estado:</strong> {negocio.activo ? 'Activo' : 'Inactivo'}</p>
-            </>
-          )}
-          {i === 2 && (
-            <>
-              <p><strong>Estado:</strong> {negocio.Estado}</p>
-              <p><strong>Municipio:</strong> {negocio.Municipio}</p>
-            </>
-          )}
-        </div>
-        <div className="card-footer N text-center">
-                    {i === 0 && (
-                        <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
-                        Editar Portada
-                        </button>
-                    )}
-                    {i === 1 && (
-                        <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
-                        Editar Información
-                        </button>
-                    )}
-                    {i === 2 && (
-                        <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
-                        Editar Ubicación
-                        </button>
-                    )}
-                    </div>
+        <div className="container mt-4">
+          <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-3">
+            {cardsData.map((card, index) => (
+              <div className="col" key={index}>
+                <div className="card d-flex flex-row align-items-center p-3 mb-3">
+                  <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
+                  <div className="ms-3 text-center">
+                    <h5 className="card-title">{card.title}</h5>
+                    <p className="card-text">{card.description}</p>
+                  </div>
                 </div>
-                </div>
+              </div>
             ))}
-            </div>
-
-      <div className="gallery">
-      <h2 className="text-center mb-4 titulo2">Galería</h2>
-      <button className="btn btn-primary mb-3"  onClick={() => setShowModalGaleria(true)}> Agregar fotos </button>
-      <div className="row">
-
-     {Array.isArray(negocio.imagenes) ? (
-  negocio.imagenes.map((img: string, index: number) => {
-    const filename = img.split('/').pop(); // extraer el nombre del archivo
-    return (
-      <div key={index} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
-        <div className="card-galeria">
-          <div className="card-body">
-            <img src={img} alt={`Galería ${index + 1}`} className="gallery-image rounded-4 mb-3" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-          </div>
-          <div className="card-footer d-flex justify-content-between">
-            <button className='btn btn-warning me-2' onClick={() => { setImagenAEditar(filename!); setShowModalEditar(true); }}>Editar</button>
-            <button className='btn btn-danger' onClick={() => eliminarImagen(filename!)}>Eliminar</button>
           </div>
         </div>
-      </div>
-    );
-  })
-) : (
-  <p>No hay imágenes disponibles.</p>
-)}
 
- 
-      </div>
-      </div>
+        <button
+          className="btn btn-primary position-fixed bottom-0 end-0 m-5"
+          onClick={() => navigate('/nuevonegocio')}
+          style={{ zIndex: 1050 }}
+        >
+          Nuevo negocio
+        </button>
 
-       {/* Modal para portada */}
-        <ModalPortada
-        show={showModalPortada}
-        onClose={() => setShowModalPortada(false)}
-        onUpload={setPortada}
-        onSubmit={subirPortada}
-        />
-      
-      {/* Modal para galeria */}
-        <ModalGaleria
-        show={showModalGaleria}
-        onClose={() => setShowModalGaleria(false)}
-        onUpload={setGaleria}
-        onSubmit={subirGaleria}
-        />
-        
-        {/* Modal para info del negocio */}
-        <ModalInfoNegocio
-        show={showModalInfoNegocio}
-        onClose={() => setShowModalInfoNegocio(false)}
-        editForm={editForm}
-        onChange={handleInputChange}
-        onSubmit={handleUpdate}
-        categorias={categorias}
-        subcategorias={subcategorias}
-        />
-        {/* Modal para reemplazar img */}
-        {showModalEditar && (
-        <ModalEditarImagen
-        show={showModalEditar}
-        onClose={() => setShowModalEditar(false)}
-        onFileChange={setImagenNueva}
-        onSubmit={reemplazarImagen}
-        />
-      )}
+        {/* Filtro de búsqueda */}
+        <div className="row mb-4 mt-4 px-3">
+          <div className="col-12 col-md-4 mb-3">
+            <input
+              className="form-control fs-5"
+              type="search"
+              placeholder="Buscar negocio por nombre"
+              aria-label="Buscar"
+              value={terminoBusqueda}
+              onChange={(e) => setTerminoBusqueda(e.target.value)}
+            />
+          </div>
+          <div className="col-12 col-md-2 mb-3">
+            <button className="btn btn-success w-100 fs-5" onClick={handleBuscar}>
+              Buscar
+            </button>
+          </div>
+        </div>
 
+        {/* Tarjetas de negocios */}
+        <div className="row">
+          {negociosPaginados.map(negocio => (
+            <div key={negocio.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+              <div className="card-portada h-100 text-center">
+                <img
+                  src={negocio.portada && negocio.portada.trim() !== ''
+                    ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
+                    : noimagen}
+                  style={{ width: '90%', height: '200px', objectFit: 'cover' }}
+                  className="card-img-top rounded-4"
+                  alt="Negocio"
+                />
+                <div className="card-body">
+                  <h5 className="card-title">{negocio.nombre_comercial}</h5>
+                  <button
+                    className="btn btn-primary d-block mx-auto"
+                    onClick={() => navigate(`/DatosNegocio/${negocio.idnegocio}`)}
+                  >
+                    Ver más
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Paginación */}
+        {totalPaginas > 1 && (
+          <nav>
+            <ul className="pagination justify-content-center">
+              <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setPaginaActual(paginaActual - 1)}>
+                  Anterior
+                </button>
+              </li>
+              {Array.from({ length: totalPaginas }, (_, i) => (
+                <li key={i + 1} className={`page-item ${paginaActual === i + 1 ? 'active' : ''}`}>
+                  <button className="page-link" onClick={() => setPaginaActual(i + 1)}>
+                    {i + 1}
+                  </button>
+                </li>
+              ))}
+              <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setPaginaActual(paginaActual + 1)}>
+                  Siguiente
+                </button>
+              </li>
+            </ul>
+          </nav>
+        )}
+
+        {negociosFiltrados.length === 0 && (
+          <p className="text-center">No hay negocios registrados aún.</p>
+        )}
       </div>
     </div>
   );
 };
 
-export default DatosNegocio;
-
-
-
+export default Negocios;
