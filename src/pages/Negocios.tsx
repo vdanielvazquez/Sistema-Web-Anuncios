@@ -134,7 +134,7 @@ const Negocios = () => {
                   src={negocio.portada && negocio.portada.trim() !== ''
                     ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
                     : noimagen}
-                  style={{ width: '90%', height: '200px', objectFit: 'cover' }}
+                  style={{ width: '90%', height: '250px', objectFit: 'cover' }}
                   className="card-img-top rounded-4"
                   alt="Negocio"
                 />

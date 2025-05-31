@@ -90,8 +90,6 @@ export const ModalInfoNegocio: React.FC<{
   categorias: any[];
   subcategorias: any[];
 }> = ({ show, onClose, editForm, onChange, onSubmit, categorias, subcategorias }) => {
-  if (!show) return null;
-
   return (
     <Modal show={show} onClose={onClose} title="Editar">
       <form onSubmit={onSubmit}>

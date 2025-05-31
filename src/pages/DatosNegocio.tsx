@@ -10,6 +10,17 @@ import noimagen from "../assets/no-img.avif";
 import { ModalPortada,ModalGaleria,  ModalInfoNegocio,  ModalEditarImagen,} from '../pages/ModalesDatosNegocio'; 
 
 const DatosNegocio = () => {
+    interface Categoria {
+  idcategoria: number;
+  nombre_categoria: string;
+}
+
+interface Subcategoria {
+  idsubcategoria: number;
+  nombre_subcategoria: string;
+}
+
+
   const API_URL = 'https://sistemawebpro.com';
 
   const { id } = useParams();
@@ -28,9 +39,18 @@ const DatosNegocio = () => {
   const [showModalGaleria, setShowModalGaleria] = useState(false);
   const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
 
+const [categorias, setCategorias] = useState<Categoria[]>([]);
+const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
 
-  const [categorias, setCategorias] = useState([]);
-  const [subcategorias, setSubcategorias] = useState([]);
+
+  const obtenerNombreCategoria = (id: number) => {
+  const cat = categorias.find((c: any) => c.idcategoria === id);
+  return cat ? cat.nombre_categoria : 'Desconocida';};
+
+const obtenerNombreSubcategoria = (id: number) => {
+  const sub = subcategorias.find((s: any) => s.idsubcategoria === id);
+  return sub ? sub.nombre_subcategoria : 'Desconocida';};
+
 
   useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
@@ -78,6 +98,8 @@ const DatosNegocio = () => {
     */
 
     //mostrar img
+
+    
     const fetchNegocio = async () => {
       try { 
       const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
@@ -208,8 +230,8 @@ const reemplazarImagen = async () => {
               <p><strong>Categorías:</strong></p>
 
 
-              <p><strong>Categoría:</strong> {negocio.categoria}</p>
-              <p><strong>Sub Categoría:</strong> {negocio.subcategoria}</p>
+              <p><strong>Categoría:</strong> {obtenerNombreCategoria(negocio.id_categoria)}</p>
+              <p><strong>Sub Categoría:</strong> {obtenerNombreSubcategoria(negocio.id_subcategoria)}</p>
               <p><strong>Telefono:</strong> {negocio.telefono}</p>
               <p><strong>Fecha de alta:</strong> {new Date(negocio.fecha_de_alta).toLocaleDateString()}</p>
               <p><strong>Estado:</strong> {negocio.activo ? 'Activo' : 'Inactivo'}</p>
