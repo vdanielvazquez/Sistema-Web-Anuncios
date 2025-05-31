@@ -39,8 +39,8 @@ interface Subcategoria {
   const [showModalGaleria, setShowModalGaleria] = useState(false);
   const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
 
-const [categorias, setCategorias] = useState<Categoria[]>([]);
-const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
 
 
   const obtenerNombreCategoria = (id: number) => {
@@ -275,24 +275,28 @@ const reemplazarImagen = async () => {
       <h2 className="text-center mb-4 titulo2">Galería</h2>
       <button className="btn btn-primary mb-3"  onClick={() => setShowModalGaleria(true)}> Agregar fotos </button>
       <div className="row">
-      {negocio.imagenes?.map((img: string, index: number) => {
-  const filename = img.split('/').pop(); // extraer el nombre del archivo
 
-  return (
-    <div key={index} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
-      <div className="card-galeria">
-        <div className="card-body">
-          <img src={img} alt={`Galería ${index + 1}`} className="gallery-image rounded-4 mb-3" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-          
-        </div>
-        <div className="card-footer d-flex justify-content-between">
-          <button className='btn btn-warning me-2'  onClick={() => { setImagenAEditar(filename!); setShowModalEditar(true);}}>Editar</button>
-          <button className='btn btn-danger' onClick={() => eliminarImagen(filename!)}>Eliminar</button>
+     {Array.isArray(negocio.imagenes) ? (
+  negocio.imagenes.map((img: string, index: number) => {
+    const filename = img.split('/').pop(); // extraer el nombre del archivo
+    return (
+      <div key={index} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
+        <div className="card-galeria">
+          <div className="card-body">
+            <img src={img} alt={`Galería ${index + 1}`} className="gallery-image rounded-4 mb-3" style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
+          </div>
+          <div className="card-footer d-flex justify-content-between">
+            <button className='btn btn-warning me-2' onClick={() => { setImagenAEditar(filename!); setShowModalEditar(true); }}>Editar</button>
+            <button className='btn btn-danger' onClick={() => eliminarImagen(filename!)}>Eliminar</button>
+          </div>
         </div>
       </div>
-    </div>
-  );
-})}
+    );
+  })
+) : (
+  <p>No hay imágenes disponibles.</p>
+)}
+
  
       </div>
       </div>
