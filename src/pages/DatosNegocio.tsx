@@ -44,12 +44,17 @@ const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
 
 
   const obtenerNombreCategoria = (id: number) => {
-  const cat = categorias.find((c: any) => c.idcategoria === id);
-  return cat ? cat.nombre_categoria : 'Desconocida';};
+  if (!Array.isArray(categorias)) return 'Desconocida';
+  const cat = categorias.find((c) => c.idcategoria === id);
+  return cat ? cat.nombre_categoria : 'Desconocida';
+};
 
 const obtenerNombreSubcategoria = (id: number) => {
-  const sub = subcategorias.find((s: any) => s.idsubcategoria === id);
-  return sub ? sub.nombre_subcategoria : 'Desconocida';};
+  if (!Array.isArray(subcategorias)) return 'Desconocida';
+  const sub = subcategorias.find((s) => s.idsubcategoria === id);
+  return sub ? sub.nombre_subcategoria : 'Desconocida';
+};
+
 
 
   useEffect(() => {
