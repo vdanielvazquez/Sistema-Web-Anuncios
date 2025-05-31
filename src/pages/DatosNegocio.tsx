@@ -4,7 +4,8 @@ import '../css/datosnegocio.css';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ModalPortada, ModalGaleria, ModalInfoNegocio, ModalEditarImagen } from '../pages/ModalesDatosNegocio';
+
+import { ModalPortada, ModalGaleria, ModalEditarImagen } from '../pages/ModalesDatosNegocio';
 const DatosNegocio = () => {
   const API_URL = 'https://sistemawebpro.com';
 
@@ -82,9 +83,9 @@ const DatosNegocio = () => {
       fetchNegocio();
     }, [id]);
     
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-  setEditForm({ ...editForm, [e.target.name]: e.target.value });
-};
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
 
 //subir fotos
 const subirPortada = async () => {
@@ -254,7 +255,8 @@ const reemplazarImagen = async () => {
       </div>
       </div>
 
-       {/* Modales */}
+
+        {/* Modales */}
         <ModalPortada
           show={showModalPortada}
           onClose={() => setShowModalPortada(false)}
@@ -269,15 +271,7 @@ const reemplazarImagen = async () => {
           onSubmit={subirGaleria}
         />
 
-        <ModalInfoNegocio
-          show={showModalInfoNegocio}
-          onClose={() => setShowModalInfoNegocio(false)}
-          editForm={editForm}
-          onChange={handleInputChange}
-          onSubmit={handleUpdate}
-          categorias={categorias}
-          subcategorias={subcategorias}
-        />
+        
 
         {showModalEditar && (
           <ModalEditarImagen
@@ -287,8 +281,60 @@ const reemplazarImagen = async () => {
             onSubmit={reemplazarImagen}
           />
         )}
-
-
+ {/* Modal para info del negocio */}
+       {showModalInfoNegocio && (
+          <div className="modal show fade d-block" tabIndex={-1}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Editar</h5>
+                  <button type="button" className="btn-close" onClick={() => setShowModalInfoNegocio(false)} />
+                </div>
+                <div className="modal-body">
+                <form onSubmit={handleUpdate}>
+                <div className="mb-3">
+                  <label className="form-label">Nombre Comercial</label>
+                  <input  type="text"  className="form-control"  name="nombre_comercial" value={editForm.nombre_comercial || ''}  onChange={handleInputChange}  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Descripcion</label>
+                  <input  type="text"  className="form-control"  name="descripcion"  value={editForm.descripcion || ''}  onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Teléfono</label>
+                  <input  type="text"  className="form-control"  name="telefono"  value={editForm.telefono || ''}  onChange={handleInputChange} />
+                </div>
+                <div className="mb-3">
+                <select className="form-select"  name="id_categoria"  value={editForm.id_categoria || ''} onChange={(e) => setEditForm({   ...editForm,  id_categoria: e.target.value,  id_subcategoria: '', }) } >
+                  <option value="">Seleccione una categoría</option>
+                  {categorias.map((cat: any) => (
+                    <option key={cat.id_categoria} value={cat.id_categoria}>
+                      {cat.nombre}
+                    </option>
+                  ))}
+                </select>
+                <select className="form-select" name="id_subcategoria"  value={editForm.id_subcategoria || ''} onChange={(e) => setEditForm({ ...editForm, id_subcategoria: e.target.value, })}
+                    disabled={!editForm.id_categoria}>
+                  <option value="">Seleccione una subcategoría</option>
+                  {subcategorias.map((sub: any) => (
+                    <option key={sub.id_subcategoria} value={sub.id_subcategoria}>
+                      {sub.nombre}
+                    </option>
+                  ))}
+                </select>
+                </div>
+                <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setShowModalInfoNegocio(false)}>
+                    Cancelar
+                  </button>
+                  <button type="submit" className="btn btn-success">Guardar Cambios</button>
+                </div>
+              </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
