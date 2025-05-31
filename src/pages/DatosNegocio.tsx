@@ -4,7 +4,7 @@ import '../css/datosnegocio.css';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import { ModalPortada, ModalGaleria, ModalInfoNegocio, ModalEditarImagen } from '../pages/ModalesDatosNegocio';
 const DatosNegocio = () => {
   const API_URL = 'https://sistemawebpro.com';
 
@@ -82,9 +82,9 @@ const DatosNegocio = () => {
       fetchNegocio();
     }, [id]);
     
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditForm({ ...editForm, [e.target.name]: e.target.value });
-  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  setEditForm({ ...editForm, [e.target.name]: e.target.value });
+};
 
 //subir fotos
 const subirPortada = async () => {
@@ -254,139 +254,40 @@ const reemplazarImagen = async () => {
       </div>
       </div>
 
-       {/* Modal para portada */}
-       {showModalPortada && (
-          <div className="modal show fade d-block" tabIndex={-1}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Agregar Portada</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModalPortada(false)} />
-                </div>
-                <div className="modal-body">
-                <div className="mb-2">
-                    <label>Imagen de portada:</label>
-                    <input  type="file"  className="form-control"  onChange={e => setPortada(e.target.files?.[0] || null)}  />
-                </div>
-                </div>
-                <div className="modal-footer">
-                  <button className="btn btn-secondary" onClick={() => setShowModalPortada(false)}>
-                    Cancelar
-                  </button>
-                  <button  type="button"  className="btn btn-success"  onClick={subirPortada}  >
-                    Subir imágen
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      {/* Modal para galeria */}
-       {showModalGaleria && (
-        <div className="modal show fade d-block" tabIndex={-1}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Agregar Fotos a la galería</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModalGaleria(false)} />
-              </div>
-              <div className="modal-body">
-                <div className="mb-2">
-                  <label>Galería (puedes seleccionar varias):</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    multiple
-                    onChange={e => setGaleria(Array.from(e.target.files || []))}
-                  />
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModalGaleria(false)}>Cancelar</button>
-                <button type="button" className="btn btn-success" onClick={subirGaleria}>
-                  Subir imágenes de galería
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-        
-        {/* Modal para info del negocio */}
-       {showModalInfoNegocio && (
-          <div className="modal show fade d-block" tabIndex={-1}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Editar</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModalInfoNegocio(false)} />
-                </div>
-                <div className="modal-body">
-                <form onSubmit={handleUpdate}>
-                <div className="mb-3">
-                  <label className="form-label">Nombre Comercial</label>
-                  <input  type="text"  className="form-control"  name="nombre_comercial" value={editForm.nombre_comercial || ''}  onChange={handleInputChange}  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Descripcion</label>
-                  <input  type="text"  className="form-control"  name="descripcion"  value={editForm.descripcion || ''}  onChange={handleInputChange} />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Teléfono</label>
-                  <input  type="text"  className="form-control"  name="telefono"  value={editForm.telefono || ''}  onChange={handleInputChange} />
-                </div>
-                <div className="mb-3">
-                <select className="form-select"  name="id_categoria"  value={editForm.id_categoria || ''} onChange={(e) => setEditForm({   ...editForm,  id_categoria: e.target.value,  id_subcategoria: '', }) } >
-                  <option value="">Seleccione una categoría</option>
-                  {categorias.map((cat: any) => (
-                    <option key={cat.id_categoria} value={cat.id_categoria}>
-                      {cat.nombre}
-                    </option>
-                  ))}
-                </select>
-                <select className="form-select" name="id_subcategoria"  value={editForm.id_subcategoria || ''} onChange={(e) => setEditForm({ ...editForm, id_subcategoria: e.target.value, })}
-                    disabled={!editForm.id_categoria}>
-                  <option value="">Seleccione una subcategoría</option>
-                  {subcategorias.map((sub: any) => (
-                    <option key={sub.id_subcategoria} value={sub.id_subcategoria}>
-                      {sub.nombre}
-                    </option>
-                  ))}
-                </select>
-                </div>
-                <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModalInfoNegocio(false)}>
-                    Cancelar
-                  </button>
-                  <button type="submit" className="btn btn-success">Guardar Cambios</button>
-                </div>
-              </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        {/* Modal para reemplazar img */}
+       {/* Modales */}
+        <ModalPortada
+          show={showModalPortada}
+          onClose={() => setShowModalPortada(false)}
+          onUpload={setPortada}
+          onSubmit={subirPortada}
+        />
+
+        <ModalGaleria
+          show={showModalGaleria}
+          onClose={() => setShowModalGaleria(false)}
+          onUpload={setGaleria}
+          onSubmit={subirGaleria}
+        />
+
+        <ModalInfoNegocio
+          show={showModalInfoNegocio}
+          onClose={() => setShowModalInfoNegocio(false)}
+          editForm={editForm}
+          onChange={handleInputChange}
+          onSubmit={handleUpdate}
+          categorias={categorias}
+          subcategorias={subcategorias}
+        />
+
         {showModalEditar && (
-        <div className="modal show fade d-block" tabIndex={-1}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Reemplazar Imagen</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModalEditar(false)} />
-              </div>
-              <div className="modal-body">
-                <label>Selecciona nueva imagen:</label>
-                <input type="file" className="form-control" onChange={e => setImagenNueva(e.target.files?.[0] || null)} />
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModalEditar(false)}>Cancelar</button>
-                <button className="btn btn-success" onClick={reemplazarImagen}>Guardar cambios</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+          <ModalEditarImagen
+            show={showModalEditar}
+            onClose={() => setShowModalEditar(false)}
+            onFileChange={setImagenNueva}
+            onSubmit={reemplazarImagen}
+          />
+        )}
+
 
       </div>
     </div>
