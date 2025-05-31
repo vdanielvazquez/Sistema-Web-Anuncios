@@ -4,7 +4,7 @@ import '../css/datosnegocio.css';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import noimagen from "../assets/no-img.avif";
 import { ModalPortada, ModalGaleria, ModalEditarImagen } from '../pages/ModalesDatosNegocio';
 const DatosNegocio = () => {
   const API_URL = 'https://sistemawebpro.com';
@@ -30,10 +30,6 @@ const DatosNegocio = () => {
   const [categorias, setCategorias] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
 
-
-  
- 
-  
   
   useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
@@ -95,7 +91,6 @@ const subirPortada = async () => {
 
   try {
     await axios.post(`${API_URL}/api/negocios/imagenes/portada/${id}`, formData, {
-      //await axios.post(`http://localhost:3001/api/negocios/imagenes/portada/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Portada subida con éxito');
@@ -185,8 +180,16 @@ const reemplazarImagen = async () => {
           <div className="card">
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
-            <img src={ negocio.portada ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}` : 'default-image.jpg' } className="card-img-top rounded-4" alt="Negocio"/> 
-            </div>
+             <img
+                      src={
+                        negocio.portada && negocio.portada.trim() !== ''
+                          ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
+                          : noimagen
+                      }
+                      className="card-img-top rounded-4"
+                      alt="Negocio"
+                    />
+  </div>
             <div className="card-footer">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
               Editar Portada
