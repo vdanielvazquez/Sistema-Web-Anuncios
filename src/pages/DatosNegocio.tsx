@@ -1,9 +1,21 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+
+
 import '../css/datosnegocio.css';
+
+import noimagen from "../assets/no-img.avif";
+import { ModalPortada, ModalGaleria, ModalInfoNegocio, ModalEditarImagen } from '../pages/ModalesDatosNegocio';
+
+
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+
+
+import { ToastContainer } from 'react-toastify';
 
 const DatosNegocio = () => {
   const API_URL = 'https://sistemawebpro.com';
@@ -81,9 +93,10 @@ const DatosNegocio = () => {
       fetchNegocio();
     }, [id]);
     
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditForm({ ...editForm, [e.target.name]: e.target.value });
-  };
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  setEditForm({ ...editForm, [e.target.name]: e.target.value });
+};
+
 
 //subir fotos
 const subirPortada = async () => {
@@ -95,13 +108,13 @@ const subirPortada = async () => {
     await axios.post(`${API_URL}/api/negocios/imagenes/portada/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    alert('Portada subida con éxito');
+     toast.success('Portada subida con éxito');
     
     setShowModalPortada(false);
     fetchNegocio(); // Recargar datos
   } catch (error) {
     console.error('Error al subir portada:', error);
-    alert('Error al subir portada');
+     toast.success('Error al subir portada');
   }
 };
 //subir galeria
@@ -141,7 +154,6 @@ const reemplazarImagen = async () => {
 
   try {
     await axios.put(`${API_URL}/api/negocios/imagenes/galeria/${id}/${imagenAEditar}`, formData, {
-      //await axios.put(`http://localhost:3001/api/negocios/imagenes/galeria/${id}/${imagenAEditar}`, formData, {//local
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Imagen reemplazada correctamente');
@@ -159,7 +171,6 @@ const reemplazarImagen = async () => {
     e.preventDefault();
     try {
       await axios.put(`${API_URL}/api/negocios/${id}`, editForm);
-      //await axios.put(`http://localhost:3001/api/negocios/${id}`, editForm);//local
       setNegocio(editForm); // actualiza la vista con los nuevos datos
       alert('Negocio actualizado correctamente');
     } catch (error) {
@@ -171,7 +182,9 @@ const reemplazarImagen = async () => {
   if (!negocio) return <p>Cargando...</p>;
 
   return (
+    
     <div className="divprincipal">
+    <ToastContainer />
        <div className="container">
         <h2 className="text-center mt-5">Detalles del Negocio</h2>
       <div className="row">
@@ -179,8 +192,8 @@ const reemplazarImagen = async () => {
           <div className="card">
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
-            <img src={ negocio.portada ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}` : 'default-image.jpg' } className="card-img-top rounded-4" alt="Negocio"/> 
-            </div>
+             <img src={ negocio.portada && negocio.portada.trim() !== ''   ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`  : noimagen   } className="card-img-top rounded-4" alt="Negocio"/>
+             </div>
             <div className="card-footer">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
               Editar Portada
@@ -249,139 +262,39 @@ const reemplazarImagen = async () => {
       </div>
       </div>
 
-       {/* Modal para portada */}
-       {showModalPortada && (
-          <div className="modal show fade d-block" tabIndex={-1}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Agregar Portada</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModalPortada(false)} />
-                </div>
-                <div className="modal-body">
-                <div className="mb-2">
-                    <label>Imagen de portada:</label>
-                    <input  type="file"  className="form-control"  onChange={e => setPortada(e.target.files?.[0] || null)}  />
-                </div>
-                </div>
-                <div className="modal-footer">
-                  <button className="btn btn-secondary" onClick={() => setShowModalPortada(false)}>
-                    Cancelar
-                  </button>
-                  <button  type="button"  className="btn btn-success"  onClick={subirPortada}  >
-                    Subir imágen
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      {/* Modal para galeria */}
-       {showModalGaleria && (
-        <div className="modal show fade d-block" tabIndex={-1}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Agregar Fotos a la galería</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModalGaleria(false)} />
-              </div>
-              <div className="modal-body">
-                <div className="mb-2">
-                  <label>Galería (puedes seleccionar varias):</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    multiple
-                    onChange={e => setGaleria(Array.from(e.target.files || []))}
-                  />
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModalGaleria(false)}>Cancelar</button>
-                <button type="button" className="btn btn-success" onClick={subirGaleria}>
-                  Subir imágenes de galería
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-        
-        {/* Modal para info del negocio */}
-       {showModalInfoNegocio && (
-          <div className="modal show fade d-block" tabIndex={-1}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Editar</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModalInfoNegocio(false)} />
-                </div>
-                <div className="modal-body">
-                <form onSubmit={handleUpdate}>
-                <div className="mb-3">
-                  <label className="form-label">Nombre Comercial</label>
-                  <input  type="text"  className="form-control"  name="nombre_comercial" value={editForm.nombre_comercial || ''}  onChange={handleInputChange}  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Descripcion</label>
-                  <input  type="text"  className="form-control"  name="descripcion"  value={editForm.descripcion || ''}  onChange={handleInputChange} />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Teléfono</label>
-                  <input  type="text"  className="form-control"  name="telefono"  value={editForm.telefono || ''}  onChange={handleInputChange} />
-                </div>
-                <div className="mb-3">
-                <select className="form-select"  name="id_categoria"  value={editForm.id_categoria || ''} onChange={(e) => setEditForm({   ...editForm,  id_categoria: e.target.value,  id_subcategoria: '', }) } >
-                  <option value="">Seleccione una categoría</option>
-                  {categorias.map((cat: any) => (
-                    <option key={cat.id_categoria} value={cat.id_categoria}>
-                      {cat.nombre}
-                    </option>
-                  ))}
-                </select>
-                <select className="form-select" name="id_subcategoria"  value={editForm.id_subcategoria || ''} onChange={(e) => setEditForm({ ...editForm, id_subcategoria: e.target.value, })}
-                    disabled={!editForm.id_categoria}>
-                  <option value="">Seleccione una subcategoría</option>
-                  {subcategorias.map((sub: any) => (
-                    <option key={sub.id_subcategoria} value={sub.id_subcategoria}>
-                      {sub.nombre}
-                    </option>
-                  ))}
-                </select>
-                </div>
-                <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModalInfoNegocio(false)}>
-                    Cancelar
-                  </button>
-                  <button type="submit" className="btn btn-success">Guardar Cambios</button>
-                </div>
-              </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        {/* Modal para reemplazar img */}
+         {/* Modales */}
+        <ModalPortada
+          show={showModalPortada}
+          onClose={() => setShowModalPortada(false)}
+          onUpload={setPortada}
+          onSubmit={subirPortada}
+        />
+
+        <ModalGaleria
+          show={showModalGaleria}
+          onClose={() => setShowModalGaleria(false)}
+          onUpload={setGaleria}
+          onSubmit={subirGaleria}
+        />
+
+        <ModalInfoNegocio
+          show={showModalInfoNegocio}
+          onClose={() => setShowModalInfoNegocio(false)}
+          editForm={editForm}
+          onChange={handleInputChange}
+          onSubmit={handleUpdate}
+          categorias={categorias}
+          subcategorias={subcategorias}
+        />
+
         {showModalEditar && (
-        <div className="modal show fade d-block" tabIndex={-1}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Reemplazar Imagen</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModalEditar(false)} />
-              </div>
-              <div className="modal-body">
-                <label>Selecciona nueva imagen:</label>
-                <input type="file" className="form-control" onChange={e => setImagenNueva(e.target.files?.[0] || null)} />
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModalEditar(false)}>Cancelar</button>
-                <button className="btn btn-success" onClick={reemplazarImagen}>Guardar cambios</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+          <ModalEditarImagen
+            show={showModalEditar}
+            onClose={() => setShowModalEditar(false)}
+            onFileChange={setImagenNueva}
+            onSubmit={reemplazarImagen}
+          />
+        )}
 
       </div>
     </div>
