@@ -70,7 +70,6 @@ const DatosNegocio = () => {
       try {
        
         const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
-        //const response = await axios.get(`http://localhost:3001/api/negocios/imagenes/${id}`);//local
         setNegocio(response.data);
         setEditForm(response.data);
       } catch (error) {
@@ -94,7 +93,6 @@ const subirPortada = async () => {
 
   try {
     await axios.post(`${API_URL}/api/negocios/imagenes/portada/${id}`, formData, {
-      //await axios.post(`http://localhost:3001/api/negocios/imagenes/portada/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Portada subida con éxito');
@@ -114,7 +112,6 @@ const subirGaleria = async () => {
 
   try {
     await axios.post(`${API_URL}/api/negocios/imagenes/galeria/${id}`, formData, {
-    //await axios.post(`http://localhost:3001/api/negocios/imagenes/galeria/${id}`, formData, {//local
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Galería subida con éxito');
@@ -129,7 +126,6 @@ const eliminarImagen = async (filename: string) => {
   if (!window.confirm('¿Estás seguro de que deseas eliminar esta imagen?')) return;
   try {
     await axios.delete(`${API_URL}/api/negocios/imagenes/${id}/${filename}`);
-    //await axios.delete(`http://localhost:3001/api/negocios/imagenes/${id}/${filename}`);//local
     alert('Imagen eliminada correctamente');
     fetchNegocio(); // recarga galería
   } catch (error) {
@@ -175,9 +171,9 @@ const reemplazarImagen = async () => {
   if (!negocio) return <p>Cargando...</p>;
 
   return (
-    <div className="container-fluid  mt-5">
-      <div className='div-datos-negocio'>
-      <h2 className="text-center mb-4">Detalles del Negocio</h2>
+    <div className="divprincipal">
+       <div className="container">
+        <h2 className="text-center mt-5">Detalles del Negocio</h2>
       <div className="row">
         <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
           <div className="card">
