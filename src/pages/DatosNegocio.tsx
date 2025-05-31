@@ -78,7 +78,7 @@ const Negocios = () => {
   const negociosPaginados = negociosFiltrados.slice(indexInicio, indexFin);
 
   return (
-    <div className="divprincipalnegocios">
+    <div className="divprincipal">
       <div className="div-custom">
         <h2 className="text-center mt-5">Listado de Negocios</h2>
 
