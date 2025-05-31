@@ -56,8 +56,9 @@ const DatosNegocio = () => {
       // Asegurarse de que 'imagenes' es un array
        const data = response.data;
         data.imagenes = Array.isArray(data.imagenes) ? data.imagenes : [];
-      setNegocio(response.data);
-      setEditForm(response.data);
+        setNegocio(data);
+
+      setEditForm(data);
       
     } catch (error) {
       console.error('Error al obtener el negocio:', error);
