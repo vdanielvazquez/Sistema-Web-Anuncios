@@ -106,14 +106,21 @@ const obtenerNombreSubcategoria = (id: number) => {
 
     //mostrar img
 
-   const fetchNegocio = async () => {
+  const fetchNegocio = async () => {
   try { 
     const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
     const data = response.data;
 
-    // Asegura que sea array
+    // Validar que 'imagenes' sea un arreglo
     if (!Array.isArray(data.imagenes)) {
-      data.imagenes = []; // o intenta parsear si viene como string
+      try {
+        data.imagenes = JSON.parse(data.imagenes);
+        if (!Array.isArray(data.imagenes)) {
+          data.imagenes = [];
+        }
+      } catch {
+        data.imagenes = [];
+      }
     }
 
     setNegocio(data);
@@ -122,6 +129,7 @@ const obtenerNombreSubcategoria = (id: number) => {
     console.error('Error al obtener el negocio:', error);
   }
 };
+
 
     
     useEffect(() => {
