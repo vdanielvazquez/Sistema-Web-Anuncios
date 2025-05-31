@@ -11,11 +11,14 @@ import { ModalPortada, ModalGaleria, ModalInfoNegocio, ModalEditarImagen } from 
 
 const DatosNegocio = () => {
   const API_URL = 'https://sistemawebpro.com';
+
   const { id } = useParams();
   const [negocio, setNegocio] = useState<any>(null);
   const [editForm, setEditForm] = useState<any>({});
+
   const [portada, setPortada] = useState<File | null>(null);
   const [galeria, setGaleria] = useState<File[]>([]);
+  
   const [imagenAEditar, setImagenAEditar] = useState<string | null>(null);
   const [imagenNueva, setImagenNueva] = useState<File | null>(null);
 
@@ -50,8 +53,12 @@ const DatosNegocio = () => {
   const fetchNegocio = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
+      // Asegurarse de que 'imagenes' es un array
+       const data = response.data;
+        data.imagenes = Array.isArray(data.imagenes) ? data.imagenes : [];
       setNegocio(response.data);
       setEditForm(response.data);
+      
     } catch (error) {
       console.error('Error al obtener el negocio:', error);
     }
