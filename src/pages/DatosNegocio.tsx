@@ -67,7 +67,7 @@ const DatosNegocio = () => {
       try {
        
         //const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
-        const response = await axios.get(`${API_URL}/api/negocio-detalle/${id}`);
+        const response = await axios.get(`${API_URL}/api/negocios/${id}`);
         setNegocio(response.data);
         setEditForm(response.data);
       } catch (error) {
