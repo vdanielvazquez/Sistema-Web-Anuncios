@@ -66,8 +66,8 @@ const DatosNegocio = () => {
     const fetchNegocio = async () => {
       try {
        
-        //const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
-        const response = await axios.get(`${API_URL}/api/negocios/${id}`);
+        const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
+        //const response = await axios.get(`${API_URL}/api/negocios/${id}`);
         setNegocio(response.data);
         setEditForm(response.data);
       } catch (error) {
@@ -192,13 +192,13 @@ console.log(negocio);
             <div className="card-body">
               <p><strong>Descripción:</strong> {negocio.descripcion}</p>
               {negocio.categoria || negocio.subcategoria ? (
-  <p>
-    <strong>Categoría:</strong> {negocio.categoria || 'Sin categoría'} <br />
-    <strong>Subcategoría:</strong> {negocio.subcategoria || 'Sin subcategoría'}
-  </p>
-) : (
-  <p>No tiene categorías asociadas</p>
-)}
+                <p>
+                    <strong>Categoría:</strong> {negocio.categoria || 'Sin categoría'} <br />
+                    <strong>Subcategoría:</strong> {negocio.subcategoria || 'Sin subcategoría'}
+                </p>
+                ) : (
+                <p>No tiene categorías asociadas</p>
+                )}
 
               <p><strong>Telefono:</strong> {negocio.telefono}</p>
               <p><strong>Fecha de alta:</strong> {new Date(negocio.fecha_de_alta).toLocaleDateString()}</p>
