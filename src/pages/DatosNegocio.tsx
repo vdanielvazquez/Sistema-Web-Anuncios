@@ -191,16 +191,14 @@ console.log(negocio);
           <h2 className="card-title">{negocio.nombre_comercial}</h2>
             <div className="card-body">
               <p><strong>Descripción:</strong> {negocio.descripcion}</p>
-              {negocio.categorias && negocio.categorias.length > 0 ? (
-                negocio.categorias.map((cat: any, index: number) => (
-                    <p key={index}>
-                    <strong>Categoría:</strong> {cat.categoria} <br />
-                    <strong>Subcategoría:</strong> {cat.subcategoria}
-                    </p>
-                ))
-                ) : (
-                <p>No tiene categorías asociadas</p>
-                )}
+              {negocio.categoria || negocio.subcategoria ? (
+  <p>
+    <strong>Categoría:</strong> {negocio.categoria || 'Sin categoría'} <br />
+    <strong>Subcategoría:</strong> {negocio.subcategoria || 'Sin subcategoría'}
+  </p>
+) : (
+  <p>No tiene categorías asociadas</p>
+)}
 
               <p><strong>Telefono:</strong> {negocio.telefono}</p>
               <p><strong>Fecha de alta:</strong> {new Date(negocio.fecha_de_alta).toLocaleDateString()}</p>
