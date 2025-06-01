@@ -65,8 +65,8 @@ const DatosNegocio = () => {
     //mostrar img
     const fetchNegocio = async () => {
       try {
-       
-        const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
+       const response = await axios.get(`${API_URL}/api/negocios/detalle/${id}`);
+        //const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
         //const response = await axios.get(`${API_URL}/api/negocios/${id}`);
         setNegocio(response.data);
         setEditForm(response.data);
@@ -82,6 +82,8 @@ const DatosNegocio = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   };
+//
+
 
 //subir portada
 const subirPortada = async () => {
