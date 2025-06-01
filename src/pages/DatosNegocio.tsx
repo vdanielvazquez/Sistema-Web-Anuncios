@@ -66,8 +66,8 @@ const DatosNegocio = () => {
     const fetchNegocio = async () => {
       try {
        
-        const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
-        //const response = await axios.get(`http://localhost:3001/api/negocios/imagenes/${id}`);//local
+        //const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
+        const response = await axios.get(`${API_URL}/api/negocio-detalle/${id}`);
         setNegocio(response.data);
         setEditForm(response.data);
       } catch (error) {
@@ -83,7 +83,7 @@ const DatosNegocio = () => {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   };
 
-//subir fotos
+//subir portada
 const subirPortada = async () => {
   if (!id || !portada) return;
   const formData = new FormData();
@@ -110,7 +110,6 @@ const subirGaleria = async () => {
 
   try {
     await axios.post(`${API_URL}/api/negocios/imagenes/galeria/${id}`, formData, {
-    //await axios.post(`http://localhost:3001/api/negocios/imagenes/galeria/${id}`, formData, {//local
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Galería subida con éxito');
@@ -125,7 +124,6 @@ const eliminarImagen = async (filename: string) => {
   if (!window.confirm('¿Estás seguro de que deseas eliminar esta imagen?')) return;
   try {
     await axios.delete(`${API_URL}/api/negocios/imagenes/${id}/${filename}`);
-    //await axios.delete(`http://localhost:3001/api/negocios/imagenes/${id}/${filename}`);//local
     alert('Imagen eliminada correctamente');
     fetchNegocio(); // recarga galería
   } catch (error) {
@@ -141,7 +139,6 @@ const reemplazarImagen = async () => {
 
   try {
     await axios.put(`${API_URL}/api/negocios/imagenes/galeria/${id}/${imagenAEditar}`, formData, {
-      //await axios.put(`http://localhost:3001/api/negocios/imagenes/galeria/${id}/${imagenAEditar}`, formData, {//local
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Imagen reemplazada correctamente');
@@ -159,7 +156,6 @@ const reemplazarImagen = async () => {
     e.preventDefault();
     try {
       await axios.put(`${API_URL}/api/negocios/${id}`, editForm);
-      //await axios.put(`http://localhost:3001/api/negocios/${id}`, editForm);//local
       setNegocio(editForm); // actualiza la vista con los nuevos datos
       alert('Negocio actualizado correctamente');
     } catch (error) {
@@ -180,16 +176,8 @@ const reemplazarImagen = async () => {
           <div className="card">
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
-             <img
-                      src={
-                        negocio.portada && negocio.portada.trim() !== ''
-                          ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
-                          : noimagen
-                      }
-                      className="card-img-top rounded-4"
-                      alt="Negocio"
-                    />
-  </div>
+             <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}className="card-img-top rounded-4" alt="Negocio"/>
+            </div>
             <div className="card-footer">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
               Editar Portada
@@ -202,8 +190,17 @@ const reemplazarImagen = async () => {
           <h2 className="card-title">{negocio.nombre_comercial}</h2>
             <div className="card-body">
               <p><strong>Descripción:</strong> {negocio.descripcion}</p>
-              <p><strong>Categoría:</strong> {negocio.categoria}</p>
-              <p><strong>Sub Categoría:</strong> {negocio.subcategoria}</p>
+              {negocio.categorias && negocio.categorias.length > 0 ? (
+                negocio.categorias.map((cat: any, index: number) => (
+                    <p key={index}>
+                    <strong>Categoría:</strong> {cat.categoria} <br />
+                    <strong>Subcategoría:</strong> {cat.subcategoria}
+                    </p>
+                ))
+                ) : (
+                <p>No tiene categorías asociadas</p>
+                )}
+
               <p><strong>Telefono:</strong> {negocio.telefono}</p>
               <p><strong>Fecha de alta:</strong> {new Date(negocio.fecha_de_alta).toLocaleDateString()}</p>
               <p><strong>Estado:</strong> {negocio.activo ? 'Activo' : 'Inactivo'}</p>
