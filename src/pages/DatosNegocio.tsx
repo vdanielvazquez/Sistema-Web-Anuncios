@@ -165,6 +165,7 @@ const reemplazarImagen = async () => {
   };
 
   if (!negocio) return <p>Cargando...</p>;
+console.log(negocio);
 
   return (
     <div className="divprincipal">
