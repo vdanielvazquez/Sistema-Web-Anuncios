@@ -31,7 +31,6 @@ const DatosNegocio = () => {
   const [subcategorias, setSubcategorias] = useState([]);
 
   
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
@@ -81,14 +80,14 @@ const DatosNegocio = () => {
     }; */
     const fetchNegocio = async () => {
   try {
-    setLoading(true);
+    
     const response = await axios.get(`${API_URL}/api/negocios/detalle-completo/${id}`);
     setNegocio(response.data);
     setEditForm(response.data);
   } catch (error) {
     console.error('Error al obtener el negocio:', error);
   } finally {
-    setLoading(false);
+   
   }
 };
 
