@@ -31,6 +31,8 @@ const DatosNegocio = () => {
   const [subcategorias, setSubcategorias] = useState([]);
 
   
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
       .then(res => {
@@ -60,12 +62,29 @@ const DatosNegocio = () => {
         });
     }
   }, [editForm.id_categoria]); // Este useEffect se dispara cuando el id_categoria cambia
-  
+  ////mostrar datos e imagen
+   
+
+            useEffect(() => {
+                axios.get(`${API_URL}/negocios/detalle-completo/${id}`)
+                .then(response => {
+                    setNegocio(response.data.negocio);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    console.error('Error al cargar negocio:', error);
+                    setLoading(false);
+                });
+            }, [id]);
+
+            if (loading) return <p>Cargando...</p>;
+            if (!negocio) return <p>Negocio no encontrado</p>;
+
 
     //mostrar img
     const fetchNegocio = async () => {
       try {
-       const response = await axios.get(`${API_URL}/api/negocios/detalle/${id}`);
+          const response = await axios.get(`${API_URL}/api/negocios/detalle-completo/${id}`);
         //const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
         //const response = await axios.get(`${API_URL}/api/negocios/${id}`);
         setNegocio(response.data);
