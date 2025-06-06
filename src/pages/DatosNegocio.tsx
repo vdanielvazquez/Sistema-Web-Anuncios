@@ -65,28 +65,13 @@ const DatosNegocio = () => {
     //mostrar img
     const fetchNegocio = async () => {
       try {
-//const response = await axios.get(`${API_URL}/api/negocios/detalle-completo/${id}`);
         const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
-        //const response = await axios.get(`${API_URL}/api/negocios/${id}`);
         setNegocio(response.data);
         setEditForm(response.data);
       } catch (error) {
         console.error('Error al obtener el negocio:', error);
       }
     }; 
- /**   const fetchNegocio = async () => {
-  try {
-    
-    const response = await axios.get(`${API_URL}/api/negocios/detalle-completo/${id}`);
-    setNegocio(response.data);
-    setEditForm(response.data);
-  } catch (error) {
-    console.error('Error al obtener el negocio:', error);
-  } finally {
-   
-  }
-}; */
-
     useEffect(() => {
       fetchNegocio();
     }, [id]);
@@ -186,6 +171,20 @@ console.log(negocio);
       <div className="container">
         <h2 className="text-center mt-5">Detalles del Negocio</h2>
 
+       <div className="col-12 col-sm-12 col-md-12 col-lg-12 ">
+          <div className="card">
+          <h2 className="card-title">Ubicacion</h2>
+            <div className="card-body">
+            <p><strong>Estado:</strong> {negocio.estado}</p>
+            <p><strong>Municipio:</strong> {negocio.municipio}</p>
+            </div>
+            <div className="card-footer">
+             <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
+                Editar Ubicacion
+              </button>
+             </div>
+          </div>
+        </div>
       <div className="row">
         <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
           <div className="card">
@@ -202,7 +201,7 @@ console.log(negocio);
             </div>
           </div>
         </div>
-        <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
+        <div className="col-12 col-sm-6 col-md-6 col-lg-8 ">
           <div className="card">
           <h2 className="card-title">{negocio.nombre_comercial}</h2>
             <div className="card-body">
@@ -227,20 +226,7 @@ console.log(negocio);
             </div>
           </div>
         </div>
-        <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
-          <div className="card">
-          <h2 className="card-title">Ubicacion</h2>
-            <div className="card-body">
-            <p><strong>Estado:</strong> {negocio.estado}</p>
-            <p><strong>Municipio:</strong> {negocio.municipio}</p>
-            </div>
-            <div className="card-footer">
-             <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
-                Editar Ubicacion
-              </button>
-             </div>
-          </div>
-        </div>
+       
       </div>
       <div className="gallery">
       <h2 className="text-center mb-4 titulo2">Galería</h2>
