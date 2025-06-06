@@ -35,8 +35,8 @@ const DatosNegocio = () => {
   useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
       .then(res => {
-        console.log(res.data);  // Verifica qué datos recibes
-        setCategorias(res.data);
+        console.log(res.data);  // Confirma la estructura
+      setCategorias(res.data.data); // Corregido
       })
       .catch(error => console.error('Error al obtener categorías:', error));
   }, []);
@@ -306,14 +306,24 @@ console.log(negocio);
                   <input  type="text"  className="form-control"  name="telefono"  value={editForm.telefono || ''}  onChange={handleInputChange} />
                 </div>
                 <div className="mb-3">
-                <select className="form-select"  name="id_categoria"  value={editForm.id_categoria || ''} onChange={(e) => setEditForm({   ...editForm,  id_categoria: e.target.value,  id_subcategoria: '', }) } >
-                  <option value="">Seleccione una categoría</option>
-                  {categorias.map((cat: any) => (
-                    <option key={cat.id_categoria} value={cat.id_categoria}>
-                      {cat.nombre}
-                    </option>
-                  ))}
-                </select>
+                <select className="form-select"
+                name="id_categoria"
+                value={editForm.id_categoria || ''}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    id_categoria: e.target.value,
+                    id_subcategoria: '',
+                  })
+                }>
+                <option value="">Seleccione una categoría</option>
+                {categorias.map((cat: any) => (
+                  <option key={cat.idcategoria} value={cat.idcategoria}>
+                    {cat.descripcion}
+                  </option>
+                ))}
+              </select>
+
                 <select className="form-select" name="id_subcategoria"  value={editForm.id_subcategoria || ''} onChange={(e) => setEditForm({ ...editForm, id_subcategoria: e.target.value, })}
                     disabled={!editForm.id_categoria}>
                   <option value="">Seleccione una subcategoría</option>
