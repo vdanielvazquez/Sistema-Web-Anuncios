@@ -28,7 +28,7 @@ const DatosNegocio = () => {
 
 
   const [subcategorias, setSubcategorias] = useState([]);
-const [categorias, setCategorias] = useState<any[]>([]);
+  const [categorias, setCategorias] = useState<any[]>([]);
 
   
 
@@ -190,9 +190,7 @@ console.log(negocio);
           <div className="card">
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
-             <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}className="card-img-top rounded-4" alt="Negocio"/>
-            
-            
+             <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}className="card-img-top rounded-4" alt="Negocio"/>            
             </div>
             <div className="card-footer">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
@@ -271,9 +269,6 @@ console.log(negocio);
           onUpload={setGaleria}
           onSubmit={subirGaleria}
         />
-
-        
-
         {showModalEditar && (
           <ModalEditarImagen
             show={showModalEditar}
