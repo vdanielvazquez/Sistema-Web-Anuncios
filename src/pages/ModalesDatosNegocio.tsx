@@ -81,53 +81,91 @@ export const ModalGaleria: React.FC<{
 };
 
 // Modal para editar info negocio (formulario)
-export const ModalInfoNegocio: React.FC<{
+
+interface ModalEditarInfoNegocioProps {
   show: boolean;
   onClose: () => void;
   editForm: any;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  setEditForm: React.Dispatch<React.SetStateAction<any>>;
   categorias: any[];
   subcategorias: any[];
-}> = ({ show, onClose, editForm, onChange, onSubmit, categorias, subcategorias }) => {
+  onSubmit: (e: React.FormEvent) => void;
+}
+
+export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
+  show,
+  onClose,
+  editForm,
+  setEditForm,
+  categorias,
+  subcategorias,
+  onSubmit,
+}) => {
+  if (!show) return null;
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
+
   return (
-    <Modal show={show} onClose={onClose} title="Editar">
+    <Modal show={show} onClose={onClose} title="Editar Información del Negocio">
       <form onSubmit={onSubmit}>
         <div className="mb-3">
           <label className="form-label">Nombre Comercial</label>
-          <input type="text" className="form-control" name="nombre_comercial" value={editForm.nombre_comercial || ''} onChange={onChange} />
+          <input
+            type="text"
+            className="form-control"
+            name="nombre_comercial"
+            value={editForm.nombre_comercial || ''}
+            onChange={handleInputChange}
+          />
         </div>
         <div className="mb-3">
-          <label className="form-label">Descripcion</label>
-          <input type="text" className="form-control" name="descripcion" value={editForm.descripcion || ''} onChange={onChange} />
+          <label className="form-label">Descripción</label>
+          <input
+            type="text"
+            className="form-control"
+            name="descripcion"
+            value={editForm.descripcion || ''}
+            onChange={handleInputChange}
+          />
         </div>
         <div className="mb-3">
           <label className="form-label">Teléfono</label>
-          <input type="text" className="form-control" name="telefono" value={editForm.telefono || ''} onChange={onChange} />
+          <input
+            type="text"
+            className="form-control"
+            name="telefono"
+            value={editForm.telefono || ''}
+            onChange={handleInputChange}
+          />
         </div>
         <div className="mb-3">
           <select
             className="form-select"
             name="id_categoria"
             value={editForm.id_categoria || ''}
-            onChange={e => {
-              onChange(e);
-              // Limpia subcategoria cuando cambia categoria
-              editForm.id_subcategoria = '';
-            }}
+            onChange={e =>
+              setEditForm({
+                ...editForm,
+                id_categoria: e.target.value,
+                id_subcategoria: '', // resetea subcategoría al cambiar categoría
+              })
+            }
           >
             <option value="">Seleccione una categoría</option>
             {categorias.map(cat => (
-              <option key={cat.id_categoria} value={cat.id_categoria}>
-                {cat.nombre}
+              <option key={cat.idcategoria} value={cat.idcategoria}>
+                {cat.descripcion}
               </option>
             ))}
           </select>
+
           <select
-            className="form-select"
+            className="form-select mt-2"
             name="id_subcategoria"
             value={editForm.id_subcategoria || ''}
-            onChange={onChange}
+            onChange={e => setEditForm({ ...editForm, id_subcategoria: e.target.value })}
             disabled={!editForm.id_categoria}
           >
             <option value="">Seleccione una subcategoría</option>
@@ -139,7 +177,7 @@ export const ModalInfoNegocio: React.FC<{
           </select>
         </div>
         <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={onClose}>
+          <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancelar
           </button>
           <button type="submit" className="btn btn-success">
@@ -150,6 +188,7 @@ export const ModalInfoNegocio: React.FC<{
     </Modal>
   );
 };
+
 
 // Modal para reemplazar imagen
 export const ModalEditarImagen: React.FC<{
