@@ -368,7 +368,7 @@ const geocodeLocation = async (estado: string, municipio: string) => {
                 <label htmlFor="latitud" className="form-label">Latitud</label>
                 <input type="text" className="form-control" id="latitud" name="latitud" value={formData.latitud ?? ''} readOnly />
                 <label htmlFor="codigop" className="form-label">Codigo postal</label>
-                <input type="number" className="form-control" id="codigop" name="codigop" value={formData.codigop ?? ''} onChange={handleChange}/>
+                <input type="number" className="form-control" id="codigop" name="codigop" value={formData.codigop ?? ''}/>
               </div>
             </div>
             <div className="row">

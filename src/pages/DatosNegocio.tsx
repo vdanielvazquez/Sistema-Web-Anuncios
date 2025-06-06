@@ -75,11 +75,6 @@ const DatosNegocio = () => {
     useEffect(() => {
       fetchNegocio();
     }, [id]);
-    
-  
-//
-
-
 //subir portada
 const subirPortada = async () => {
   if (!id || !portada) return;
