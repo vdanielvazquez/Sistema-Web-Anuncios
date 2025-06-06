@@ -75,6 +75,11 @@ const DatosNegocio = () => {
     useEffect(() => {
       fetchNegocio();
     }, [id]);
+    
+ 
+//
+
+
 //subir portada
 const subirPortada = async () => {
   if (!id || !portada) return;
@@ -147,6 +152,7 @@ const reemplazarImagen = async () => {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      console.log('Enviando datos:', editForm); 
       await axios.put(`${API_URL}/api/negocios/${id}`, editForm);
       setNegocio(editForm); // actualiza la vista con los nuevos datos
       alert('Negocio actualizado correctamente');
