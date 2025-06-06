@@ -367,15 +367,8 @@ const geocodeLocation = async (estado: string, municipio: string) => {
               <div className="col-xl-2 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="latitud" className="form-label">Latitud</label>
                 <input type="text" className="form-control" id="latitud" name="latitud" value={formData.latitud ?? ''} readOnly />
-                <input
-  type="number"
-  className="form-control"
-  id="codigop"
-  name="codigop"
-  value={formData.codigop ?? ''}
-  onChange={handleChange}
-/>
-
+                <label htmlFor="codigop" className="form-label">Codigo postal</label>
+                <input type="number" className="form-control" id="codigop" name="codigop" value={formData.codigop ?? ''} onChange={handleChange}/>
               </div>
             </div>
             <div className="row">
