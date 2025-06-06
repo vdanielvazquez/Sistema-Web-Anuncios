@@ -27,8 +27,8 @@ const DatosNegocio = () => {
   const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
 
 
-  const [categorias, setCategorias] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
+const [categorias, setCategorias] = useState<any[]>([]);
 
   
 
@@ -306,23 +306,29 @@ console.log(negocio);
                   <input  type="text"  className="form-control"  name="telefono"  value={editForm.telefono || ''}  onChange={handleInputChange} />
                 </div>
                 <div className="mb-3">
-                <select className="form-select"
-                name="id_categoria"
-                value={editForm.id_categoria || ''}
-                onChange={(e) =>
-                  setEditForm({
-                    ...editForm,
-                    id_categoria: e.target.value,
-                    id_subcategoria: '',
-                  })
-                }>
-                <option value="">Seleccione una categoría</option>
-                {categorias.map((cat: any) => (
-                  <option key={cat.idcategoria} value={cat.idcategoria}>
-                    {cat.descripcion}
-                  </option>
-                ))}
-              </select>
+               <select
+  className="form-select"
+  name="id_categoria"
+  value={editForm.id_categoria || ''}
+  onChange={(e) =>
+    setEditForm({
+      ...editForm,
+      id_categoria: e.target.value,
+      id_subcategoria: '', // resetea subcategoría al cambiar categoría
+    })
+  }
+>
+  <option value="">Seleccione una categoría</option>
+
+  {/* Aquí van las categorías, si es que categorias es un array */}
+  {Array.isArray(categorias) &&
+    categorias.map((cat: any) => (
+      <option key={cat.idcategoria} value={cat.idcategoria}>
+        {cat.descripcion}
+      </option>
+    ))}
+</select>
+
 
                 <select className="form-select" name="id_subcategoria"  value={editForm.id_subcategoria || ''} onChange={(e) => setEditForm({ ...editForm, id_subcategoria: e.target.value, })}
                     disabled={!editForm.id_categoria}>
