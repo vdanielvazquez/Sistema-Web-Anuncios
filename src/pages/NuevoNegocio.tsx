@@ -1,17 +1,14 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "leaflet/dist/leaflet.css";
-import "../css/nuevonegocio.css"
+import "../css/nuevonegocio.css";
 import { useMap } from 'react-leaflet';
 
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import type { LeafletMouseEvent } from 'leaflet';
 
-
 import debounce from 'lodash.debounce';
-
-
 
 interface Cliente {
   idcliente: number;
@@ -40,13 +37,14 @@ interface FormData {
   idsubcategoria?: number | null;
   latitud?: number;
   longitud?: number;
-  codigop?:number;
+  codigop?: number;
 }
 
 interface Categoria {
   idcategoria: number;
   descripcion: string;
 }
+
 interface Subcategoria {
   idsubcategoria: number;
   descripcion: string;
@@ -76,11 +74,9 @@ const MapCenterUpdater = ({ center }: { center: { lat: number; lng: number } }) 
   return null;
 };
 
-
 const NuevoNegocio = () => {
- 
   const [formData, setFormData] = useState<FormData>({
-    Nombre_comercial:'',
+    Nombre_comercial: '',
     telefono: '',
     idcliente: null,
     idestado: null,
@@ -89,34 +85,17 @@ const NuevoNegocio = () => {
 
   const API_URL = 'https://sistemawebpro.com';
   const [clientes, setClientes] = useState<Cliente[]>([]);
-
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
-
   const [estados, setEstados] = useState<Estado[]>([]);
   const [municipios, setMunicipios] = useState<Municipio[]>([]);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 19.4326, lng: -99.1332 });
-
 
   const [clienteInput, setClienteInput] = useState<string>('');
   const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (formData.idcategoria) { 
-      axios.get(`${API_URL}/api/subcategorias/categoria/${formData.idcategoria}`)
-      .then(res => {
-        if (res.data.success && Array.isArray(res.data.data)) {
-          setSubcategorias(res.data.data);
-        } else {
-          console.error('Formato de subcategorías inválido', res.data);
-          setSubcategorias([]);
-        }
-      })
-      .catch(err => console.error('Error al obtener subcategorías:', err));
-    }
-  }, [formData.idcategoria]);
-
+  // Carga inicial de clientes y estados
   useEffect(() => {
     axios.get(`${API_URL}/api/clientes`)
       .then(res => setClientes(res.data))
@@ -127,14 +106,19 @@ const NuevoNegocio = () => {
       .catch(err => console.error('Error al obtener estados:', err));
   }, []);
 
+  // Carga de municipios al cambiar estado
   useEffect(() => {
     if (formData.idestado) {
       axios.get(`${API_URL}/api/ubicacion/municipios/${formData.idestado}`)
         .then(res => setMunicipios(res.data))
         .catch(err => console.error('Error al obtener municipios:', err));
+    } else {
+      setMunicipios([]);
+      setFormData(prev => ({ ...prev, idmunicipio: null }));
     }
   }, [formData.idestado]);
 
+  // Carga de categorías
   useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
       .then(res => {
@@ -147,57 +131,26 @@ const NuevoNegocio = () => {
       .catch(err => console.error('Error al obtener categorias:', err));
   }, []);
 
-const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  const id = parseInt(e.target.value);
-  const municipio = municipios.find(m => m.idmunicipio === id);
-
-  setFormData(prev => ({
-    ...prev,
-    idmunicipio: id,
-  }));
-
-  if (municipio && formData.idestado) {
-    const estadoNombre = estados.find(est => est.idestado === formData.idestado)?.estado;
-    if (estadoNombre) {
-      geocodeLocation(estadoNombre, municipio.municipio);
-    }
-  }
-};
-
-
-const geocodeLocation = async (estado: string, municipio: string) => {
-  try {
-    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
-      params: {
-        q: `${municipio}, ${estado}, México`,
-        format: 'json',
-        limit: 1,
-      },
-    });
-
-    if (response.data.length > 0) {
-      const { lat, lon } = response.data[0];
-      const latNum = parseFloat(lat);
-      const lonNum = parseFloat(lon);
-
-      setMapCenter({ lat: latNum, lng: lonNum });
-      setFormData(prev => ({ ...prev, latitud: latNum, longitud: lonNum }));
+  // Carga de subcategorías al cambiar categoría
+  useEffect(() => {
+    if (formData.idcategoria) {
+      axios.get(`${API_URL}/api/subcategorias/categoria/${formData.idcategoria}`)
+        .then(res => {
+          if (res.data.success && Array.isArray(res.data.data)) {
+            setSubcategorias(res.data.data);
+          } else {
+            console.error('Formato de subcategorías inválido', res.data);
+            setSubcategorias([]);
+          }
+        })
+        .catch(err => console.error('Error al obtener subcategorías:', err));
     } else {
-      console.warn('Ubicación no encontrada');
+      setSubcategorias([]);
+      setFormData(prev => ({ ...prev, idsubcategoria: null }));
     }
-  } catch (error) {
-    console.error('Error al geocodificar ubicación:', error);
-  }
-};
+  }, [formData.idcategoria]);
 
-
-
-  const handleClienteSelect = (cliente: Cliente) => {
-    setFormData(prev => ({ ...prev, idcliente: cliente.idcliente }));
-    setClienteInput(cliente.nombre);
-    setFilteredClientes([]);
-  };
-
+  // Búsqueda filtrada de clientes con debounce
   useEffect(() => {
     const debouncedSearch = debounce(() => {
       if (clienteInput.trim() === '') {
@@ -218,17 +171,63 @@ const geocodeLocation = async (estado: string, municipio: string) => {
     };
   }, [clienteInput, clientes]);
 
+  const handleClienteSelect = (cliente: Cliente) => {
+    setFormData(prev => ({ ...prev, idcliente: cliente.idcliente }));
+    setClienteInput(cliente.nombre);
+    setFilteredClientes([]);
+  };
+
+  const buscarUbicacion = async (query: string) => {
+    try {
+      const res = await axios.get(`https://nominatim.openstreetmap.org/search`, {
+        params: {
+          q: query,
+          format: 'json',
+          limit: 1,
+        }
+      });
+      return res.data;
+    } catch (err) {
+      console.error('Error al geocodificar:', err);
+      return null;
+    }
+  };
+
+  const handleMunicipioChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = parseInt(e.target.value);
+    const municipio = municipios.find(m => m.idmunicipio === id);
+
+    setFormData(prev => ({
+      ...prev,
+      idmunicipio: id,
+    }));
+
+    if (municipio && formData.idestado) {
+      const estadoNombre = estados.find(est => est.idestado === formData.idestado)?.estado;
+      if (estadoNombre) {
+        const query = `${municipio.municipio}, ${estadoNombre}, México`;
+        const data = await buscarUbicacion(query);
+        if (data && data.length > 0) {
+          const { lat, lon } = data[0];
+          const latNum = parseFloat(lat);
+          const lonNum = parseFloat(lon);
+          setMapCenter({ lat: latNum, lng: lonNum });
+          setFormData(prev => ({ ...prev, latitud: latNum, longitud: lonNum }));
+        } else {
+          console.warn('Ubicación no encontrada');
+        }
+      }
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => {
       const updatedData = { ...prev, [name]: name.startsWith('id') ? Number(value) : value };
-      console.log(updatedData.idcategoria);  // Verifica si el idcategoria cambia
       return updatedData;
     });
   };
 
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const {
@@ -243,7 +242,7 @@ const geocodeLocation = async (estado: string, municipio: string) => {
       longitud,
       codigop,
     } = formData;
-  
+
     // Validar campos obligatorios
     const missingFields = [];
     if (!Nombre_comercial) missingFields.push("Nombre del negocio");
@@ -252,12 +251,12 @@ const geocodeLocation = async (estado: string, municipio: string) => {
     if (!idestado) missingFields.push("Estado");
     if (!idmunicipio) missingFields.push("Municipio");
     if (!idcategoria) missingFields.push("Categoría");
-   
+
     if (missingFields.length > 0) {
       alert(`Por favor completa los siguientes campos: ${missingFields.join(", ")}`);
       return;
     }
-  
+
     setLoading(true);
     try {
       await axios.post(`${API_URL}/api/negocios`, {
@@ -272,9 +271,9 @@ const geocodeLocation = async (estado: string, municipio: string) => {
         longitud,
         codigop,
       });
-  
+
       alert('Negocio registrado correctamente.');
-  
+
       // Limpiar formulario
       setFormData({
         Nombre_comercial: '',
@@ -286,8 +285,9 @@ const geocodeLocation = async (estado: string, municipio: string) => {
         idsubcategoria: null,
         latitud: undefined,
         longitud: undefined,
+        codigop: undefined,
       });
-  
+
       setClienteInput('');
     } catch (err) {
       console.error('Error al registrar negocio:', err);
@@ -296,25 +296,35 @@ const geocodeLocation = async (estado: string, municipio: string) => {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="divprincipal">
       <div className='d-flex flexnegocion'>
         <div className='divnegocion'>
-
-            <form onSubmit={handleSubmit}>
-                 <h2>Nuevo negocio</h2>
+          <form onSubmit={handleSubmit}>
+            <h2>Nuevo negocio</h2>
             <div className="row">
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="clienteInput" className="form-label">Representante Legal</label>
-                <input type="text" className="form-control" id="clienteInput" value={clienteInput}
-                  onChange={(e) => {setClienteInput(e.target.value); setFormData(prev => ({ ...prev, idcliente: null }));}} required />
-                {filteredClientes.length > 0 &&  formData.idcliente === null &&(
+                <input
+                  type="text"
+                  className="form-control"
+                  id="clienteInput"
+                  value={clienteInput}
+                  onChange={(e) => { setClienteInput(e.target.value); setFormData(prev => ({ ...prev, idcliente: null })); }}
+                  required
+                />
+                {filteredClientes.length > 0 && formData.idcliente === null && (
                   <ul className="list-group position-absolute w-100" style={{ zIndex: 1000 }} role="listbox">
                     {filteredClientes.map(cliente => (
-                      <li key={cliente.idcliente} role="option" className="list-group-item list-group-item-action" onClick={() => handleClienteSelect(cliente)} style={{ cursor: 'pointer' }}>
+                      <li
+                        key={cliente.idcliente}
+                        role="option"
+                        className="list-group-item list-group-item-action"
+                        onClick={() => handleClienteSelect(cliente)}
+                        style={{ cursor: 'pointer' }}
+                      >
                         {cliente.nombre}
                       </li>
                     ))}
@@ -323,23 +333,43 @@ const geocodeLocation = async (estado: string, municipio: string) => {
               </div>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
-                <label htmlFor="nombre" className="form-label">Nombre del Negocio</label>
-                <input type="text" className="form-control" id="Nombre_comercial" name="Nombre_comercial" value={formData.Nombre_comercial} onChange={handleChange} required />
+                <label htmlFor="Nombre_comercial" className="form-label">Nombre del Negocio</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="Nombre_comercial"
+                  name="Nombre_comercial"
+                  value={formData.Nombre_comercial}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="telefono" className="form-label">Teléfono</label>
-                <input type="tel" className="form-control" id="telefono" name="telefono" value={formData.telefono} onChange={handleChange} required />
+                <input
+                  type="tel"
+                  className="form-control"
+                  id="telefono"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
-            </div>
-
-            <div className="row">
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="idestado" className="form-label">Estado</label>
-                <select className="form-select" id="idestado" name="idestado" value={formData.idestado ?? ''} onChange={handleChange} required>
+                <select
+                  className="form-select"
+                  id="idestado"
+                  name="idestado"
+                  value={formData.idestado ?? ''}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">Seleccione un estado</option>
-                  {estados.map(estado => (
+                  {estados.map((estado) => (
                     <option key={estado.idestado} value={estado.idestado}>
                       {estado.estado}
                     </option>
@@ -349,9 +379,17 @@ const geocodeLocation = async (estado: string, municipio: string) => {
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="idmunicipio" className="form-label">Municipio</label>
-                <select className="form-select" id="idmunicipio" name="idmunicipio" value={formData.idmunicipio ?? ''} onChange={handleMunicipioChange} required>
+                <select
+                  className="form-select"
+                  id="idmunicipio"
+                  name="idmunicipio"
+                  value={formData.idmunicipio ?? ''}
+                  onChange={handleMunicipioChange}
+                  required
+                  disabled={!formData.idestado}
+                >
                   <option value="">Seleccione un municipio</option>
-                  {municipios.map(municipio => (
+                  {municipios.map((municipio) => (
                     <option key={municipio.idmunicipio} value={municipio.idmunicipio}>
                       {municipio.municipio}
                     </option>
@@ -359,80 +397,87 @@ const geocodeLocation = async (estado: string, municipio: string) => {
                 </select>
               </div>
 
-              <div className="col-xl-2 col-md-6 col-sm-12 col-12 mb-3">
-                <label htmlFor="longitud" className="form-label">Longitud</label>
-                <input type="text" className="form-control" id="longitud" name="longitud" value={formData.longitud ?? ''} readOnly />
-              </div>
-
-              <div className="col-xl-2 col-md-6 col-sm-12 col-12 mb-3">
-                <label htmlFor="latitud" className="form-label">Latitud</label>
-                <input type="text" className="form-control" id="latitud" name="latitud" value={formData.latitud ?? ''} readOnly />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-xl-2 col-md-6 col-sm-12 col-12 mb-3">
-                <label htmlFor="codigop" className="form-label">Codigo Postal</label>
-                <input type="number" className="form-control" id="codigop" name="codigop" value={formData.codigop ?? ''}/>
-              </div>
-            </div>
-            <div className="row">
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="idcategoria" className="form-label">Categoría</label>
-                <select className="form-select"  id="idcategoria" name="idcategoria"onChange={handleChange}  value={formData.idcategoria ?? ''}  required >
+                <select
+                  className="form-select"
+                  id="idcategoria"
+                  name="idcategoria"
+                  value={formData.idcategoria ?? ''}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">Seleccione una categoría</option>
-                  {categorias.map((categoria) => (
+                  {categorias.map(categoria => (
                     <option key={categoria.idcategoria} value={categoria.idcategoria}>
                       {categoria.descripcion}
                     </option>
                   ))}
                 </select>
-            </div>
-            {subcategorias.length > 0 && (
+              </div>
+
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="idsubcategoria" className="form-label">Subcategoría</label>
-                <select  className="form-select"  id="idsubcategoria"  name="idsubcategoria" value={formData.idsubcategoria ?? ''} onChange={handleChange}  required={subcategorias.length > 0}>
+                <select
+                  className="form-select"
+                  id="idsubcategoria"
+                  name="idsubcategoria"
+                  value={formData.idsubcategoria ?? ''}
+                  onChange={handleChange}
+                  disabled={!formData.idcategoria}
+                >
                   <option value="">Seleccione una subcategoría</option>
-                  {subcategorias.map((sub) => (
+                  {subcategorias.map(sub => (
                     <option key={sub.idsubcategoria} value={sub.idsubcategoria}>
                       {sub.descripcion}
                     </option>
                   ))}
                 </select>
-              </div> )}
-            </div>
-            <div className="mb-3 mt-3">
-              <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-                {loading ? 'Guardando...' : 'Guardar'}
-              </button>
-            </div>
+              </div>
 
-           {formData.idestado && formData.idmunicipio && (
-            <div className="mb-3">
-                <label className="form-label">Ubicación aproximada</label>
+              <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
+                <label htmlFor="codigop" className="form-label">Código Postal</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="codigop"
+                  name="codigop"
+                  value={formData.codigop ?? ''}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="col-12 mb-3">
+                <label className="form-label">Ubicación en mapa</label>
                 <MapContainer
-                center={mapCenter}
-                zoom={13}
-                style={{ height: "1000px", width: "600px" }}
-              >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-
-
-                <MapCenterUpdater center={mapCenter} />
-                <MapClickHandler setFormData={setFormData} />
-                {formData.latitud !== undefined && formData.longitud !== undefined && (
-                  <Marker position={[formData.latitud, formData.longitud]} />
-                )}
-              </MapContainer>
+                  center={[mapCenter.lat, mapCenter.lng]}
+                  zoom={13}
+                  scrollWheelZoom={true}
+                  style={{ height: '300px', width: '100%' }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <MapClickHandler setFormData={setFormData} />
+                  <MapCenterUpdater center={mapCenter} />
+                  {formData.latitud && formData.longitud && (
+                    <Marker position={[formData.latitud, formData.longitud]} />
+                  )}
+                </MapContainer>
+              </div>
 
             </div>
-            )}
-            </form>
+
+            <button className="btn btn-primary" type="submit" disabled={loading}>
+              {loading ? 'Guardando...' : 'Guardar'}
+            </button>
+
+          </form>
         </div>
       </div>
     </div>
- );
+  );
 };
+
 export default NuevoNegocio;
