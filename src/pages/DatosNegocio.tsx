@@ -63,22 +63,18 @@ const DatosNegocio = () => {
   }, [editForm.id_categoria]); // Este useEffect se dispara cuando el id_categoria cambia
   
     //mostrar img
-    /*const fetchNegocio = async () => {
+    const fetchNegocio = async () => {
       try {
-        
-
-
-
-          const response = await axios.get(`${API_URL}/api/negocios/detalle-completo/${id}`);
-        //const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
+//const response = await axios.get(`${API_URL}/api/negocios/detalle-completo/${id}`);
+        const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
         //const response = await axios.get(`${API_URL}/api/negocios/${id}`);
         setNegocio(response.data);
         setEditForm(response.data);
       } catch (error) {
         console.error('Error al obtener el negocio:', error);
       }
-    }; */
-    const fetchNegocio = async () => {
+    }; 
+ /**   const fetchNegocio = async () => {
   try {
     
     const response = await axios.get(`${API_URL}/api/negocios/detalle-completo/${id}`);
@@ -89,7 +85,7 @@ const DatosNegocio = () => {
   } finally {
    
   }
-};
+}; */
 
     useEffect(() => {
       fetchNegocio();
@@ -196,6 +192,8 @@ console.log(negocio);
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
              <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}className="card-img-top rounded-4" alt="Negocio"/>
+            
+            
             </div>
             <div className="card-footer">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
@@ -233,8 +231,8 @@ console.log(negocio);
           <div className="card">
           <h2 className="card-title">Ubicacion</h2>
             <div className="card-body">
-            <p><strong>Estado:</strong> {negocio.Estado}</p>
-            <p><strong>Municipio:</strong> {negocio.Municipio}</p>
+            <p><strong>Estado:</strong> {negocio.estado}</p>
+            <p><strong>Municipio:</strong> {negocio.municipio}</p>
             </div>
             <div className="card-footer">
              <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
