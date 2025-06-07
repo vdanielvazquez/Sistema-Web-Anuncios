@@ -171,7 +171,7 @@ console.log(negocio);
         <h2 className="text-center mt-5">Detalles del Negocio</h2>
 
        <div className="col-12 col-sm-12 col-md-12 col-lg-12 ">
-          <div className="card">
+          <div className="card" style={{ height: '600px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
           <h2 className="card-title">Ubicacion</h2>
             <div className="card-body">
             <p><strong>Estado:</strong> {negocio.estado}</p>
@@ -186,7 +186,7 @@ console.log(negocio);
         </div>
       <div className="row">
         <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
-          <div className="card" style={{ height: '400px' }}>
+          <div className="card" style={{ height: '400px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
              <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}className="card-img-top rounded-4" alt="Negocio"/>            
@@ -199,7 +199,7 @@ console.log(negocio);
           </div>
         </div>
         <div className="col-12 col-sm-6 col-md-6 col-lg-8 ">
-          <div className="card" style={{ height: '400px' }}>
+          <div className="card" style={{ height: '400px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
           <h2 className="card-title">{negocio.nombre_comercial}</h2>
             <div className="card-body">
               <p><strong>Descripción:</strong> {negocio.descripcion}</p>
