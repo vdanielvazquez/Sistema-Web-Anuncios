@@ -142,23 +142,19 @@ const Clientes = () => {
       </div>
 
       <div className="divclientes mx-5">
-        <div className="d-flex justify-content-between align-items-end mb-3">
-          <div className="me-3" style={{ flexGrow: 1 }}>
+
+           
+
+        <div className="row mb-4 mt-4 px-3">
+          <div className="col-12 col-md-4 mb-3" style={{ flexGrow: 1 }}>
             <label htmlFor="busqueda" className="form-label fw-semibold">Buscar cliente por nombre, teléfono o correo</label>
             <div className="input-group">
-              <input
-                id="busqueda"
-                className="form-control"
-                type="search"
-                placeholder="Buscar"
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-              />
+              <input  id="busqueda"  className="form-control fs-5"  type="search"  placeholder="Buscar"  value={busqueda}  onChange={(e) => setBusqueda(e.target.value)} />
               <button className="btn btn-success" onClick={handleBuscar}>Buscar</button>
             </div>
           </div>
 
-          <button className="btn btn-success ms-2" onClick={() => setShowModalClienteN(true)}>
+          <button className="btn btn-success w-100 fs-5" onClick={() => setShowModalClienteN(true)}>
             Nuevo cliente
           </button>
         </div>
