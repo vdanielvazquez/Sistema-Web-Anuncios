@@ -186,7 +186,7 @@ console.log(negocio);
         </div>
       <div className="row">
         <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
-          <div className="card">
+          <div className="card" style={{ height: '400px' }}>
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
              <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}className="card-img-top rounded-4" alt="Negocio"/>            
@@ -199,7 +199,7 @@ console.log(negocio);
           </div>
         </div>
         <div className="col-12 col-sm-6 col-md-6 col-lg-8 ">
-          <div className="card">
+          <div className="card" style={{ height: '400px' }}>
           <h2 className="card-title">{negocio.nombre_comercial}</h2>
             <div className="card-body">
               <p><strong>Descripción:</strong> {negocio.descripcion}</p>
@@ -238,13 +238,7 @@ console.log(negocio);
     <div key={index} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
       <div className="card-galeria">
         <div className="card-body">
-         <img
-  src={`${API_URL}/uploads/${negocio.idnegocio}/${img}`}
-  alt={`Galería ${index + 1}`}
-  className="gallery-image rounded-4"
-  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-/>
- 
+         <img src={`${API_URL}/uploads/${negocio.idnegocio}/${img}`}  alt={`Galería ${index + 1}`}  className="gallery-image rounded-4"  style={{ width: '100%', height: '200px', objectFit: 'cover' }}/>
         </div>
         <div className="card-footer d-flex justify-content-between">
           <button className='btn btn-warning me-2'  onClick={() => { setImagenAEditar(filename!); setShowModalEditar(true);}}>Editar</button>
