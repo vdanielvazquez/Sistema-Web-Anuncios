@@ -196,7 +196,6 @@ const Clientes = () => {
                     </div>
                   </td>
                   <td>
-                    <button className="btn btn-warning mx-1">Editar</button>
                     <button className="btn btn-info mx-1" onClick={() => abrirDetalles(cliente.idcliente)}>Detalles</button>
                   </td>
                 </tr>
