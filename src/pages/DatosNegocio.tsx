@@ -186,10 +186,10 @@ console.log(negocio);
         </div>
       <div className="row">
         <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
-          <div className="card" style={{ height: '450px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
+          <div className="card" style={{ height: '350px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
-             <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}  className="card-img-top rounded-4" style={{ height: '400px', padding: '2px'}}  alt="Negocio"/>            
+             <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}  className="card-img-top rounded-4" style={{ width: '100%', height: '300px', objectFit: 'cover',margin: '15px' }}  alt="Negocio"/>            
             </div>
             <div className="card-footer">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
