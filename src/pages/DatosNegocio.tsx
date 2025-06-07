@@ -6,6 +6,11 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import noimagen from "../assets/no-img.avif";
 import { ModalPortada, ModalGaleria, ModalEditarImagen,ModalEditarInfoNegocio } from '../pages/ModalesDatosNegocio';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+
+
+
 const DatosNegocio = () => {
   const API_URL = 'https://sistemawebpro.com';
 
@@ -30,7 +35,17 @@ const DatosNegocio = () => {
   const [subcategorias, setSubcategorias] = useState([]);
   const [categorias, setCategorias] = useState<any[]>([]);
 
-  
+
+  // Corrige el icono del marcador por defecto en Leaflet + React (problema común)
+const icon = L.icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
   useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
@@ -146,6 +161,7 @@ const reemplazarImagen = async () => {
     alert('Error al reemplazar imagen');
   }
 };
+''
 
 
 //actualizar info
@@ -163,33 +179,44 @@ const reemplazarImagen = async () => {
   };
 
   if (!negocio) return <p>Cargando...</p>;
-console.log(negocio);
+
+const hasValidPosition = negocio.lat !== undefined && negocio.lat !== null
+  && negocio.lng !== undefined && negocio.lng !== null
+  && !isNaN(Number(negocio.lat)) && !isNaN(Number(negocio.lng));
+
+const position: [number, number] = hasValidPosition
+  ? [Number(negocio.lat), Number(negocio.lng)]
+  : [0, 0];
 
   return (
     <div className="divprincipal">
       <div className="container">
         <h2 className="text-center mt-5">Detalles del Negocio</h2>
 
-       <div className="col-12 col-sm-12 col-md-12 col-lg-12 ">
-          <div className="card" style={{ height: '600px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
-          <h2 className="card-title">Ubicacion</h2>
-            <div className="card-body">
-            <p><strong>Estado:</strong> {negocio.estado}</p>
-            <p><strong>Municipio:</strong> {negocio.municipio}</p>
-            </div>
-            <div className="card-footer">
-             <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
-                Editar Ubicacion
-              </button>
-             </div>
-          </div>
-        </div>
+        <div style={{ height: '400px', width: '100%', marginTop: '20px' }}>
+   hasValidPosition ? (
+    <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="&copy; OpenStreetMap contributors"
+      />
+      <Marker position={position} icon={icon}>
+        <Popup>
+          {negocio.nombre || 'Negocio'} <br /> {negocio.estado}, {negocio.municipio}
+        </Popup>
+      </Marker>
+    </MapContainer>
+  ) : (
+    <p>No hay coordenadas disponibles para mostrar el mapa</p>
+  )
+</div>
+
       <div className="row">
         <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
           <div className="card" style={{ height: '350px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
             <h2 className="card-title">Portada</h2>
             <div className="card-body">
-             <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}  className="card-img-top rounded-4" style={{ width: '100%', height: '300px', objectFit: 'cover',margin: '15px' }}  alt="Negocio"/>            
+               <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}  className="card-img-top rounded-4" style={{ width: '100%', height: '300px', objectFit: 'cover',margin: '15px' }}  alt="Negocio"/>            
             </div>
             <div className="card-footer">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
