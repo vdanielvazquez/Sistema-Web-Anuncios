@@ -215,49 +215,57 @@ const position: [number, number] = hasValidPosition
         </div>
 
 
-<div style={{ height: '400px', width: '100%', marginTop: '20px' }}>
-        {hasValidPosition ? (
-          <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution="&copy; OpenStreetMap contributors"
-            />
-            <Marker position={position} icon={icon}>
-              <Popup>
-                {negocio.nombre || 'Negocio'} <br /> {negocio.estado}, {negocio.municipio}
-              </Popup>
-            </Marker>
-          </MapContainer>
+
+
+        <div className="row">
+  {/* Información del negocio */}
+  <div className="col-12 col-md-6">
+    <div className="card" style={{ height: '100%', padding: '20px', margin: '15px', textAlign: 'center' }}>
+      <h2 className="card-title">{negocio.nombre_comercial}</h2>
+      <div className="card-body">
+        <p><strong>Descripción:</strong> {negocio.descripcion}</p>
+        {negocio.categoria || negocio.subcategoria ? (
+          <p>
+            <strong>Categoría:</strong> {negocio.categoria || 'Sin categoría'}<br />
+            <strong>Subcategoría:</strong> {negocio.subcategoria || 'Sin subcategoría'}
+          </p>
         ) : (
-          <p>No hay coordenadas disponibles para mostrar el mapa</p>
+          <p>No tiene categorías asociadas</p>
         )}
+        <p><strong>Teléfono:</strong> {negocio.telefono}</p>
+        <p><strong>Fecha de alta:</strong> {new Date(negocio.fecha_de_alta).toLocaleDateString()}</p>
+        <p><strong>Estado:</strong> {negocio.activo ? 'Activo' : 'Inactivo'}</p>
+      </div>
+      <div className="card-footer">
+        <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
+          Editar Información
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {/* Mapa */}
+  <div className="col-12 col-md-6">
+    <div style={{ height: '400px', width: '100%', margin: '15px 0' }}>
+      {hasValidPosition ? (
+        <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; OpenStreetMap contributors"
+          />
+          <Marker position={position} icon={icon}>
+            <Popup>
+              {negocio.nombre || 'Negocio'} <br /> {negocio.estado}, {negocio.municipio}
+            </Popup>
+          </Marker>
+        </MapContainer>
+      ) : (
+        <p>No hay coordenadas disponibles para mostrar el mapa</p>
+      )}
+    </div>
+  </div>
 </div>
 
-        <div className="col-12 col-sm-6 col-md-6 col-lg-8 ">
-          <div className="card" style={{ height: '350px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
-          <h2 className="card-title">{negocio.nombre_comercial}</h2>
-            <div className="card-body">
-              <p><strong>Descripción:</strong> {negocio.descripcion}</p>
-              {negocio.categoria || negocio.subcategoria ? (
-                <p>
-                    <strong>Categoría:</strong> {negocio.categoria || 'Sin categoría'} <br />
-                    <strong>Subcategoría:</strong> {negocio.subcategoria || 'Sin subcategoría'}
-                </p>
-                ) : (
-                <p>No tiene categorías asociadas</p>
-                )}
-
-              <p><strong>Telefono:</strong> {negocio.telefono}</p>
-              <p><strong>Fecha de alta:</strong> {new Date(negocio.fecha_de_alta).toLocaleDateString()}</p>
-              <p><strong>Estado:</strong> {negocio.activo ? 'Activo' : 'Inactivo'}</p>
-            </div>
-            <div className="card-footer">
-            <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
-                Editar Informacion
-              </button>
-            </div>
-          </div>
-        </div>
        
       </div>
       <div className="gallery">

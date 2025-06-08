@@ -152,14 +152,7 @@ const Clientes = () => {
                 Buscar cliente por nombre, teléfono o correo
               </label>
               <div className="input-group">
-                <input
-                  id="busqueda"
-                  className="form-control fs-5"
-                  type="search"
-                  placeholder="Buscar"
-                  value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
-                />
+                <input  id="busqueda"  className="form-control fs-5"  type="search"   placeholder="Buscar" value={busqueda}  style={{ maxWidth: '300px' }} onChange={(e) => setBusqueda(e.target.value)} />
                 <button className="btn btn-success" onClick={handleBuscar}>
                   Buscar
                 </button>

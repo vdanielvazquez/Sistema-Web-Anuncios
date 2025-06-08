@@ -214,24 +214,26 @@ const Ajustes: React.FC = () => {
                 ))}
               </tbody>
             </table>
-            <ReactPaginate
-            previousLabel={<button className="btn btn-outline-primary btn-sm">← Anterior</button>}
-            nextLabel={<button className="btn btn-outline-primary btn-sm">Siguiente →</button>}
-            breakLabel={<span className="px-4">...</span>}
-            pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
-            onPageChange={handlePageClickSubcategorias}
-            containerClassName={"pagination justify-content-center mt-3"}
-            pageClassName="page-item"
-            pageLinkClassName="page-link"
-            previousClassName="page-item"
-            previousLinkClassName=""
-            nextClassName="page-item"
-            nextLinkClassName=""
-            breakClassName="page-item"
-            breakLinkClassName="page-link"
-            activeClassName="active"
-            forcePage={currentPageSubcategorias}
-          />
+           <ReactPaginate
+              previousLabel="Anterior"
+              nextLabel="Siguiente"
+              breakLabel="..."
+              pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
+              onPageChange={handlePageClickSubcategorias}
+              containerClassName="pagination justify-content-center mt-3"
+              pageClassName="page-item"
+              pageLinkClassName="page-link"
+              previousClassName="page-item"
+              previousLinkClassName="page-link"
+              nextClassName="page-item"
+              nextLinkClassName="page-link"
+              breakClassName="page-item"
+              breakLinkClassName="page-link"
+              activeClassName="active"
+              disabledClassName="disabled"
+              forcePage={currentPageSubcategorias}
+            />
+
           </div>
 
           {/* Suscripciones */}

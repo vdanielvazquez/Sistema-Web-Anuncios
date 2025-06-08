@@ -106,6 +106,7 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   };
+console.log('Subcategorías disponibles:', subcategorias);
 
   return (
     <Modal show={show} onClose={onClose} title="Editar Información del Negocio">
