@@ -115,7 +115,7 @@ const Clientes = () => {
   const clientesPaginados = clientesParaMostrar.slice(indexPrimerCliente, indexUltimoCliente);
 
   return (
-    <div className="divprincipal">
+    <div className="divprincipal-clientes">
       <div className="div-custom">
         <h2 className="text-center mt-5">Listado de Clientes</h2>
 
