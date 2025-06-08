@@ -9,6 +9,9 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import type { LeafletMouseEvent } from 'leaflet';
 
 import debounce from 'lodash.debounce';
+import ubicacion from "../assets/ubicacion.png";
+import L from 'leaflet';
+
 
 interface Cliente {
   idcliente: number;
@@ -49,6 +52,12 @@ interface Subcategoria {
   idsubcategoria: number;
   descripcion: string;
 }
+const iconUbicacion = new L.Icon({
+  iconUrl: ubicacion,
+  iconSize: [32, 32], // tamaño del icono, ajusta si quieres
+  iconAnchor: [16, 32], // punto del icono que estará en la posición exacta (normalmente la punta)
+  popupAnchor: [0, -32], // si usas popup, ajusta dónde aparece
+});
 
 const MapClickHandler = ({ setFormData }: { setFormData: React.Dispatch<React.SetStateAction<FormData>> }) => {
   useMapEvents({
@@ -462,7 +471,7 @@ const NuevoNegocio = () => {
                   <MapClickHandler setFormData={setFormData} />
                   <MapCenterUpdater center={mapCenter} />
                   {formData.latitud && formData.longitud && (
-                    <Marker position={[formData.latitud, formData.longitud]} />
+                    <Marker position={[formData.latitud, formData.longitud]} icon={iconUbicacion}/>
                   )}
                 </MapContainer>
               </div>
