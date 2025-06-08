@@ -32,7 +32,6 @@ const Clientes = () => {
   const clientesPorPagina = 4;
   const navigate = useNavigate();
 
-  // Obtener clientes
   const fetchClientes = async () => {
     try {
       const response = await axios.get(`${API_URL}/clientes`);
@@ -47,7 +46,6 @@ const Clientes = () => {
     fetchClientes();
   }, []);
 
-  // Filtrar clientes por búsqueda
   const handleBuscar = () => {
     const texto = busqueda.toLowerCase().trim();
     if (texto === '') {
@@ -65,7 +63,6 @@ const Clientes = () => {
     setPaginaActual(1);
   };
 
-  // Crear cliente
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -83,7 +80,6 @@ const Clientes = () => {
     }
   };
 
-  // Cambiar estado activo/inactivo
   const handleToggleActivo = async (id: number, estadoActual: boolean) => {
     try {
       await axios.put(`${API_URL}/clientes/${id}/activo`, {
@@ -95,12 +91,10 @@ const Clientes = () => {
     }
   };
 
-  // Abrir detalles
   const abrirDetalles = (id: number) => {
     navigate(`/DatosCliente/${id}`);
   };
 
-  // Datos para tarjetas
   const totalClientes = clientes.length;
   const clientesActivos = clientes.filter(cliente => cliente.activo).length;
   const clientesInactivos = totalClientes - clientesActivos;
@@ -111,7 +105,6 @@ const Clientes = () => {
     { img: usuarioInactivo, title: clientesInactivos.toString(), description: "Clientes Inactivos" },
   ];
 
-  // Paginación
   const clientesParaMostrar = clientesFiltrados && clientesFiltrados.length > 0
     ? clientesFiltrados
     : clientes;
@@ -126,158 +119,169 @@ const Clientes = () => {
       <div className="div-custom">
         <h2 className="text-center mt-5">Listado de Clientes</h2>
 
-      <div className="container mt-4">
-        <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-3">
-          {cardsData.map((card, index) => (
-            <div className="col" key={index}>
-              <div className="card d-flex flex-row align-items-center p-3 mb-3">
-                <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
-                <div className="ms-3 text-center">
-                  <h5 className="card-title">{card.title}</h5>
-                  <p className="card-text">{card.description}</p>
+        {/* Tarjetas */}
+        <div className="container mt-4">
+          <div className="row row-cols-1 row-cols-md-3 g-4">
+            {cardsData.map((card, index) => (
+              <div className="col" key={index}>
+                <div className="card d-flex flex-row align-items-center p-3 shadow-sm">
+                  <img src={card.img} alt={card.title} width="80" />
+                  <div className="ms-3 text-center">
+                    <h5 className="mb-1">{card.title}</h5>
+                    <p className="mb-0">{card.description}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
- 
-      <div className="divclientes mx-5">
 
-           
-
-                <div className="row mb-4 mt-4 px-3 d-flex align-items-end flex-wrap gap-2">
-            {/* Input de búsqueda */}
-            <div className="col-md flex-grow-1">
-              <label htmlFor="busqueda" className="form-label fw-semibold">
+        {/* Barra de búsqueda y botón */}
+        <div className="container mt-4">
+          <div className="row gy-3 align-items-end">
+            <div className="col-md-6 col-lg-8">
+              <label className="form-label fw-semibold">
                 Buscar cliente por nombre, teléfono o correo
               </label>
               <div className="input-group">
-                <input  id="busqueda"  className="form-control fs-5"  type="search"   placeholder="Buscar" value={busqueda}  style={{ maxWidth: '300px' }} onChange={(e) => setBusqueda(e.target.value)} />
-                <button className="btn btn-success" onClick={handleBuscar}>
-                  Buscar
-                </button>
+                <input
+                  className="form-control fs-5"
+                  type="search"
+                  placeholder="Buscar"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+                <button className="btn btn-success" onClick={handleBuscar}>Buscar</button>
               </div>
             </div>
-
-            {/* Botón nuevo cliente */}
-            <div className="col-md-auto">
+            <div className="col-md-6 col-lg-4 text-end">
               <button className="btn btn-success fs-5 w-100" onClick={() => setShowModalClienteN(true)}>
                 Nuevo cliente
               </button>
             </div>
           </div>
+        </div>
 
+        {/* Tabla de clientes */}
+        <div className="container mt-4">
+          {loading ? (
+            <p>Cargando...</p>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-bordered table-striped">
+                <thead className="table-dark text-center">
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th>Fecha de Alta</th>
+                    <th>Número de Negocios</th>
+                    <th>Estado</th>
+                    <th>Activo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clientesPaginados.map((cliente) => (
+                    <tr key={cliente.idcliente} className="text-center align-middle">
+                      <td>{cliente.nombre}</td>
+                      <td>{cliente.telefono}</td>
+                      <td>{cliente.correo}</td>
+                      <td>{new Date(cliente.fecha_de_alta).toLocaleDateString('es-MX')}</td>
+                      <td>0</td>
+                      <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
+                      <td>
+                        <div className="form-check form-switch">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            checked={cliente.activo}
+                            onChange={() => handleToggleActivo(cliente.idcliente, cliente.activo)}
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <button className="btn btn-info mx-1" onClick={() => abrirDetalles(cliente.idcliente)}>
+                          Detalles
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-        {loading ? (
-          <p>Cargando...</p>
-        ) : (
-          <table className="table table-bordered table-striped">
-            <thead className="thead-dark text-center">
-              <tr>
-                <th>Cliente</th>
-                <th>Teléfono</th>
-                <th>Email</th>
-                <th>Fecha de Alta</th>
-                <th>Número de Negocios</th>
-                <th>Estado</th>
-                <th>Activo</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clientesPaginados.map((cliente) => (
-                <tr key={cliente.idcliente} className="text-center align-middle">
-                  <td>{cliente.nombre}</td>
-                  <td>{cliente.telefono}</td>
-                  <td>{cliente.correo}</td>
-                  <td>{new Date(cliente.fecha_de_alta).toLocaleDateString('es-MX')}</td>
-                  <td>0</td>
-                  <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
-                  <td>
-                    <div className="form-check form-switch">
-                      <input id={`switch-${cliente.idcliente}`} className="form-check-input" type="checkbox"
-                        checked={cliente.activo}
-                        onChange={() => handleToggleActivo(cliente.idcliente, cliente.activo)} />
-                    </div>
-                  </td>
-                  <td>
-                    <button className="btn btn-info mx-1" onClick={() => abrirDetalles(cliente.idcliente)}>Detalles</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        <nav>
-          <ul className="pagination justify-content-center">
-            <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => setPaginaActual(paginaActual - 1)}>Anterior</button>
-            </li>
-            {Array.from({ length: totalPaginas }, (_, i) => (
-              <li key={i} className={`page-item ${paginaActual === i + 1 ? 'active' : ''}`}>
-                <button className="page-link" onClick={() => setPaginaActual(i + 1)}>{i + 1}</button>
+          {/* Paginación */}
+          <nav>
+            <ul className="pagination justify-content-center">
+              <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setPaginaActual(paginaActual - 1)}>Anterior</button>
               </li>
-            ))}
-            <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => setPaginaActual(paginaActual + 1)}>Siguiente</button>
-            </li>
-          </ul>
-        </nav>
-      </div>
+              {Array.from({ length: totalPaginas }, (_, i) => (
+                <li key={i} className={`page-item ${paginaActual === i + 1 ? 'active' : ''}`}>
+                  <button className="page-link" onClick={() => setPaginaActual(i + 1)}>{i + 1}</button>
+                </li>
+              ))}
+              <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setPaginaActual(paginaActual + 1)}>Siguiente</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
 
-      {/* Modal */}
-      {showModalClienteN && (
-        <div className="modal show fade d-block" tabIndex={-1}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <form onSubmit={handleSubmit}>
-                <div className="modal-header">
-                  <h5 className="modal-title">Nuevo Cliente</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModalClienteN(false)} />
-                </div>
-                <div className="modal-body">
-                  <div className="mb-3">
-                    <label className="form-label">Nombre</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={nuevoCliente.nombre}
-                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })}
-                      required
-                    />
+        {/* Modal nuevo cliente */}
+        {showModalClienteN && (
+          <div className="modal show fade d-block" tabIndex={-1}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <form onSubmit={handleSubmit}>
+                  <div className="modal-header">
+                    <h5 className="modal-title">Nuevo Cliente</h5>
+                    <button type="button" className="btn-close" onClick={() => setShowModalClienteN(false)} />
                   </div>
-                  <div className="mb-3">
-                    <label className="form-label">Teléfono</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={nuevoCliente.telefono}
-                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, telefono: e.target.value })}
-                      required
-                    />
+                  <div className="modal-body">
+                    <div className="mb-3">
+                      <label className="form-label">Nombre</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={nuevoCliente.nombre}
+                        onChange={(e) => setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Teléfono</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={nuevoCliente.telefono}
+                        onChange={(e) => setNuevoCliente({ ...nuevoCliente, telefono: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Correo</label>
+                      <input
+                        type="email"
+                        className="form-control"
+                        value={nuevoCliente.correo}
+                        onChange={(e) => setNuevoCliente({ ...nuevoCliente, correo: e.target.value })}
+                        required
+                      />
+                    </div>
                   </div>
-                  <div className="mb-3">
-                    <label className="form-label">Correo</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      value={nuevoCliente.correo}
-                      onChange={(e) => setNuevoCliente({ ...nuevoCliente, correo: e.target.value })}
-                      required
-                    />
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" onClick={() => setShowModalClienteN(false)}>Cancelar</button>
+                    <button type="submit" className="btn btn-primary">Guardar Cliente</button>
                   </div>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowModalClienteN(false)}>Cancelar</button>
-                  <button type="submit" className="btn btn-primary">Guardar Cliente</button>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
       </div>
     </div>
   );
