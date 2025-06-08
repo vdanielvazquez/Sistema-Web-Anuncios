@@ -105,25 +105,40 @@ const DatosCliente = () => {
         </div>
 
         <h2 className="text-center mt-5">Negocios de {cliente.nombre}</h2>
-        <div className="row">
-            {negocios.length > 0 ? (
-            negocios.map((negocio) => (
-                <div key={negocio.idnegocio} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
-                <div className="card">
-                    <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}className="card-img-top rounded-4" alt="Negocio"/>
-            
-                    <div className="card-body">
-                    <p>Nombre Comercial<h3>{negocio.nombre_comercial}</h3></p>
-                    <p>Estado<h3>{negocio.activo  ? 'Activo' : 'Inactivo'}</h3></p>
-                    <Link to={`/DatosNegocio/${negocio.idnegocio}`} className="btn btn-primary">Ver más</Link>
-                    </div>
-                </div>
-                </div>
-            ))
-            ) : (
-            <p className="text-center">Este cliente aún no tiene negocios registrados.</p>
-            )}
+       <div className="row">
+  {negocios.length > 0 ? (
+    negocios.map((negocio) => (
+      <div key={negocio.idnegocio} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
+        <div className="card h-100 shadow-sm">
+          <div className="card-img-container" style={{ height: '200px', overflow: 'hidden' }}>
+            <img
+              src={
+                negocio.portada && negocio.portada.trim() !== ''
+                  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
+                  : noimagen
+              }
+              className="card-img-top rounded-0"
+              alt="Negocio"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
+          <div className="card-body text-center">
+            <p className="mb-1"><strong>Nombre Comercial</strong></p>
+            <h5 className="card-title">{negocio.nombre_comercial}</h5>
+            <p className="mb-1"><strong>Estado</strong></p>
+            <h6 className="text-muted">{negocio.activo ? 'Activo' : 'Inactivo'}</h6>
+            <Link to={`/DatosNegocio/${negocio.idnegocio}`} className="btn btn-primary mt-2">
+              Ver más
+            </Link>
+          </div>
         </div>
+      </div>
+    ))
+  ) : (
+    <p className="text-center">Este cliente aún no tiene negocios registrados.</p>
+  )}
+</div>
+
         </div>
 
         {showModalClienteEdit && (

@@ -213,21 +213,29 @@ const position: [number, number] = hasValidPosition
 
 
       <div className="row">
-        <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">
-          <div className="card" style={{ height: '350px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
-            <h2 className="card-title">Portada</h2>
-            <div className="card-body">
-               <img  src={negocio.portada && negocio.portada.trim() !== ''  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`: noimagen}  className="card-img-top rounded-4" style={{ width: '100%', height: '300px', objectFit: 'cover',margin: '15px' }}  alt="Negocio"/>            
-            </div>
-            <div className="card-footer">
-            <button className="btn btn-primary mb-3" onClick={() => setShowModalPortada(true)}>
+                <div className="card h-100 m-3 text-center">
+          <div className="card-header">
+            <h5 className="mb-0">Portada</h5>
+          </div>
+          <div className="card-body p-2">
+            <img
+              src={negocio.portada && negocio.portada.trim() !== '' 
+                ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
+                : noimagen}
+              className="img-fluid rounded-4"
+              style={{ height: '250px', objectFit: 'cover', width: '100%' }}
+              alt="Portada del negocio"
+            />
+          </div>
+          <div className="card-footer">
+            <button className="btn btn-primary" onClick={() => setShowModalPortada(true)}>
               Editar Portada
             </button>
-            </div>
           </div>
         </div>
+
         <div className="col-12 col-sm-6 col-md-6 col-lg-8 ">
-          <div className="card" style={{ height: '450px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
+          <div className="card" style={{ height: '350px', padding: '20px',  margin: '15px', textAlign: 'center'}}>
           <h2 className="card-title">{negocio.nombre_comercial}</h2>
             <div className="card-body">
               <p><strong>Descripción:</strong> {negocio.descripcion}</p>

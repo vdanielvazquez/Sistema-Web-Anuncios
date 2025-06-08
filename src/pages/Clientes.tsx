@@ -145,19 +145,35 @@ const Clientes = () => {
 
            
 
-        <div className="row mb-4 mt-4 px-3">
-          <div className="col-12 col-md-4 mb-3" style={{ flexGrow: 1 }}>
-            <label htmlFor="busqueda" className="form-label fw-semibold">Buscar cliente por nombre, teléfono o correo</label>
-            <div className="input-group">
-              <input  id="busqueda"  className="form-control fs-5"  type="search"  placeholder="Buscar"  value={busqueda}  onChange={(e) => setBusqueda(e.target.value)} />
-              <button className="btn btn-success" onClick={handleBuscar}>Buscar</button>
+                <div className="row mb-4 mt-4 px-3 d-flex align-items-end flex-wrap gap-2">
+            {/* Input de búsqueda */}
+            <div className="col-md flex-grow-1">
+              <label htmlFor="busqueda" className="form-label fw-semibold">
+                Buscar cliente por nombre, teléfono o correo
+              </label>
+              <div className="input-group">
+                <input
+                  id="busqueda"
+                  className="form-control fs-5"
+                  type="search"
+                  placeholder="Buscar"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+                <button className="btn btn-success" onClick={handleBuscar}>
+                  Buscar
+                </button>
+              </div>
+            </div>
+
+            {/* Botón nuevo cliente */}
+            <div className="col-md-auto">
+              <button className="btn btn-success fs-5 w-100" onClick={() => setShowModalClienteN(true)}>
+                Nuevo cliente
+              </button>
             </div>
           </div>
 
-          <button className="btn btn-success w-100 fs-5" onClick={() => setShowModalClienteN(true)}>
-            Nuevo cliente
-          </button>
-        </div>
 
         {loading ? (
           <p>Cargando...</p>

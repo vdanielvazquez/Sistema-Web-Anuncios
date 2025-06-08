@@ -4,9 +4,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import noimagen from "../assets/no-img.avif";
-import usuarioTotal from "../assets/usuario-total.png";
-import usuarioActivo from "../assets/usuario-activo.png";
-import usuarioInactivo from "../assets/usuario-inactivo.png";
+import negociototal from "../assets/negocios-total.png";
+import negocioactivo from "../assets/negocios-activo.png";
+import negocioinactivo from "../assets/negocios-inactivos.png";
 
 interface Negocio {
   idnegocio: number;
@@ -67,9 +67,9 @@ const Negocios = () => {
   const clientesInactivos = totalClientes - clientesActivos;
 
   const cardsData = [
-    { img: usuarioTotal, title: totalClientes.toString(), description: "Total de Negocios" },
-    { img: usuarioActivo, title: clientesActivos.toString(), description: "Negocios Activos" },
-    { img: usuarioInactivo, title: clientesInactivos.toString(), description: "Negocios Inactivos" },
+    { img: negociototal, title: totalClientes.toString(), description: "Total de Negocios" },
+    { img: negocioactivo, title: clientesActivos.toString(), description: "Negocios Activos" },
+    { img: negocioinactivo, title: clientesInactivos.toString(), description: "Negocios Inactivos" },
   ];
 
   const totalPaginas = Math.ceil(negociosFiltrados.length / negociosPorPagina);
@@ -109,14 +109,7 @@ const Negocios = () => {
         {/* Filtro de búsqueda */}
         <div className="row mb-4 mt-4 px-3">
           <div className="col-12 col-md-4 mb-3">
-            <input
-              className="form-control fs-5"
-              type="search"
-              placeholder="Buscar negocio por nombre"
-              aria-label="Buscar"
-              value={terminoBusqueda}
-              onChange={(e) => setTerminoBusqueda(e.target.value)}
-            />
+            <input  className="form-control fs-5"  type="search"  placeholder="Buscar negocio por nombre" aria-label="Buscar" value={terminoBusqueda} onChange={(e) => setTerminoBusqueda(e.target.value)} />
           </div>
           <div className="col-12 col-md-2 mb-3">
             <button className="btn btn-success w-100 fs-5" onClick={handleBuscar}>
