@@ -193,23 +193,24 @@ const position: [number, number] = hasValidPosition
       <div className="container">
         <h2 className="text-center mt-5">Detalles del Negocio</h2>
 
-        <div style={{ height: '400px', width: '100%', marginTop: '20px' }}>
-   hasValidPosition ? (
-    <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; OpenStreetMap contributors"
-      />
-      <Marker position={position} icon={icon}>
-        <Popup>
-          {negocio.nombre || 'Negocio'} <br /> {negocio.estado}, {negocio.municipio}
-        </Popup>
-      </Marker>
-    </MapContainer>
-  ) : (
-    <p>No hay coordenadas disponibles para mostrar el mapa</p>
-  )
+      <div style={{ height: '400px', width: '100%', marginTop: '20px' }}>
+        {hasValidPosition ? (
+          <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; OpenStreetMap contributors"
+            />
+            <Marker position={position} icon={icon}>
+              <Popup>
+                {negocio.nombre || 'Negocio'} <br /> {negocio.estado}, {negocio.municipio}
+              </Popup>
+            </Marker>
+          </MapContainer>
+        ) : (
+          <p>No hay coordenadas disponibles para mostrar el mapa</p>
+        )}
 </div>
+
 
       <div className="row">
         <div className="col-12 col-sm-6 col-md-6 col-lg-4 ">

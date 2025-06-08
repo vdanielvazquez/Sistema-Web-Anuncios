@@ -30,6 +30,10 @@ const DatosCliente = () => {
 
   const { id } = useParams();
   const [cliente, setCliente] = useState<Cliente | null>(null);
+  const [nombre, setNombre] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [correo, setCorreo] = useState('');
+
   const [negocios, setNegocios] = useState<Negocio[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,6 +43,9 @@ const DatosCliente = () => {
         // Obtener datos del cliente
         const clienteRes = await axios.get(`${API_URL}/api/clientes/${id}`);
         setCliente(clienteRes.data);
+        setNombre(clienteRes.data.nombre);
+        setTelefono(clienteRes.data.telefono);
+        setCorreo(clienteRes.data.correo);
 
         // Obtener negocios del cliente
         const negociosRes = await axios.get(`${API_URL}/api/negocios/negocios/${id}`);
@@ -57,6 +64,27 @@ const DatosCliente = () => {
 
   if (!cliente) return <p className="text-center">Cliente no encontrado.</p>;
 
+  const handleUpdateCliente = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    await axios.put(`${API_URL}/api/clientes/${id}`, {
+      nombre,
+      correo,
+      telefono
+    });
+
+    // Actualiza el estado del cliente
+    setCliente((prev) => prev ? { ...prev, nombre, correo, telefono } : null);
+
+    setShowModalClienteEdit(false);
+  } catch (error) {
+    console.error('Error al actualizar cliente:', error);
+    alert('Hubo un error al actualizar el cliente.');
+  }
+};
+
+
   // Mostrar la portada de los negocios
   return (
     <div className="divprincipal">
@@ -70,7 +98,7 @@ const DatosCliente = () => {
                 <p className="card-text"><strong>Teléfono: </strong> {cliente.telefono}</p>
                 <p className="card-text"><strong>Email: </strong> {cliente.correo}</p>
                 <p className="card-text"><strong>Estado: </strong> {cliente.activo  ? 'Activo' : 'Inactivo'}</p>
-                <a className="btn btn-primary">Editar</a>
+                <button className="btn btn-primary" onClick={() => setShowModalClienteEdit(true)}>Editar</button>
                 </div>
             </div>
             </div>
@@ -102,38 +130,41 @@ const DatosCliente = () => {
         <div className="modal show fade d-block" tabIndex={-1}>
           <div className="modal-dialog">
             <div className="modal-content">
-              <form >
+              <form onSubmit={handleUpdateCliente}>
                 <div className="modal-header">
-                  <h5 className="modal-title">Nuevo Cliente</h5>
+                  <h5 className="modal-title">Editar</h5>
                   <button type="button" className="btn-close" onClick={() => setShowModalClienteEdit(false)} />
                 </div>
                 <div className="modal-body">
                   <div className="mb-3">
                     <label className="form-label">Nombre</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      value={cliente.nombre}
-                      required
-                    />
+  type="text"
+  className="form-control"
+  value={nombre}
+  onChange={(e) => setNombre(e.target.value)}
+  required
+/>
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Teléfono</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      value={cliente.telefono}
-                      required
-                    />
+  type="text"
+  className="form-control"
+  value={telefono}
+  onChange={(e) => setTelefono(e.target.value)}
+  required
+/>
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Correo</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      value={cliente.correo}
-                      required
-                    />
+                   <input
+  type="email"
+  className="form-control"
+  value={correo}
+  onChange={(e) => setCorreo(e.target.value)}
+  required
+/>
                   </div>
                 </div>
                 <div className="modal-footer">
