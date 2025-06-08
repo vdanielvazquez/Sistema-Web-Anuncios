@@ -1,9 +1,14 @@
-.divprincipal{
-  width: 100vw;
-  height: 100vh;
+.divprincipal {
+  min-height: 100vh;
+  width: 100%;
   padding: 10px;
-  background-color: lightblue;
+
+  background-image: url('../assets/fondo.jpg'); /* Reemplaza esta ruta */ 
+  background-size: cover; /* Hace que la imagen cubra toda el área */
+  background-position: center; /* Centra la imagen */
+  background-repeat: no-repeat; /* Evita que se repita */
 }
+
 .titulo{
    text-align: center;
    margin-top: 65px;
