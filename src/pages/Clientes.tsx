@@ -29,7 +29,7 @@ const Clientes = () => {
     correo: '',
   });
 
-  const clientesPorPagina = 10;
+  const clientesPorPagina = 4;
   const navigate = useNavigate();
 
   // Obtener clientes
@@ -123,7 +123,8 @@ const Clientes = () => {
 
   return (
     <div className="divprincipal">
-      <h2 className="text-center mt-5">Listado de Clientes</h2>
+      <div className="div-custom">
+        <h2 className="text-center mt-5">Listado de Clientes</h2>
 
       <div className="container mt-4">
         <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-3">
@@ -140,7 +141,7 @@ const Clientes = () => {
           ))}
         </div>
       </div>
-
+ 
       <div className="divclientes mx-5">
 
            
@@ -277,6 +278,7 @@ const Clientes = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };

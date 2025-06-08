@@ -190,7 +190,6 @@ const Ajustes: React.FC = () => {
             activeClassName="active"
             forcePage={currentPageCategorias}
           />
-
           </div>
 
           {/* Subcategorías */}
