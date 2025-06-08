@@ -31,8 +31,8 @@ const DatosNegocio = () => {
   const [showModalGaleria, setShowModalGaleria] = useState(false);
   const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
 
-
-  const [subcategorias, setSubcategorias] = useState([]);
+  
+const [subcategorias, setSubcategorias] = useState([]);
   const [categorias, setCategorias] = useState<any[]>([]);
 
 
@@ -62,7 +62,7 @@ const icon = L.icon({
         .then(response => {
           console.log("Código de estado:", response.status);
           console.log("Subcategorías:", response.data);
-          setSubcategorias(response.data); // Establecer las subcategorías
+          setSubcategorias(response.data.data);// Establecer las subcategorías
         })
         .catch(error => {
           if (error.response) {

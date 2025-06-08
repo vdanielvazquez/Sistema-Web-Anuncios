@@ -169,7 +169,7 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
             disabled={!editForm.id_categoria}
           >
             <option value="">Seleccione una subcategoría</option>
-            {subcategorias.map(sub => (
+             {subcategorias && Array.isArray(subcategorias) && subcategorias.map((sub) => (
               <option key={sub.id_subcategoria} value={sub.id_subcategoria}>
                 {sub.nombre}
               </option>
