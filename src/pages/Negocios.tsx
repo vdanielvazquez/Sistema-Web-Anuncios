@@ -134,45 +134,81 @@ useEffect(() => {
           Nuevo negocio
         </button>
 
-        {/* Filtro de búsqueda */}
-        <div className="row mb-4 mt-4 px-3">
-          <div className="col-12 col-md-4 mb-3">
-            <input  className="form-control fs-5"  type="search"  placeholder="Buscar negocio por nombre" aria-label="Buscar" value={terminoBusqueda} onChange={(e) => setTerminoBusqueda(e.target.value)} />
-          </div>
-          <div className="col-12 col-md-2 mb-3">
-            <button className="btn btn-success w-100 fs-5" onClick={handleBuscar}>
-              Buscar
-            </button>
-          </div>
-        </div>
-{/* chec de negocios */}
-
-              <div className="col-12 col-md-6 mb-3 d-flex align-items-center gap-3">
-  <div className="form-check">
+        <div className="row mb-4 mt-4 px-3 align-items-end">
+  {/* Input de búsqueda */}
+  <div className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
     <input
-      className="form-check-input"
-      type="checkbox"
-      id="checkActivos"
-      checked={mostrarActivos}
-      onChange={() => setMostrarActivos(!mostrarActivos)}
+      className="form-control fs-5"
+      type="search"
+      placeholder="Buscar negocio por nombre"
+      aria-label="Buscar"
+      value={terminoBusqueda}
+      onChange={(e) => setTerminoBusqueda(e.target.value)}
     />
-    <label className="form-check-label" htmlFor="checkActivos">
-      Mostrar solo activos
-    </label>
   </div>
-  <div className="form-check">
-    <input
-      className="form-check-input"
-      type="checkbox"
-      id="checkInactivos"
-      checked={mostrarInactivos}
-      onChange={() => setMostrarInactivos(!mostrarInactivos)}
-    />
-    <label className="form-check-label" htmlFor="checkInactivos">
-      Mostrar solo inactivos
-    </label>
+
+  {/* Botón buscar */}
+  <div className="col-xl-2 col-md-3 col-sm-6 col-12 mb-3">
+    <button className="btn btn-success w-100 fs-5" onClick={handleBuscar}>
+      Buscar
+    </button>
+  </div>
+
+  {/* Select Estado */}
+  <div className="col-xl-2 col-md-3 col-sm-6 col-12 mb-3">
+    <select
+      className="form-select"
+      id="idestado"
+      name="idestado"
+      required
+    >
+      <option value="">Estado</option>
+      {/* Aquí agregarás dinámicamente los estados */}
+    </select>
+  </div>
+
+  {/* Select Municipio */}
+  <div className="col-xl-2 col-md-3 col-sm-6 col-12 mb-3">
+    <select
+      className="form-select"
+      id="idmunicipio"
+      name="idmunicipio"
+    >
+      <option value="">Municipio</option>
+      {/* Aquí agregarás dinámicamente los municipios */}
+    </select>
+  </div>
+
+  {/* Checkboxes de estado */}
+  <div className="col-xl-3 col-md-6 col-12 mb-3 d-flex gap-3 flex-wrap">
+    <div className="form-check">
+      <input
+        className="form-check-input"
+        type="checkbox"
+        id="checkActivos"
+        checked={mostrarActivos}
+        onChange={() => setMostrarActivos(!mostrarActivos)}
+      />
+      <label className="form-check-label" htmlFor="checkActivos">
+        Solo activos
+      </label>
+    </div>
+    <div className="form-check">
+      <input
+        className="form-check-input"
+        type="checkbox"
+        id="checkInactivos"
+        checked={mostrarInactivos}
+        onChange={() => setMostrarInactivos(!mostrarInactivos)}
+      />
+      <label className="form-check-label" htmlFor="checkInactivos">
+        Solo inactivos
+      </label>
+    </div>
   </div>
 </div>
+
+       
 
 
 
