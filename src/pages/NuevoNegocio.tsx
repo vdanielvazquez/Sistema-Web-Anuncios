@@ -49,7 +49,7 @@ interface Categoria {
 }
 
 interface Subcategoria {
-  idsubcategoria: number;
+  subcategoria: number;
   descripcion: string;
 }
 const iconUbicacion = new L.Icon({
@@ -437,7 +437,7 @@ const NuevoNegocio = () => {
                 >
                   <option value="">Seleccione una subcategoría</option>
                   {subcategorias.map(sub => (
-                    <option key={sub.idsubcategoria} value={sub.idsubcategoria}>
+                    <option key={sub.subcategoria} value={sub.subcategoria}>
                       {sub.descripcion}
                     </option>
                   ))}

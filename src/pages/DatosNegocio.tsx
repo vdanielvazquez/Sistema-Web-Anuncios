@@ -68,14 +68,10 @@ const icon = L.icon({
     if (editForm.id_categoria) {
       axios.get(`${API_URL}/api/subcategorias/categoria/${editForm.id_categoria}`)
         .then(response => {
-          console.log("Código de estado:", response.status);
-          console.log("Subcategorías:", response.data);
           setSubcategorias(response.data.data);// Establecer las subcategorías
         })
         .catch(error => {
           if (error.response) {
-            console.error("Respuesta de error:", error.response.data);
-            console.error("Código de estado:", error.response.status);
           } else if (error.request) {
             console.error("No se recibió respuesta:", error.request);
           } else {
@@ -98,9 +94,6 @@ const icon = L.icon({
     useEffect(() => {
       fetchNegocio();
     }, [id]);
-    
- 
-//
 
 
 //subir portada
@@ -244,7 +237,7 @@ const position: [number, number] = hasValidPosition
         <div className="row">
   {/* Información del negocio */}
   <div className="col-12 col-md-6">
-    <div className="card" style={{ height: '100%', padding: '20px', margin: '15px', textAlign: 'center' }}>
+    <div className="card" style={{ height: '80%', padding: '20px', margin: '15px', textAlign: 'center' }}>
       <h2 className="card-title">{negocio.nombre_comercial}</h2>
       <div className="card-body">
         <p><strong>Descripción:</strong> {negocio.descripcion}</p>
