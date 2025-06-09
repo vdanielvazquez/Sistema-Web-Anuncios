@@ -32,8 +32,15 @@ const DatosNegocio = () => {
   const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
 
   
-const [subcategorias, setSubcategorias] = useState([]);
+  const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
   const [categorias, setCategorias] = useState<any[]>([]);
+  
+  interface Subcategoria {
+  idsubcategoria: number;
+  descripcion: string;
+}
+
+
 
 
   // Corrige el icono del marcador por defecto en Leaflet + React (problema común)
@@ -179,6 +186,20 @@ const reemplazarImagen = async () => {
   };
 
   if (!negocio) return <p>Cargando...</p>;
+  useEffect(() => {
+  if (negocio?.categoria) {
+    axios.get(`${API_URL}/api/subcategorias/categoria/${negocio.categoria}`)
+      .then(response => {
+        setSubcategorias(response.data.data);
+      })
+      .catch(error => {
+        console.error("Error al cargar subcategorías:", error);
+      });
+  }
+}, [negocio]);
+
+
+
 
 const hasValidPosition = negocio.lat !== undefined && negocio.lat !== null
   && negocio.lng !== undefined && negocio.lng !== null
@@ -225,10 +246,16 @@ const position: [number, number] = hasValidPosition
       <div className="card-body">
         <p><strong>Descripción:</strong> {negocio.descripcion}</p>
         {negocio.categoria || negocio.subcategoria ? (
-          <p>
-            <strong>Categoría:</strong> {negocio.categoria || 'Sin categoría'}<br />
-            <strong>Subcategoría:</strong> {negocio.subcategoria || 'Sin subcategoría'}
-          </p>
+         <p>
+  <strong>Categoría:</strong> {
+    categorias.find(c => c.idcategoria === negocio.categoria)?.descripcion || 'Sin categoría'
+  }<br />
+  <strong>Subcategoría:</strong> {
+    subcategorias.find(s => s.idsubcategoria === negocio.subcategoria)?.descripcion || 'Sin subcategoría'
+  }
+</p>
+
+
         ) : (
           <p>No tiene categorías asociadas</p>
         )}
