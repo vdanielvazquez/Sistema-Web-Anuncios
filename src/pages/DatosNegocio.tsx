@@ -34,7 +34,8 @@ const DatosNegocio = () => {
   
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
   const [categorias, setCategorias] = useState<any[]>([]);
-  
+
+
   interface Subcategoria {
   idsubcategoria: number;
   descripcion: string;
@@ -185,7 +186,8 @@ const reemplazarImagen = async () => {
     }
   };
 
-  if (!negocio) return <p>Cargando...</p>;
+
+//
   useEffect(() => {
   if (negocio?.categoria) {
     axios.get(`${API_URL}/api/subcategorias/categoria/${negocio.categoria}`)
@@ -199,7 +201,8 @@ const reemplazarImagen = async () => {
 }, [negocio]);
 
 
-
+//
+  if (!negocio) return <p>Cargando...</p>;
 
 const hasValidPosition = negocio.lat !== undefined && negocio.lat !== null
   && negocio.lng !== undefined && negocio.lng !== null
@@ -246,15 +249,14 @@ const position: [number, number] = hasValidPosition
       <div className="card-body">
         <p><strong>Descripción:</strong> {negocio.descripcion}</p>
         {negocio.categoria || negocio.subcategoria ? (
-         <p>
-  <strong>Categoría:</strong> {
-    categorias.find(c => c.idcategoria === negocio.categoria)?.descripcion || 'Sin categoría'
-  }<br />
-  <strong>Subcategoría:</strong> {
-    subcategorias.find(s => s.idsubcategoria === negocio.subcategoria)?.descripcion || 'Sin subcategoría'
-  }
-</p>
-
+          <p>
+            <strong>Categoría:</strong> {
+              categorias.find(c => c.idcategoria === negocio.categoria)?.descripcion || 'Sin categoría'
+            }<br />
+            <strong>Subcategoría:</strong> {
+              subcategorias.find(s => s.idsubcategoria === negocio.subcategoria)?.descripcion || 'Sin subcategoría'
+            }
+          </p>
 
         ) : (
           <p>No tiene categorías asociadas</p>
