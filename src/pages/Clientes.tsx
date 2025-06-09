@@ -115,13 +115,13 @@ const Clientes = () => {
   const clientesPaginados = clientesParaMostrar.slice(indexPrimerCliente, indexUltimoCliente);
 
   return (
-    <div className="divprincipal-clientes">
+    <div className="divprincipal">
       <div className="div-custom">
         <h2 className="text-center mt-5">Listado de Clientes</h2>
 
         {/* Tarjetas */}
         <div className="container mt-4">
-          <div className="row row-cols-1 row-cols-md-3 g-4">
+          <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-3">
             {cardsData.map((card, index) => (
               <div className="col" key={index}>
                 <div className="card d-flex flex-row align-items-center p-3 shadow-sm">
@@ -167,7 +167,7 @@ const Clientes = () => {
           {loading ? (
             <p>Cargando...</p>
           ) : (
-            <div className="table-responsive">
+            <div className="table-responsive table-container-xl">
               <table className="table table-bordered table-striped">
                 <thead className="table-dark text-center">
                   <tr>
