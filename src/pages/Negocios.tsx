@@ -66,6 +66,9 @@ const Negocios = () => {
   const clientesActivos = negocios.filter(n => n.activo).length;
   const clientesInactivos = totalClientes - clientesActivos;
 
+  const [mostrarActivos, setMostrarActivos] = useState(false);
+  const [mostrarInactivos, setMostrarInactivos] = useState(false);
+
   const cardsData = [
     { img: negociototal, title: totalClientes.toString(), description: "Total de Negocios" },
     { img: negocioactivo, title: clientesActivos.toString(), description: "Negocios Activos" },
@@ -76,6 +79,31 @@ const Negocios = () => {
   const indexInicio = (paginaActual - 1) * negociosPorPagina;
   const indexFin = indexInicio + negociosPorPagina;
   const negociosPaginados = negociosFiltrados.slice(indexInicio, indexFin);
+
+
+
+useEffect(() => {
+  let filtrados = negocios;
+
+  if (terminoBusqueda.trim() !== '') {
+    filtrados = filtrados.filter(n =>
+      n.nombre_comercial.toLowerCase().includes(terminoBusqueda.toLowerCase())
+    );
+  }
+
+  if (mostrarActivos && !mostrarInactivos) {
+    filtrados = filtrados.filter(n => n.activo);
+  } else if (!mostrarActivos && mostrarInactivos) {
+    filtrados = filtrados.filter(n => !n.activo);
+  } else if (mostrarActivos && mostrarInactivos) {
+    // Mostrar ambos, no se aplica ningún filtro adicional
+  }
+
+  setNegociosFiltrados(filtrados);
+  setPaginaActual(1); // Reiniciar a la primera página
+}, [terminoBusqueda, mostrarActivos, mostrarInactivos, negocios]);
+
+
 
   return (
     <div className="divprincipal">
@@ -117,6 +145,36 @@ const Negocios = () => {
             </button>
           </div>
         </div>
+{/* chec de negocios */}
+
+              <div className="col-12 col-md-6 mb-3 d-flex align-items-center gap-3">
+  <div className="form-check">
+    <input
+      className="form-check-input"
+      type="checkbox"
+      id="checkActivos"
+      checked={mostrarActivos}
+      onChange={() => setMostrarActivos(!mostrarActivos)}
+    />
+    <label className="form-check-label" htmlFor="checkActivos">
+      Mostrar solo activos
+    </label>
+  </div>
+  <div className="form-check">
+    <input
+      className="form-check-input"
+      type="checkbox"
+      id="checkInactivos"
+      checked={mostrarInactivos}
+      onChange={() => setMostrarInactivos(!mostrarInactivos)}
+    />
+    <label className="form-check-label" htmlFor="checkInactivos">
+      Mostrar solo inactivos
+    </label>
+  </div>
+</div>
+
+
 
         {/* Tarjetas de negocios */}
         <div className="row">
