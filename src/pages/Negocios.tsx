@@ -183,26 +183,32 @@ useEffect(() => {
   {/* Checkboxes de estado */}
  <div className="col-xl-3 col-md-6 col-12 mb-3 d-flex gap-4 flex-wrap align-items-center">
   <div className="form-check form-switch fs-5">
-    <input
-      className="form-check-input"
-      type="checkbox"
-      id="checkActivos"
-      checked={mostrarActivos}
-      onChange={() => setMostrarActivos(!mostrarActivos)}
-    />
+     <input
+    className="form-check-input"
+    type="checkbox"
+    id="checkActivos"
+    checked={mostrarActivos}
+    onChange={() => {
+      setMostrarActivos(true);
+      setMostrarInactivos(false);
+    }}
+  />
     <label className="form-check-label" htmlFor="checkActivos">
       Solo activos
     </label>
   </div>
 
   <div className="form-check form-switch fs-5">
-    <input
-      className="form-check-input"
-      type="checkbox"
-      id="checkInactivos"
-      checked={mostrarInactivos}
-      onChange={() => setMostrarInactivos(!mostrarInactivos)}
-    />
+   <input
+    className="form-check-input"
+    type="checkbox"
+    id="checkInactivos"
+    checked={mostrarInactivos}
+    onChange={() => {
+      setMostrarActivos(false);
+      setMostrarInactivos(true);
+    }}
+  />
     <label className="form-check-label" htmlFor="checkInactivos">
       Solo inactivos
     </label>
