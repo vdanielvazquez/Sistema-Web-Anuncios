@@ -186,50 +186,19 @@ const NuevoNegocio = () => {
     setFilteredClientes([]);
   };
 
-  const buscarUbicacion = async (query: string) => {
-    try {
-      const res = await axios.get(`https://nominatim.openstreetmap.org/search`, {
-        params: {
-          q: query,
-          format: 'json',
-          limit: 1,
-        }
-      });
-      return res.data;
-    } catch (err) {
-      console.error('Error al geocodificar:', err);
-      return null;
-    }
-  };
+ const buscarUbicacion = async (query: string) => {
+  try {
+    const res = await axios.get(`${API_URL}/api/geocodificar`, {
+      params: { q: query }
+    });
+    return res.data;
+  } catch (err) {
+    console.error('Error al geocodificar:', err);
+    return null;
+  }
+};
 
- /**
-  *  const handleMunicipioChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = parseInt(e.target.value);
-    const municipio = municipios.find(m => m.idmunicipio === id);
 
-    setFormData(prev => ({
-      ...prev,
-      idmunicipio: id,
-    }));
-
-    if (municipio && formData.idestado) {
-      const estadoNombre = estados.find(est => est.idestado === formData.idestado)?.estado;
-      if (estadoNombre) {
-        const query = `${municipio.municipio}, ${estadoNombre}, México`;
-        const data = await buscarUbicacion(query);
-        if (data && data.length > 0) {
-          const { lat, lon } = data[0];
-          const latNum = parseFloat(lat);
-          const lonNum = parseFloat(lon);
-          setMapCenter({ lat: latNum, lng: lonNum });
-          setFormData(prev => ({ ...prev, latitud: latNum, longitud: lonNum }));
-        } else {
-          console.warn('Ubicación no encontrada');
-        }
-      }
-    }
-  };
-  */
 const handleMunicipioChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
   const id = parseInt(e.target.value);
   const municipio = municipios.find(m => m.idmunicipio === id);
