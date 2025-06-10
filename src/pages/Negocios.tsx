@@ -71,8 +71,8 @@ interface Estado {
 }
 
 interface Municipio {
-  id: string;
-  nombre: string;
+ idmunicipio: number;
+  municipio: string;
 }
 
 
@@ -179,9 +179,11 @@ if (formData.idestado) {
   filtrados = filtrados.filter(n => n.Estado === nombreEstado);
 }
 
-  if (formData.idmunicipio) {
-    filtrados = filtrados.filter(n => n.Municipio === municipios.find(m => m.id === formData.idmunicipio)?.nombre);
-  }
+if (formData.idmunicipio) {
+  const nombreMunicipio = municipios.find(m => m.idmunicipio.toString() === formData.idmunicipio)?.municipio;
+  filtrados = filtrados.filter(n => n.Municipio === nombreMunicipio);
+}
+
 
   setNegociosFiltrados(filtrados);
   setPaginaActual(1);
@@ -273,22 +275,27 @@ if (formData.idestado) {
 
   {/* Select Municipio */}
   <div className="col-xl-2 col-md-3 col-sm-6 col-12 mb-3">
-   <select
+ <select
   className="form-select"
   id="idmunicipio"
   name="idmunicipio"
   value={formData.idmunicipio}
-  onChange={(e) => setFormData(prev => ({
-    ...prev,
-    idmunicipio: e.target.value
-  }))}
+  onChange={(e) =>
+    setFormData((prev) => ({
+      ...prev,
+      idmunicipio: e.target.value,
+    }))
+  }
   disabled={!formData.idestado}
 >
   <option value="">Municipio</option>
-  {municipios.map((mun: any) => (
-    <option key={mun.id} value={mun.id}>{mun.nombre}</option>
+  {municipios.map((mun) => (
+    <option key={mun.idmunicipio} value={mun.idmunicipio}>
+      {mun.municipio}
+    </option>
   ))}
 </select>
+
   </div>
 
   {/* Checkboxes de estado */}
