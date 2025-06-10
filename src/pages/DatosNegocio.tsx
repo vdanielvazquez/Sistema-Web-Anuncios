@@ -268,27 +268,42 @@ const position: [number, number] = hasValidPosition
   </div>
 
   {/* Mapa */}
-  <div className="col-12 col-md-6">
-    <div style={{ height: '350px', width: '100%', margin: '15px 0' }}>
-      {hasValidPosition ? (
-              <MapContainer center={position} zoom={30} style={{ height: '100%', width: '100%' }}>
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&copy; OpenStreetMap contributors"
-          />
-          <Marker position={position} icon={icon}>
-            <Popup>
-              {negocio.nombre_comercial || 'Negocio'}<br />
-              {negocio.estado}, {negocio.municipio}
-            </Popup>
-          </Marker>
-        </MapContainer>
+<div className="col-12 col-md-6">
+  <div style={{ height: '350px', width: '100%', margin: '15px 0' }}>
+    {hasValidPosition ? (
+      <MapContainer center={position} zoom={30} style={{ height: '100%', width: '100%' }}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors"
+        />
+        <Marker position={position} icon={icon}>
+          <Popup>
+            {negocio.nombre_comercial || 'Negocio'}<br />
+            {negocio.estado}, {negocio.municipio}
+          </Popup>
+        </Marker>
+      </MapContainer>
+    ) : (
+      <p>No hay coordenadas disponibles para mostrar el mapa</p>
+    )}
+  </div>
 
-      ) : (
-        <p>No hay coordenadas disponibles para mostrar el mapa</p>
-      )}
+  {/* Etiquetas debajo del mapa */}
+  <div className="text-center mt-3">
+    <div className="row">
+      <div className="col-md-4">
+        <strong>Estado:</strong> {negocio.estado}
+      </div>
+      <div className="col-md-4">
+        <strong>Municipio:</strong> {negocio.municipio}
+      </div>
+      <div className="col-md-4">
+        <strong>Código Postal:</strong> {negocio.codigo_postal}
+      </div>
     </div>
   </div>
+</div>
+
 </div>
 
        
