@@ -202,7 +202,8 @@ const NuevoNegocio = () => {
     }
   };
 
-  const handleMunicipioChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+ /**
+  *  const handleMunicipioChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = parseInt(e.target.value);
     const municipio = municipios.find(m => m.idmunicipio === id);
 
@@ -228,6 +229,33 @@ const NuevoNegocio = () => {
       }
     }
   };
+  */
+const handleMunicipioChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const id = parseInt(e.target.value);
+  const municipio = municipios.find(m => m.idmunicipio === id);
+
+  setFormData(prev => ({
+    ...prev,
+    idmunicipio: id,
+  }));
+
+  if (municipio && formData.idestado) {
+    const estadoNombre = estados.find(est => est.idestado === formData.idestado)?.estado;
+    if (estadoNombre) {
+      const query = `${municipio.municipio}, ${estadoNombre}, México`;
+      const data = await buscarUbicacion(query); // <--- aquí sigue igual
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        const latNum = parseFloat(lat);
+        const lonNum = parseFloat(lon);
+        setMapCenter({ lat: latNum, lng: lonNum });
+        setFormData(prev => ({ ...prev, latitud: latNum, longitud: lonNum }));
+      } else {
+        console.warn('Ubicación no encontrada');
+      }
+    }
+  }
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
