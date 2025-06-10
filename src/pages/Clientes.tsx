@@ -36,41 +36,33 @@ const Clientes = () => {
   const clientesPorPagina = 4;
   const navigate = useNavigate();
 
-  const fetchClientes = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/clientes`);
-      setClientes(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error al obtener clientes:', error);
-    }
-  };
-
+  // Carga clientes y negocios juntos para evitar llamadas dobles
   useEffect(() => {
-    fetchClientes();
-  }, []);
-  //
-  const fetchNegocios = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/negocios`);
-      setNegocios(response.data);
-    } catch (error) {
-      console.error('Error al obtener negocios:', error);
-    }
-  };
+    const cargarDatos = async () => {
+      setLoading(true);
+      try {
+        const [clientesRes, negociosRes] = await Promise.all([
+          axios.get(`${API_URL}/clientes`),
+          axios.get(`${API_URL}/negocios`)
+        ]);
+        setClientes(clientesRes.data);
+        setNegocios(negociosRes.data);
+      } catch (error) {
+        console.error('Error al cargar datos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  useEffect(() => {
-    Promise.all([fetchClientes(), fetchNegocios()])
-      .then(() => setLoading(false));
+    cargarDatos();
   }, []);
-  //
- // Contar negocios por cliente
+
+  // Contar negocios por cliente
   const negociosPorCliente = negocios.reduce<Record<number, number>>((acc, negocio) => {
     acc[negocio.idcliente] = (acc[negocio.idcliente] || 0) + 1;
     return acc;
   }, {});
 
-  //
   const handleBuscar = () => {
     const texto = busqueda.toLowerCase().trim();
     if (texto === '') {
@@ -96,7 +88,13 @@ const Clientes = () => {
       });
 
       if (response.data) {
-        await fetchClientes();
+        // Recargar datos para reflejar nuevo cliente y negocios
+        const [clientesRes, negociosRes] = await Promise.all([
+          axios.get(`${API_URL}/clientes`),
+          axios.get(`${API_URL}/negocios`)
+        ]);
+        setClientes(clientesRes.data);
+        setNegocios(negociosRes.data);
         setShowModalClienteN(false);
         setNuevoCliente({ nombre: '', telefono: '', correo: '' });
       }
@@ -110,7 +108,13 @@ const Clientes = () => {
       await axios.put(`${API_URL}/clientes/${id}/activo`, {
         activo: !estadoActual,
       });
-      fetchClientes();
+      // Recargar datos para reflejar cambio de estado
+      const [clientesRes, negociosRes] = await Promise.all([
+        axios.get(`${API_URL}/clientes`),
+        axios.get(`${API_URL}/negocios`)
+      ]);
+      setClientes(clientesRes.data);
+      setNegocios(negociosRes.data);
     } catch (error) {
       console.error('Error al actualizar estado del cliente:', error);
     }
@@ -213,7 +217,7 @@ const Clientes = () => {
                       <td>{cliente.telefono}</td>
                       <td>{cliente.correo}</td>
                       <td>{new Date(cliente.fecha_de_alta).toLocaleDateString('es-MX')}</td>
-                       <td>{negociosPorCliente[cliente.idcliente] || 0}</td>
+                      <td>{negociosPorCliente[cliente.idcliente] || 0}</td>
                       <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
                       <td>
                         <div className="form-check form-switch">
