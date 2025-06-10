@@ -16,7 +16,9 @@ const DatosNegocio = () => {
 
 
   const { id } = useParams();
-  const [negocio, setNegocio] = useState<any>(null);
+  //const [negocio, setNegocio] = useState<any>(null);
+  const [negocio, setNegocio] = useState<Negocio | null>(null);
+
   const [editForm, setEditForm] = useState<any>({});
 
   const [portada, setPortada] = useState<File | null>(null);
@@ -41,9 +43,6 @@ const DatosNegocio = () => {
   descripcion: string;
 }
 
-
-
-
   // Corrige el icono del marcador por defecto en Leaflet + React (problema común)
 const icon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
@@ -54,7 +53,28 @@ const icon = L.icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 });
+////
+interface Negocio {
+  idnegocio: number;
+  nombre_comercial?: string;
+  descripcion?: string;
+  categoria?: number;
+  subcategoria?: number;
+  telefono?: string;
+  fecha_de_alta?: string;
+  activo?: boolean;
+  portada?: string;
+  imagenes?: string[];
+  latitud?: number | string;
+  longitud?: number | string;
+  estado?: string;
+  municipio?: string;
+  codigop?: string;
+  // añade las demás propiedades que tenga tu objeto negocio
+}
 
+
+////
   useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
       .then(res => {
@@ -93,9 +113,28 @@ const icon = L.icon({
     }; 
     useEffect(() => {
       fetchNegocio();
+       fetchUbicacion(); 
     }, [id]);
 
+//
 
+const fetchUbicacion = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/negocioubi/${id}`);
+    const ubicacion = response.data;
+    setNegocio(prev => ({ ...prev, ...ubicacion })); // Actualiza el estado del negocio con ubicación
+  } catch (error) {
+    console.error('Error al obtener ubicación del negocio:', error);
+  }
+};
+
+useEffect(() => {
+  if (id) {
+    fetchUbicacion();
+  }
+}, [id]);
+
+//
 //subir portada
 const subirPortada = async () => {
   if (!id || !portada) return;
@@ -193,7 +232,7 @@ const reemplazarImagen = async () => {
   }
 }, [negocio]);
 
-
+//
 //
   if (!negocio) return <p>Cargando...</p>;
 //
@@ -256,7 +295,9 @@ const position: [number, number] = hasValidPosition
           <p>No tiene categorías asociadas</p>
         )}
         <p><strong>Teléfono:</strong> {negocio.telefono}</p>
-        <p><strong>Fecha de alta:</strong> {new Date(negocio.fecha_de_alta).toLocaleDateString()}</p>
+        <p>
+  <strong>Fecha de alta:</strong> {negocio.fecha_de_alta ? new Date(negocio.fecha_de_alta).toLocaleDateString() : 'No disponible'}
+</p>
         <p><strong>Estado:</strong> {negocio.activo ? 'Activo' : 'Inactivo'}</p>
       </div>
       <div className="card-footer">
@@ -268,42 +309,41 @@ const position: [number, number] = hasValidPosition
   </div>
 
   {/* Mapa */}
-<div className="col-12 col-md-6">
-  <div style={{ height: '350px', width: '100%', margin: '15px 0' }}>
-    {hasValidPosition ? (
-      <MapContainer center={position} zoom={30} style={{ height: '100%', width: '100%' }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; OpenStreetMap contributors"
-        />
-        <Marker position={position} icon={icon}>
-          <Popup>
-            {negocio.nombre_comercial || 'Negocio'}<br />
-            {negocio.estado}, {negocio.municipio}
-          </Popup>
-        </Marker>
-      </MapContainer>
-    ) : (
-      <p>No hay coordenadas disponibles para mostrar el mapa</p>
-    )}
-  </div>
+        <div className="col-12 col-md-6">
+          <div style={{ height: '350px', width: '100%', margin: '15px 0' }}>
+            {hasValidPosition ? (
+              <MapContainer center={position} zoom={30} style={{ height: '100%', width: '100%' }}>
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; OpenStreetMap contributors"
+                />
+                <Marker position={position} icon={icon}>
+                  <Popup>
+                    {negocio.nombre_comercial || 'Negocio'}<br />
+                    {negocio.estado}, {negocio.municipio}
+                  </Popup>
+                </Marker>
+              </MapContainer>
+            ) : (
+              <p>No hay coordenadas disponibles para mostrar el mapa</p>
+            )}
+          </div>
 
-  {/* Etiquetas debajo del mapa */}
-  <div className="text-center mt-3">
-    <div className="row">
-      <div className="col-md-4">
-        <strong>Estado:</strong> {negocio.estado}
-      </div>
-      <div className="col-md-4">
-        <strong>Municipio:</strong> {negocio.municipio}
-      </div>
-      <div className="col-md-4">
-        <strong>Código Postal:</strong> {negocio.codigo_postal}
-      </div>
-    </div>
-  </div>
-</div>
-
+          {/* Etiquetas debajo del mapa */}
+          <div className="text-center mt-3">
+            <div className="row">
+              <div className="col-md-4">
+               <p><strong>Estado:</strong> {negocio.estado}</p>
+              </div>
+              <div className="col-md-4">
+                <p><strong>Municipio:</strong> {negocio.municipio}</p>
+              </div>
+              <div className="col-md-4">
+                <p><strong>Código Postal:</strong> {negocio.codigop}</p>
+              </div>
+            </div>
+          </div>
+        </div>
 </div>
 
        
