@@ -103,7 +103,7 @@ const NuevoNegocio = () => {
   const [clienteInput, setClienteInput] = useState<string>('');
   const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  
+
  const buscarUbicacion = async (query: string) => {
   try {
     const res = await axios.get(`${API_URL}/api/negocios/geocodificar`, {
@@ -214,13 +214,12 @@ const handleMunicipioChange = async (e: React.ChangeEvent<HTMLSelectElement>) =>
     if (estadoNombre) {
       const query = `${municipio.municipio}, ${estadoNombre}, México`;
       const data = await buscarUbicacion(query); // <--- aquí sigue igual
-      if (data && data.length > 0) {
-        const { lat, lon } = data[0];
-        const latNum = parseFloat(lat);
-        const lonNum = parseFloat(lon);
+     if (data && data.lat && data.lon) {
+        const latNum = parseFloat(data.lat);
+        const lonNum = parseFloat(data.lon);
         setMapCenter({ lat: latNum, lng: lonNum });
         setFormData(prev => ({ ...prev, latitud: latNum, longitud: lonNum }));
-      } else {
+      }  else {
         console.warn('Ubicación no encontrada');
       }
     }
