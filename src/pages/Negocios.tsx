@@ -17,8 +17,10 @@ interface Negocio {
   activo: boolean;
   portada: string;
   imagenes: string[];
-  Estado: string;
-  Municipio: string;
+  //Estado: string;
+  //Municipio: string;
+  idestado: number;     
+  idmunicipio: number;
   id_categoria: number;
   id_subcategoria: number;
   categoria?: string;
@@ -160,6 +162,7 @@ useEffect(() => {
 useEffect(() => {
   let filtrados = negocios;
 
+  // Si hay texto para búsqueda por nombre
   if (terminoBusqueda.trim() !== '') {
     filtrados = filtrados.filter(n =>
       n.nombre_comercial.toLowerCase().includes(terminoBusqueda.toLowerCase())
@@ -167,23 +170,21 @@ useEffect(() => {
   }
 
   if (!mostrarTodos) {
-  if (mostrarActivos) {
-    filtrados = filtrados.filter(n => n.activo);
-  } else if (mostrarInactivos) {
-    filtrados = filtrados.filter(n => !n.activo);
+    if (mostrarActivos) {
+      filtrados = filtrados.filter(n => n.activo);
+    } else if (mostrarInactivos) {
+      filtrados = filtrados.filter(n => !n.activo);
+    }
   }
-}
 
-if (formData.idestado) {
-  const nombreEstado = estados.find(e => e.idestado.toString() === formData.idestado)?.estado;
-  filtrados = filtrados.filter(n => n.Estado === nombreEstado);
-}
+  if (formData.idestado) {
+    // Aquí comparamos el idestado numérico con formData.idestado convertido a número
+    filtrados = filtrados.filter(n => n.idestado === Number(formData.idestado));
+  }
 
-if (formData.idmunicipio) {
-  const nombreMunicipio = municipios.find(m => m.idmunicipio.toString() === formData.idmunicipio)?.municipio;
-  filtrados = filtrados.filter(n => n.Municipio === nombreMunicipio);
-}
-
+  if (formData.idmunicipio) {
+    filtrados = filtrados.filter(n => n.idmunicipio === Number(formData.idmunicipio));
+  }
 
   setNegociosFiltrados(filtrados);
   setPaginaActual(1);
@@ -193,10 +194,9 @@ if (formData.idmunicipio) {
   mostrarInactivos,
   mostrarTodos,
   formData,
-  estados,
-  municipios,
   negocios,
 ]);
+
 
 
   return (
