@@ -118,7 +118,7 @@ useEffect(() => {
                   <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
                   <div className="ms-3 text-center">
                     <h5 className="card-title">{card.title}</h5>
-                    <p className="card-text">{card.description}</p>
+                    <p className="card-text"></p>
                   </div>
                 </div>
               </div>
