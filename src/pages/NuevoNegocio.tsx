@@ -251,14 +251,32 @@ useEffect(() => {
 }, [formData.codigop]);
 
 ///
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+ /** const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => {
       const updatedData = { ...prev, [name]: name.startsWith('id') ? Number(value) : value };
       return updatedData;
     });
-  };
+  }; */
+//
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const { name, value } = e.target;
+  setFormData(prev => {
+    let newValue: any = value;
+    if (value === '') {
+      newValue = null;
+    } else if (
+      name.startsWith('id') ||
+      name === 'subcategoria' ||
+      name === 'codigop'
+    ) {
+      newValue = Number(value);
+    }
+    return { ...prev, [name]: newValue };
+  });
+};
 
+//
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const {
