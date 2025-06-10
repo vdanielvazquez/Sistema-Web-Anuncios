@@ -71,7 +71,7 @@ const Negocios = () => {
 
   const cardsData = [
     { img: negociototal, title: totalClientes.toString(), description: "Total de Negocios" },
-    { img: negocioactivo, title: clientesActivos.toString(), description: "Negocios Activos" },
+    { img: negocioactivo, title: "clientesActivos.toString()", description: "Negocios Activos" },
     { img: negocioinactivo, title: clientesInactivos.toString(), description: "Negocios Inactivos" },
   ];
 
@@ -118,7 +118,7 @@ useEffect(() => {
                   <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
                   <div className="ms-3 text-center">
                     <h5 className="card-title">{card.title}</h5>
-                    <p className="card-text"></p>
+                    <p className="card-text">{card.description}</p>
                   </div>
                 </div>
               </div>
