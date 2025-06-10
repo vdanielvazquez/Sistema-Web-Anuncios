@@ -71,7 +71,7 @@ const Negocios = () => {
 
   const cardsData = [
     { img: negociototal, title: totalNegocios.toString(), description: "Total de Negocios" },
-    { img: negocioactivo, title: negocioactivo.toString(), description: "Negocios Activos" },
+    { img: negocioactivo, title: negociosActivos.toString(), description: "Negocios Activos" },
     { img: negocioinactivo, title: negociosInactivos.toString(), description: "Negocios Inactivos" },
   ];
 
