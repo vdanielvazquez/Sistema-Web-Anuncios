@@ -16,8 +16,7 @@ const DatosNegocio = () => {
 
 
   const { id } = useParams();
-  //const [negocio, setNegocio] = useState<any>(null);
-  const [negocio, setNegocio] = useState<Negocio | null>(null);
+  const [negocio, setNegocio] = useState<any>(null);
 
   const [editForm, setEditForm] = useState<any>({});
 
@@ -54,24 +53,6 @@ const icon = L.icon({
   shadowSize: [41, 41]
 });
 ////
-interface Negocio {
-  idnegocio: number;
-  nombre_comercial?: string;
-  descripcion?: string;
-  categoria?: number;
-  subcategoria?: number;
-  telefono?: string;
-  fecha_de_alta?: string;
-  activo?: boolean;
-  portada?: string;
-  imagenes?: string[];
-  latitud?: number | string;
-  longitud?: number | string;
-  estado?: string;
-  municipio?: string;
-  codigop?: string;
-  // añade las demás propiedades que tenga tu objeto negocio
-}
 
 
 ////
@@ -113,28 +94,11 @@ interface Negocio {
     }; 
     useEffect(() => {
       fetchNegocio();
-       fetchUbicacion(); 
     }, [id]);
 
 //
 
-const fetchUbicacion = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/api/negocioubi/${id}`);
-    const ubicacion = response.data;
-    setNegocio(prev => ({ ...prev, ...ubicacion })); // Actualiza el estado del negocio con ubicación
-  } catch (error) {
-    console.error('Error al obtener ubicación del negocio:', error);
-  }
-};
 
-useEffect(() => {
-  if (id) {
-    fetchUbicacion();
-  }
-}, [id]);
-
-//
 //subir portada
 const subirPortada = async () => {
   if (!id || !portada) return;
