@@ -218,7 +218,8 @@ const Clientes = () => {
                       <td>{cliente.correo}</td>
                       <td>{new Date(cliente.fecha_de_alta).toLocaleDateString('es-MX')}</td>
                       <td>{negociosPorCliente[cliente.idcliente] || 0}</td>
-                      <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
+                      <td  className={cliente.activo ? 'text-success' : 'text-danger'}>
+                        {cliente.activo ? 'Activo' : 'Inactivo'}</td>
                       <td>
                         <div className="form-check form-switch">
                           <input

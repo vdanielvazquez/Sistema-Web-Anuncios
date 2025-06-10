@@ -262,7 +262,7 @@ const position: [number, number] = hasValidPosition
         <p>
   <strong>Fecha de alta:</strong> {negocio.fecha_de_alta ? new Date(negocio.fecha_de_alta).toLocaleDateString() : 'No disponible'}
 </p>
-        <p><strong>Estado:</strong> {negocio.activo ? 'Activo' : 'Inactivo'}</p>
+        <p><strong  className={negocio.activo ? 'text-success' : 'text-danger'}>Estado:</strong> {negocio.activo ? 'Activo' : 'Inactivo'}</p>
       </div>
       <div className="card-footer">
         <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
