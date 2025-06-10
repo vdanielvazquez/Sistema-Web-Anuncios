@@ -66,8 +66,8 @@ useEffect(() => {
 
 //
 interface Estado {
-  id: string;
-  nombre: string;
+  idestado: number;
+  estado: string;
 }
 
 interface Municipio {
@@ -174,10 +174,10 @@ useEffect(() => {
   }
 }
 
-
-  if (formData.idestado) {
-    filtrados = filtrados.filter(n => n.Estado === estados.find(e => e.id === formData.idestado)?.nombre);
-  }
+if (formData.idestado) {
+  const nombreEstado = estados.find(e => e.idestado.toString() === formData.idestado)?.estado;
+  filtrados = filtrados.filter(n => n.Estado === nombreEstado);
+}
 
   if (formData.idmunicipio) {
     filtrados = filtrados.filter(n => n.Municipio === municipios.find(m => m.id === formData.idmunicipio)?.nombre);
@@ -253,17 +253,22 @@ useEffect(() => {
   id="idestado"
   name="idestado"
   value={formData.idestado}
-  onChange={(e) => setFormData(prev => ({
-    ...prev,
-    idestado: e.target.value,
-    idmunicipio: '', // Reiniciar municipio
-  }))}
+  onChange={(e) =>
+    setFormData((prev) => ({
+      ...prev,
+      idestado: e.target.value,
+      idmunicipio: '', // reinicia municipio
+    }))
+  }
 >
   <option value="">Estado</option>
-  {estados.map((estado: any) => (
-    <option key={estado.id} value={estado.id}>{estado.nombre}</option>
+  {estados.map((estado) => (
+    <option key={estado.idestado} value={estado.idestado}>
+      {estado.estado}
+    </option>
   ))}
 </select>
+
   </div>
 
   {/* Select Municipio */}
@@ -342,11 +347,6 @@ useEffect(() => {
 </div>
 
 </div>
-
-       
-
-
-
         {/* Tarjetas de negocios */}
         <div className="row">
           {negociosPaginados.map(negocio => (
