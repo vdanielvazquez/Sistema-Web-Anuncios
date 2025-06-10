@@ -83,6 +83,7 @@ const MapCenterUpdater = ({ center }: { center: { lat: number; lng: number } }) 
   return null;
 };
 
+
 const NuevoNegocio = () => {
   const [formData, setFormData] = useState<FormData>({
     Nombre_comercial: '',
@@ -251,30 +252,16 @@ useEffect(() => {
 }, [formData.codigop]);
 
 ///
- /** const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => {
       const updatedData = { ...prev, [name]: name.startsWith('id') ? Number(value) : value };
       return updatedData;
     });
-  }; */
-//
-const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-  const { name, value } = e.target;
-  setFormData(prev => {
-    let newValue: any = value;
-    if (value === '') {
-      newValue = null;
-    } else if (
-      name.startsWith('id') ||
-      name === 'subcategoria' ||
-      name === 'codigop'
-    ) {
-      newValue = Number(value);
-    }
-    return { ...prev, [name]: newValue };
-  });
-};
+  };
+
+
 
 //
   const handleSubmit = async (e: React.FormEvent) => {
@@ -356,25 +343,11 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="clienteInput" className="form-label">Representante Legal</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="clienteInput"
-                  value={clienteInput}
-                  onChange={(e) => { setClienteInput(e.target.value); setFormData(prev => ({ ...prev, idcliente: null })); }}
-                  required
-                />
+                <input  type="text"  className="form-control"  id="clienteInput"  value={clienteInput}  onChange={(e) => { setClienteInput(e.target.value); setFormData(prev => ({ ...prev, idcliente: null })); }} required />
                 {filteredClientes.length > 0 && formData.idcliente === null && (
                   <ul className="list-group position-absolute w-100" style={{ zIndex: 1000 }} role="listbox">
                     {filteredClientes.map(cliente => (
-                      <li
-                        key={cliente.idcliente}
-                        role="option"
-                        className="list-group-item list-group-item-action"
-                        onClick={() => handleClienteSelect(cliente)}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {cliente.nombre}
+                      <li key={cliente.idcliente} role="option"  className="list-group-item list-group-item-action"  onClick={() => handleClienteSelect(cliente)}  style={{ cursor: 'pointer' }}  >  {cliente.nombre}
                       </li>
                     ))}
                   </ul>
