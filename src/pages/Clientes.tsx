@@ -13,11 +13,15 @@ interface Cliente {
   fecha_de_alta: string;
   activo: boolean;
 }
-
+interface Negocio {
+  idnegocio: number;
+  idcliente: number;
+}
 const API_URL = 'https://sistemawebpro.com/api';
 
 const Clientes = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [negocios, setNegocios] = useState<Negocio[]>([]);
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState('');
   const [clientesFiltrados, setClientesFiltrados] = useState<Cliente[] | null>(null);
@@ -45,7 +49,28 @@ const Clientes = () => {
   useEffect(() => {
     fetchClientes();
   }, []);
+  //
+  const fetchNegocios = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/negocios`);
+      setNegocios(response.data);
+    } catch (error) {
+      console.error('Error al obtener negocios:', error);
+    }
+  };
 
+  useEffect(() => {
+    Promise.all([fetchClientes(), fetchNegocios()])
+      .then(() => setLoading(false));
+  }, []);
+  //
+ // Contar negocios por cliente
+  const negociosPorCliente = negocios.reduce<Record<number, number>>((acc, negocio) => {
+    acc[negocio.idcliente] = (acc[negocio.idcliente] || 0) + 1;
+    return acc;
+  }, {});
+
+  //
   const handleBuscar = () => {
     const texto = busqueda.toLowerCase().trim();
     if (texto === '') {
@@ -188,7 +213,7 @@ const Clientes = () => {
                       <td>{cliente.telefono}</td>
                       <td>{cliente.correo}</td>
                       <td>{new Date(cliente.fecha_de_alta).toLocaleDateString('es-MX')}</td>
-                      <td>0</td>
+                       <td>{negociosPorCliente[cliente.idcliente] || 0}</td>
                       <td>{cliente.activo ? 'Activo' : 'Inactivo'}</td>
                       <td>
                         <div className="form-check form-switch">
