@@ -196,14 +196,15 @@ const reemplazarImagen = async () => {
 
 //
   if (!negocio) return <p>Cargando...</p>;
-
-const hasValidPosition = negocio.lat !== undefined && negocio.lat !== null
-  && negocio.lng !== undefined && negocio.lng !== null
-  && !isNaN(Number(negocio.lat)) && !isNaN(Number(negocio.lng));
+//
+const hasValidPosition = negocio.latitud !== undefined && negocio.latitud !== null &&
+                         negocio.longitud !== undefined && negocio.longitud !== null &&
+                         !isNaN(Number(negocio.latitud)) && !isNaN(Number(negocio.longitud));
 
 const position: [number, number] = hasValidPosition
-  ? [Number(negocio.lat), Number(negocio.lng)]
+  ? [Number(negocio.latitud), Number(negocio.longitud)]
   : [0, 0];
+//mapa
 
   return (
     <div className="divprincipal">
@@ -270,17 +271,19 @@ const position: [number, number] = hasValidPosition
   <div className="col-12 col-md-6">
     <div style={{ height: '400px', width: '100%', margin: '15px 0' }}>
       {hasValidPosition ? (
-        <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
+              <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; OpenStreetMap contributors"
           />
           <Marker position={position} icon={icon}>
             <Popup>
-              {negocio.nombre || 'Negocio'} <br /> {negocio.estado}, {negocio.municipio}
+              {negocio.nombre_comercial || 'Negocio'}<br />
+              {negocio.estado}, {negocio.municipio}
             </Popup>
           </Marker>
         </MapContainer>
+
       ) : (
         <p>No hay coordenadas disponibles para mostrar el mapa</p>
       )}

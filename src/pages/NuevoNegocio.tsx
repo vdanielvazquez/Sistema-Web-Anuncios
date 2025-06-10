@@ -37,7 +37,7 @@ interface FormData {
   idestado: number | null;
   idmunicipio: number | null;
   idcategoria?: number | null;
-  idsubcategoria?: number | null;
+  subcategoria?: number | null;
   latitud?: number;
   longitud?: number;
   codigop?: number;
@@ -49,7 +49,7 @@ interface Categoria {
 }
 
 interface Subcategoria {
-  idsubcategoria: number;
+  subcategoria: number;
   descripcion: string;
 }
 const iconUbicacion = new L.Icon({
@@ -155,7 +155,7 @@ const NuevoNegocio = () => {
         .catch(err => console.error('Error al obtener subcategorías:', err));
     } else {
       setSubcategorias([]);
-      setFormData(prev => ({ ...prev, idsubcategoria: null }));
+      setFormData(prev => ({ ...prev, subcategoria: null }));
     }
   }, [formData.idcategoria]);
 
@@ -246,7 +246,7 @@ const NuevoNegocio = () => {
       telefono,
       idmunicipio,
       idcategoria,
-      idsubcategoria,
+      subcategoria,
       latitud,
       longitud,
       codigop,
@@ -275,7 +275,7 @@ const NuevoNegocio = () => {
         idestado,
         idmunicipio,
         idcategoria,
-        idsubcategoria,
+        subcategoria,
         latitud,
         longitud,
         codigop,
@@ -291,7 +291,7 @@ const NuevoNegocio = () => {
         idestado: null,
         idmunicipio: null,
         idcategoria: null,
-        idsubcategoria: null,
+        subcategoria: null,
         latitud: undefined,
         longitud: undefined,
         codigop: undefined,
@@ -426,18 +426,18 @@ const NuevoNegocio = () => {
               </div>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
-                <label htmlFor="idsubcategoria" className="form-label">Subcategoría</label>
+                <label htmlFor="subcategoria" className="form-label">Subcategoría</label>
                 <select
                   className="form-select"
-                  id="idsubcategoria"
-                  name="idsubcategoria"
-                  value={formData.idsubcategoria ?? ''}
+                  id="subcategoria"
+                  name="subcategoria"
+                  value={formData.subcategoria ?? ''}
                   onChange={handleChange}
                   disabled={!formData.idcategoria}
                 >
                   <option value="">Seleccione una subcategoría</option>
                   {subcategorias.map(sub => (
-                    <option key={sub.idsubcategoria} value={sub.idsubcategoria}>
+                    <option key={sub.subcategoria} value={sub.subcategoria}>
                       {sub.descripcion}
                     </option>
                   ))}

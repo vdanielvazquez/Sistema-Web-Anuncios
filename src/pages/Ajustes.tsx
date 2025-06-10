@@ -172,20 +172,20 @@ const Ajustes: React.FC = () => {
                 )}
               </tbody>
             </table>
-            <ReactPaginate
-            previousLabel={<button className="btn btn-outline-primary btn-sm">← Anterior</button>}
-            nextLabel={<button className="btn btn-outline-primary btn-sm">Siguiente →</button>}
+          <ReactPaginate
+            previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
+            nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
             breakLabel={<span className="px-2">...</span>}
             pageCount={Math.ceil(categorias.length / itemsPerPage)}
             onPageChange={handlePageClickCategorias}
-            containerClassName={"pagination justify-content-center mt-3"}
-            pageClassName="page-item"
+            containerClassName="pagination justify-content-center mt-3"
+            pageClassName="page-item mx-1"
             pageLinkClassName="page-link"
             previousClassName="page-item"
             previousLinkClassName=""
             nextClassName="page-item"
             nextLinkClassName=""
-            breakClassName="page-item"
+            breakClassName="page-item mx-1"
             breakLinkClassName="page-link"
             activeClassName="active"
             forcePage={currentPageCategorias}
@@ -213,25 +213,25 @@ const Ajustes: React.FC = () => {
                 ))}
               </tbody>
             </table>
-           <ReactPaginate
-              previousLabel="Anterior"
-              nextLabel="Siguiente"
-              breakLabel="..."
-              pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
-              onPageChange={handlePageClickSubcategorias}
-              containerClassName="pagination justify-content-center mt-3"
-              pageClassName="page-item"
-              pageLinkClassName="page-link"
-              previousClassName="page-item"
-              previousLinkClassName="page-link"
-              nextClassName="page-item"
-              nextLinkClassName="page-link"
-              breakClassName="page-item"
-              breakLinkClassName="page-link"
-              activeClassName="active"
-              disabledClassName="disabled"
-              forcePage={currentPageSubcategorias}
-            />
+          <ReactPaginate
+            previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
+            nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
+            breakLabel={<span className="px-2">...</span>}
+            pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
+            onPageChange={handlePageClickSubcategorias}
+            containerClassName="pagination justify-content-center mt-3"
+            pageClassName="page-item mx-1" // margen horizontal
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName="" // ya no usas page-link porque es un botón personalizado
+            nextClassName="page-item"
+            nextLinkClassName=""
+            breakClassName="page-item mx-1"
+            breakLinkClassName="page-link"
+            activeClassName="active"
+            disabledClassName="disabled"
+            forcePage={currentPageSubcategorias}
+          />
 
           </div>
 
