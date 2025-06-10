@@ -35,6 +35,47 @@ const Negocios = () => {
   const negociosPorPagina = 8;
 
   const navigate = useNavigate();
+//
+  const [formData, setFormData] = useState({
+  idestado: '',
+  idmunicipio: '',
+});
+
+const [estados, setEstados] = useState<Estado[]>([]);
+const [municipios, setMunicipios] = useState<Municipio[]>([]);
+//
+useEffect(() => {
+  axios.get(`${API_URL}/api/ubicacion/estados`)
+    .then(res => setEstados(res.data))
+    .catch(err => console.error('Error al obtener estados:', err));
+}, []);
+useEffect(() => {
+  if (formData.idestado) {
+    axios.get(`${API_URL}/api/ubicacion/municipios/${formData.idestado}`)
+      .then(res => setMunicipios(res.data))
+      .catch(err => console.error('Error al obtener municipios:', err));
+  } else {
+    setMunicipios([]);
+    setFormData(prev => ({ ...prev, idmunicipio: '' }));
+  }
+}, [formData.idestado]);
+
+//
+interface Estado {
+  id: string;
+  nombre: string;
+}
+
+interface Municipio {
+  id: string;
+  nombre: string;
+}
+
+
+
+
+////////////////////////
+
 
   useEffect(() => {
     const fetchNegocios = async () => {
@@ -69,6 +110,8 @@ const Negocios = () => {
 
   const [mostrarActivos, setMostrarActivos] = useState(false);
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
+  const [mostrarTodos, setMostrarTodos] = useState(true);
+
 
   const cardsData = [
     { img: negociototal, title: totalNegocios.toString(), description: "Total de Negocios" },
@@ -82,7 +125,9 @@ const Negocios = () => {
   const negociosPaginados = negociosFiltrados.slice(indexInicio, indexFin);
 
 
-
+/**
+ * 
+ * 
 useEffect(() => {
   let filtrados = negocios;
 
@@ -97,13 +142,55 @@ useEffect(() => {
   } else if (!mostrarActivos && mostrarInactivos) {
     filtrados = filtrados.filter(n => !n.activo);
   } else if (mostrarActivos && mostrarInactivos) {
-    // Mostrar ambos, no se aplica ningún filtro adicional
+  
   }
 
   setNegociosFiltrados(filtrados);
   setPaginaActual(1); // Reiniciar a la primera página
 }, [terminoBusqueda, mostrarActivos, mostrarInactivos, negocios]);
 
+ * 
+ */
+
+
+useEffect(() => {
+  let filtrados = negocios;
+
+  if (terminoBusqueda.trim() !== '') {
+    filtrados = filtrados.filter(n =>
+      n.nombre_comercial.toLowerCase().includes(terminoBusqueda.toLowerCase())
+    );
+  }
+
+  if (!mostrarTodos) {
+  if (mostrarActivos) {
+    filtrados = filtrados.filter(n => n.activo);
+  } else if (mostrarInactivos) {
+    filtrados = filtrados.filter(n => !n.activo);
+  }
+}
+
+
+  if (formData.idestado) {
+    filtrados = filtrados.filter(n => n.Estado === estados.find(e => e.id === formData.idestado)?.nombre);
+  }
+
+  if (formData.idmunicipio) {
+    filtrados = filtrados.filter(n => n.Municipio === municipios.find(m => m.id === formData.idmunicipio)?.nombre);
+  }
+
+  setNegociosFiltrados(filtrados);
+  setPaginaActual(1);
+}, [
+  terminoBusqueda,
+  mostrarActivos,
+  mostrarInactivos,
+  mostrarTodos,
+  formData,
+  estados,
+  municipios,
+  negocios,
+]);
 
 
   return (
@@ -157,27 +244,42 @@ useEffect(() => {
 
   {/* Select Estado */}
   <div className="col-xl-2 col-md-3 col-sm-6 col-12 mb-3">
-    <select
-      className="form-select"
-      id="idestado"
-      name="idestado"
-      required
-    >
-      <option value="">Estado</option>
-      {/* Aquí agregarás dinámicamente los estados */}
-    </select>
+<select
+  className="form-select"
+  id="idestado"
+  name="idestado"
+  value={formData.idestado}
+  onChange={(e) => setFormData(prev => ({
+    ...prev,
+    idestado: e.target.value,
+    idmunicipio: '', // Reiniciar municipio
+  }))}
+>
+  <option value="">Estado</option>
+  {estados.map((estado: any) => (
+    <option key={estado.id} value={estado.id}>{estado.nombre}</option>
+  ))}
+</select>
   </div>
 
   {/* Select Municipio */}
   <div className="col-xl-2 col-md-3 col-sm-6 col-12 mb-3">
-    <select
-      className="form-select"
-      id="idmunicipio"
-      name="idmunicipio"
-    >
-      <option value="">Municipio</option>
-      {/* Aquí agregarás dinámicamente los municipios */}
-    </select>
+   <select
+  className="form-select"
+  id="idmunicipio"
+  name="idmunicipio"
+  value={formData.idmunicipio}
+  onChange={(e) => setFormData(prev => ({
+    ...prev,
+    idmunicipio: e.target.value
+  }))}
+  disabled={!formData.idestado}
+>
+  <option value="">Municipio</option>
+  {municipios.map((mun: any) => (
+    <option key={mun.id} value={mun.id}>{mun.nombre}</option>
+  ))}
+</select>
   </div>
 
   {/* Checkboxes de estado */}
@@ -191,6 +293,7 @@ useEffect(() => {
     onChange={() => {
       setMostrarActivos(true);
       setMostrarInactivos(false);
+      setMostrarTodos(false);
     }}
   />
     <label className="form-check-label" htmlFor="checkActivos">
@@ -207,10 +310,29 @@ useEffect(() => {
     onChange={() => {
       setMostrarActivos(false);
       setMostrarInactivos(true);
+      setMostrarTodos(false);
     }}
   />
     <label className="form-check-label" htmlFor="checkInactivos">
       Solo inactivos
+    </label>
+  </div>
+
+
+  <div className="form-check form-switch fs-5">
+   <input
+  className="form-check-input"
+  type="checkbox"
+  id="checkTodos"
+  checked={mostrarTodos}
+  onChange={() => {
+    setMostrarActivos(false);
+    setMostrarInactivos(false);
+    setMostrarTodos(true);
+  }}
+/>
+    <label className="form-check-label" htmlFor="checkInactivos">
+      todos
     </label>
   </div>
 </div>
