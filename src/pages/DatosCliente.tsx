@@ -126,7 +126,7 @@ const DatosCliente = () => {
             <p className="mb-1"><strong>Nombre Comercial</strong></p>
             <h5 className="card-title">{negocio.nombre_comercial}</h5>
             <p className="mb-1"><strong>Estado</strong></p>
-           <h6 className={`text-muted ${cliente.activo ? 'text-success' : 'text-danger'}`}>{cliente.activo ? 'Activo' : 'Inactivo'}</h6>
+           <h6 className={`text-muted ${negocio.activo ? 'text-success' : 'text-danger'}`}>{cliente.activo ? 'Activo' : 'Inactivo'}</h6>
             <Link to={`/DatosNegocio/${negocio.idnegocio}`} className="btn btn-primary mt-2">
               Ver más
             </Link>
