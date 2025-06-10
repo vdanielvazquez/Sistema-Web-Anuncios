@@ -62,17 +62,17 @@ const Negocios = () => {
     }
   };
 
-  const totalClientes = negocios.length;
-  const clientesActivos = negocios.filter(n => n.activo).length;
-  const clientesInactivos = totalClientes - clientesActivos;
+  const totalNegocios = negocios.length;
+  const negociosActivos = negocios.filter(n => n.activo).length;
+  const negociosInactivos = totalNegocios - negociosActivos;
 
   const [mostrarActivos, setMostrarActivos] = useState(false);
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
 
   const cardsData = [
-    { img: negociototal, title: totalClientes.toString(), description: "Total de Negocios" },
-    { img: negocioactivo, title: "clientesActivos.toString()", description: "Negocios Activos" },
-    { img: negocioinactivo, title: clientesInactivos.toString(), description: "Negocios Inactivos" },
+    { img: negociototal, title: totalNegocios.toString(), description: "Total de Negocios" },
+    { img: negocioactivo, title: negocioactivo.toString(), description: "Negocios Activos" },
+    { img: negocioinactivo, title: negociosInactivos.toString(), description: "Negocios Inactivos" },
   ];
 
   const totalPaginas = Math.ceil(negociosFiltrados.length / negociosPorPagina);
