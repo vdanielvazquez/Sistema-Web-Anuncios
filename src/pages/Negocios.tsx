@@ -40,6 +40,7 @@ const Negocios = () => {
     const fetchNegocios = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/negocios`);
+        console.log("Negocios recibidos:", response.data);
         setNegocios(response.data);
         setNegociosFiltrados(response.data);
       } catch (error) {
