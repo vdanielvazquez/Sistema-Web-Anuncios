@@ -188,7 +188,7 @@ const NuevoNegocio = () => {
 
  const buscarUbicacion = async (query: string) => {
   try {
-    const res = await axios.get(`${API_URL}/api/geocodificar`, {
+    const res = await axios.get(`${API_URL}/api/negocios/geocodificar`, {
       params: { q: query }
     });
     return res.data;
