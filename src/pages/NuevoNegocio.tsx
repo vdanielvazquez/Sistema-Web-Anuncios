@@ -103,6 +103,18 @@ const NuevoNegocio = () => {
   const [clienteInput, setClienteInput] = useState<string>('');
   const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  
+ const buscarUbicacion = async (query: string) => {
+  try {
+    const res = await axios.get(`${API_URL}/api/negocios/geocodificar`, {
+      params: { q: query }
+    });
+    return res.data;
+  } catch (err) {
+    console.error('Error al geocodificar:', err);
+    return null;
+  }
+};
 
   // Carga inicial de clientes y estados
   useEffect(() => {
@@ -186,17 +198,6 @@ const NuevoNegocio = () => {
     setFilteredClientes([]);
   };
 
- const buscarUbicacion = async (query: string) => {
-  try {
-    const res = await axios.get(`${API_URL}/api/negocios/geocodificar`, {
-      params: { q: query }
-    });
-    return res.data;
-  } catch (err) {
-    console.error('Error al geocodificar:', err);
-    return null;
-  }
-};
 
 
 const handleMunicipioChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
