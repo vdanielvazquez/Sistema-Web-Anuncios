@@ -225,7 +225,32 @@ const handleMunicipioChange = async (e: React.ChangeEvent<HTMLSelectElement>) =>
     }
   }
 };
+///
+useEffect(() => {
+  const fetchUbicacionPorCP = async () => {
+    if (!formData.codigop || String(formData.codigop).length < 4) return;
 
+    if (!formData.codigop) return;
+
+    const data = await buscarUbicacion(`${formData.codigop}, México`);
+    if (data && data.lat && data.lon) {
+      const latNum = parseFloat(data.lat);
+      const lonNum = parseFloat(data.lon);
+      setMapCenter({ lat: latNum, lng: lonNum });
+      setFormData(prev => ({
+        ...prev,
+        latitud: latNum,
+        longitud: lonNum
+      }));
+    } else {
+      console.warn('Ubicación no encontrada para el código postal');
+    }
+  };
+
+  fetchUbicacionPorCP();
+}, [formData.codigop]);
+
+///
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => {
