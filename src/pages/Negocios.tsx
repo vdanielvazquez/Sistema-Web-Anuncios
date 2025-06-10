@@ -46,7 +46,11 @@ const [municipios, setMunicipios] = useState<Municipio[]>([]);
 //
 useEffect(() => {
   axios.get(`${API_URL}/api/ubicacion/estados`)
-    .then(res => setEstados(res.data))
+  
+    .then(res => {
+      console.log("Estados recibidos:", res.data);  
+      setEstados(res.data);
+    })
     .catch(err => console.error('Error al obtener estados:', err));
 }, []);
 useEffect(() => {
