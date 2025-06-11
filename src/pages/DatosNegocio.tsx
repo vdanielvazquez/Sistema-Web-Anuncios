@@ -176,6 +176,7 @@ const reemplazarImagen = async () => {
       await axios.put(`${API_URL}/api/negocios/${id}`, editForm);
       setNegocio(editForm); // actualiza la vista con los nuevos datos
       alert('Negocio actualizado correctamente');
+       setShowModalEditar(false);
     } catch (error) {
       console.error('Error al actualizar el negocio:', error);
       alert('Ocurrió un error al actualizar');
