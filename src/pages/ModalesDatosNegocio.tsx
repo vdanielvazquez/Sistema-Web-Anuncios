@@ -106,7 +106,21 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   };
-console.log('Subcategorías disponibles:', subcategorias);
+
+  const handleCategoriaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEditForm({
+      ...editForm,
+      categoria: parseInt(e.target.value),
+      subcategoria: null, // opcional: limpia subcategoría al cambiar categoría
+    });
+  };
+
+  const handleSubcategoriaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEditForm({
+      ...editForm,
+      subcategoria: parseInt(e.target.value),
+    });
+  };
 
   return (
     <Modal show={show} onClose={onClose} title="Editar Información del Negocio">
@@ -142,45 +156,31 @@ console.log('Subcategorías disponibles:', subcategorias);
           />
         </div>
         <div className="mb-3">
-         <select
-  className="form-control"
-  value={editForm.id_categoria || ''}
-  onChange={(e) => {
-    const nuevaCategoria = parseInt(e.target.value);
-    setEditForm((prev: any) => ({
-      ...prev,
-      id_categoria: nuevaCategoria,
-      id_subcategoria: '', // Reinicia subcategoría
-    }));
-  }}
->
-  <option value="">Seleccione categoría</option>
-  {categorias.map((cat: any) => (
-    <option key={cat.idcategoria} value={cat.idcategoria}>
-      {cat.descripcion}
-    </option>
-  ))}
-</select>
+          <select
+            className="form-select mb-2"
+            value={editForm.categoria || ''}
+            onChange={handleCategoriaChange}
+          >
+            <option value="">Seleccione categoría</option>
+            {categorias.map(cat => (
+              <option key={cat.categoria} value={cat.categoria}>
+                {cat.descripcion}
+              </option>
+            ))}
+          </select>
 
-
-         <select
-  className="form-control"
-  value={editForm.id_subcategoria || ''}
-  onChange={(e) =>
-    setEditForm((prev: any) => ({
-      ...prev,
-      id_subcategoria: parseInt(e.target.value),
-    }))
-  }
->
-  <option value="">Seleccione subcategoría</option>
-  {subcategorias.map((sub) => (
-    <option key={sub.idsubcategoria} value={sub.idsubcategoria}>
-      {sub.descripcion}
-    </option>
-  ))}
-</select>
-
+          <select
+            className="form-select"
+            value={editForm.subcategoria || ''}
+            onChange={handleSubcategoriaChange}
+          >
+            <option value="">Seleccione subcategoría</option>
+            {subcategorias.map(sub => (
+              <option key={sub.subcategoria} value={sub.subcategoria}>
+                {sub.descripcion}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={onClose}>
@@ -194,6 +194,7 @@ console.log('Subcategorías disponibles:', subcategorias);
     </Modal>
   );
 };
+
 
 
 // Modal para reemplazar imagen
