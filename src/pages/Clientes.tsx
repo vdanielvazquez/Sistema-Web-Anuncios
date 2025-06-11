@@ -33,7 +33,7 @@ const Clientes = () => {
     correo: '',
   });
 
-  const clientesPorPagina = 4;
+  const clientesPorPagina = 10;
   const navigate = useNavigate();
 
   // Carga clientes y negocios juntos para evitar llamadas dobles
@@ -154,10 +154,10 @@ const Clientes = () => {
             {cardsData.map((card, index) => (
               <div className="col" key={index}>
                 <div className="card d-flex flex-row align-items-center p-3 shadow-sm">
-                  <img src={card.img} alt={card.title} width="80" />
-                  <div className="ms-3 text-center">
-                    <h5 className="mb-1">{card.title}</h5>
-                    <p className="mb-0">{card.description}</p>
+                  <img src={card.img} alt={card.title} width="100" />
+                  <div className="flex-fill text-center">
+                    <h5 className="card-title">{card.title}</h5>
+                    <p className="card-text">{card.description}</p>
                   </div>
                 </div>
               </div>

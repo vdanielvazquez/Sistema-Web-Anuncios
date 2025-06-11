@@ -290,7 +290,7 @@ const Negocios = () => {
                       ? `${API_URL}/uploads/${n.idnegocio}/${n.portada}`
                       : noimagen
                   }
-                  className="card-img-top rounded-4"
+                  className="card-img-top rounded-4 shadow-sm"
                   style={{ width: '90%', height: '250px', objectFit: 'cover' }}
                   alt="Negocio"
                 />
