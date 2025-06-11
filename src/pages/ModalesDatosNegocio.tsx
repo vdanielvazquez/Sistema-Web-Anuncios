@@ -108,9 +108,10 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
   };
 
   // Filtra las subcategorías según la categoría seleccionada
- const subcategoriasFiltradas = subcategorias.filter(
-  sub => sub.idcategoria === editForm.categoria
+const subcategoriasFiltradas = subcategorias.filter(
+  sub => sub.idcategoria === Number(editForm.categoria)
 );
+
 
 
   return (
