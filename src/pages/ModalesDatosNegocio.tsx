@@ -176,13 +176,15 @@ console.log('Subcategorias filtradas:', subcategoriasFiltradas);
 <select
   className="form-select"
   value={editForm.subcategoria !== null && editForm.subcategoria !== undefined ? String(editForm.subcategoria) : ''}
-  onChange={(e) => {
-    const value = parseInt(e.target.value, 10);
-    setEditForm({
-      ...editForm,
-      subcategoria: isNaN(value) ? null : value,
-    });
-  }}
+ onChange={(e) => {
+  const value = parseInt(e.target.value, 10);
+  setEditForm({
+    ...editForm,
+    categoria: isNaN(value) ? null : value,
+    subcategoria: null,
+  });
+}}
+
   disabled={!editForm.categoria}
 >
   <option value="">Seleccione subcategoría</option>
