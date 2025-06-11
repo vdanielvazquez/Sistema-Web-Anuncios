@@ -147,7 +147,7 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
         </div>
         <div className="mb-3">
           <label className="form-label">Categoría</label>
-          <select
+         <select
   className="form-select"
   value={editForm.categoria !== null && editForm.categoria !== undefined ? String(editForm.categoria) : ''}
   onChange={(e) => {
@@ -167,10 +167,11 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
   ))}
 </select>
 
+
         </div>
         <div className="mb-3">
           <label className="form-label">Subcategoría</label>
-         <select
+       <select
   className="form-select"
   value={editForm.subcategoria !== null && editForm.subcategoria !== undefined ? String(editForm.subcategoria) : ''}
   onChange={(e) => {
@@ -189,6 +190,7 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
     </option>
   ))}
 </select>
+
 
         </div>
         <div className="modal-footer">
