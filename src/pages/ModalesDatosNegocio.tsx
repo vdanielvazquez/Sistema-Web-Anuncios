@@ -148,46 +148,48 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
         <div className="mb-3">
           <label className="form-label">Categoría</label>
           <select
-            className="form-select"
-            value={editForm.categoria ?? ''}
-            onChange={(e) => {
-              const value = parseInt(e.target.value, 10);
-              setEditForm({
-                ...editForm,
-                categoria: isNaN(value) ? null : value,
-                subcategoria: null, // Limpiar subcategoría al cambiar categoría
-              });
-            }}
-          >
-            <option value="">Seleccione categoría</option>
-            {categorias.map(cat => (
-              <option key={cat.categoria} value={cat.categoria}>
-                {cat.descripcion}
-              </option>
-            ))}
-          </select>
+  className="form-select"
+  value={editForm.categoria !== null && editForm.categoria !== undefined ? String(editForm.categoria) : ''}
+  onChange={(e) => {
+    const value = parseInt(e.target.value, 10);
+    setEditForm({
+      ...editForm,
+      categoria: isNaN(value) ? null : value,
+      subcategoria: null,
+    });
+  }}
+>
+  <option value="">Seleccione categoría</option>
+  {categorias.map(cat => (
+    <option key={cat.categoria} value={String(cat.categoria)}>
+      {cat.descripcion}
+    </option>
+  ))}
+</select>
+
         </div>
         <div className="mb-3">
           <label className="form-label">Subcategoría</label>
-          <select
-            className="form-select"
-            value={editForm.subcategoria ?? ''}
-            onChange={(e) => {
-              const value = parseInt(e.target.value, 10);
-              setEditForm({
-                ...editForm,
-                subcategoria: isNaN(value) ? null : value,
-              });
-            }}
-            disabled={!editForm.categoria} // Deshabilita si no hay categoría seleccionada
-          >
-            <option value="">Seleccione subcategoría</option>
-            {subcategoriasFiltradas.map(sub => (
-              <option key={sub.subcategoria} value={sub.subcategoria}>
-                {sub.descripcion}
-              </option>
-            ))}
-          </select>
+         <select
+  className="form-select"
+  value={editForm.subcategoria !== null && editForm.subcategoria !== undefined ? String(editForm.subcategoria) : ''}
+  onChange={(e) => {
+    const value = parseInt(e.target.value, 10);
+    setEditForm({
+      ...editForm,
+      subcategoria: isNaN(value) ? null : value,
+    });
+  }}
+  disabled={!editForm.categoria}
+>
+  <option value="">Seleccione subcategoría</option>
+  {subcategoriasFiltradas.map(sub => (
+    <option key={sub.subcategoria} value={String(sub.subcategoria)}>
+      {sub.descripcion}
+    </option>
+  ))}
+</select>
+
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={onClose}>
