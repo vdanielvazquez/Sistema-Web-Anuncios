@@ -241,8 +241,8 @@ const position: [number, number] = hasValidPosition
         <div className="row">
   {/* Información del negocio */}
   <div className="col-12 col-md-6">
-    <div className="card" style={{ height: '80%', padding: '20px', margin: '15px', textAlign: 'center' }}>
-      <h2 className="card-title">{negocio.nombre_comercial}</h2>
+    <div className="card shadow" style={{ height: '80%', padding: '20px', margin: '15px', textAlign: 'center', fontSize: '1.4rem' }}>
+      <h2 className="card-title" style={{ fontSize: '1.8rem' }}>{negocio.nombre_comercial}</h2>
       <div className="card-body">
         <p><strong>Descripción:</strong> {negocio.descripcion}</p>
         {negocio.categoria || negocio.subcategoria ? (
@@ -272,40 +272,41 @@ const position: [number, number] = hasValidPosition
 
   {/* Mapa */}
         <div className="col-12 col-md-6">
-          <div style={{ height: '350px', width: '100%', margin: '15px 0' }}>
-            {hasValidPosition ? (
-              <MapContainer center={position} zoom={20} style={{ height: '100%', width: '100%' }}>
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution="&copy; OpenStreetMap contributors"
-                />
-                <Marker position={position} icon={icon}>
-                  <Popup>
-                    {negocio.nombre_comercial || 'Negocio'}<br />
-                    {negocio.estado}, {negocio.municipio}
-                  </Popup>
-                </Marker>
-              </MapContainer>
-            ) : (
-              <p>No hay coordenadas disponibles para mostrar el mapa</p>
-            )}
-          </div>
+  <div className="shadow rounded-4" style={{ height: '350px', width: '100%', margin: '15px 0', overflow: 'hidden' }}>
+    {hasValidPosition ? (
+      <MapContainer center={position} zoom={20} style={{ height: '100%', width: '100%' }}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors"
+        />
+        <Marker position={position} icon={icon}>
+          <Popup>
+            {negocio.nombre_comercial || 'Negocio'}<br />
+            {negocio.estado}, {negocio.municipio}
+          </Popup>
+        </Marker>
+      </MapContainer>
+    ) : (
+      <p className="text-center pt-5">No hay coordenadas disponibles para mostrar el mapa</p>
+    )}
+  </div>
 
-          {/* Etiquetas debajo del mapa */}
-          <div className="text-center mt-3">
-            <div className="row">
-              <div className="col-md-4">
-               <p><strong>Estado:</strong> {negocio.estado}</p>
-              </div>
-              <div className="col-md-4">
-                <p><strong>Municipio:</strong> {negocio.municipio}</p>
-              </div>
-              <div className="col-md-4">
-                <p><strong>Código Postal:</strong> {negocio.codigop}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+  {/* Etiquetas debajo del mapa */}
+  <div className="text-center mt-3">
+    <div className="row">
+      <div className="col-md-4">
+        <p className="bg-light rounded p-2"><strong>Estado:</strong> {negocio.estado}</p>
+      </div>
+      <div className="col-md-4">
+        <p className="bg-light rounded p-2"><strong>Municipio:</strong> {negocio.municipio}</p>
+      </div>
+      <div className="col-md-4">
+        <p className="bg-light rounded p-2"><strong>Código Postal:</strong> {negocio.codigop}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
 
        
@@ -323,7 +324,7 @@ const position: [number, number] = hasValidPosition
     <div key={index} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
       <div className="card-galeria">
         <div className="card-body">
-         <img src={`${API_URL}/uploads/${negocio.idnegocio}/${img}`}  alt={`Galería ${index + 1}`}  className="gallery-image rounded-4"  style={{ width: '100%', height: '200px', objectFit: 'cover',margin: '15px' }}/>
+         <img src={`${API_URL}/uploads/${negocio.idnegocio}/${img}`}  alt={`Galería ${index + 1}`}  className="gallery-image shadow rounded-4"  style={{ width: '100%', height: '200px', objectFit: 'cover',margin: '15px' }}/>
         </div>
         <div className="card-footer d-flex justify-content-between">
           <button className='btn btn-warning me-2'  onClick={() => { setImagenAEditar(filename!); setShowModalEditar(true);}}>Editar</button>

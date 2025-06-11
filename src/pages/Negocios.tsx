@@ -162,7 +162,7 @@ const Negocios = () => {
               <div className="col" key={index}>
                 <div className="card d-flex flex-row align-items-center p-3 mb-3">
                   <img src={card.img} alt={card.title} width="100" />
-                  <div className="ms-3 text-center">
+                  <div className="flex-fill text-center">
                     <h5 className="card-title">{card.title}</h5>
                     <p className="card-text">{card.description}</p>
                   </div>

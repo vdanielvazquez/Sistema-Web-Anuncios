@@ -1,13 +1,7 @@
 .divprincipal {
   width: 100vw;
   height: 100vh;
-  padding: 10px;
-
-  background-image: url('../assets/fondo.jpg'); /* Reemplaza esta ruta */ 
-  background-size: cover; /* Hace que la imagen cubra toda el área */
-  background-position: center; /* Centra la imagen */
-  background-repeat: no-repeat; /* Evita que se repita */
-          background-attachment: fixed;                                                                                                                                                                                                                                                                               
+  padding: 10px;                                                                                                                                                                                                                                                                             
 }
 
 .titulo{
