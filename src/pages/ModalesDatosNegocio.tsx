@@ -142,40 +142,45 @@ console.log('Subcategorías disponibles:', subcategorias);
           />
         </div>
         <div className="mb-3">
-          <select
-            className="form-select"
-            name="id_categoria"
-            value={editForm.id_categoria || ''}
-            onChange={e =>
-              setEditForm({
-                ...editForm,
-                id_categoria: e.target.value,
-                id_subcategoria: '', // resetea subcategoría al cambiar categoría
-              })
-            }
-          >
-            <option value="">Seleccione una categoría</option>
-            {categorias.map(cat => (
-              <option key={cat.idcategoria} value={cat.idcategoria}>
-                {cat.descripcion}
-              </option>
-            ))}
-          </select>
+         <select
+  className="form-control"
+  value={editForm.id_categoria || ''}
+  onChange={(e) => {
+    const nuevaCategoria = parseInt(e.target.value);
+    setEditForm((prev: any) => ({
+      ...prev,
+      id_categoria: nuevaCategoria,
+      id_subcategoria: '', // Reinicia subcategoría
+    }));
+  }}
+>
+  <option value="">Seleccione categoría</option>
+  {categorias.map((cat: any) => (
+    <option key={cat.idcategoria} value={cat.idcategoria}>
+      {cat.descripcion}
+    </option>
+  ))}
+</select>
 
-          <select
-            className="form-select mt-2"
-            name="id_subcategoria"
-            value={editForm.id_subcategoria || ''}
-            onChange={e => setEditForm({ ...editForm, id_subcategoria: e.target.value })}
-            disabled={!editForm.id_categoria}
-          >
-            <option value="">Seleccione una subcategoría</option>
-             {subcategorias && Array.isArray(subcategorias) && subcategorias.map((sub) => (
-              <option key={sub.id_subcategoria} value={sub.id_subcategoria}>
-                {sub.nombre}
-              </option>
-            ))}
-          </select>
+
+         <select
+  className="form-control"
+  value={editForm.id_subcategoria || ''}
+  onChange={(e) =>
+    setEditForm((prev: any) => ({
+      ...prev,
+      id_subcategoria: parseInt(e.target.value),
+    }))
+  }
+>
+  <option value="">Seleccione subcategoría</option>
+  {subcategorias.map((sub) => (
+    <option key={sub.idsubcategoria} value={sub.idsubcategoria}>
+      {sub.descripcion}
+    </option>
+  ))}
+</select>
+
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={onClose}>
