@@ -8,6 +8,7 @@ import negociototal from "../assets/negocios-total.png";
 import negocioactivo from "../assets/negocios-activo.png";
 import negocioinactivo from "../assets/negocios-inactivos.png";
 
+// Interfaces
 interface Negocio {
   idnegocio: number;
   nombre_comercial: string;
@@ -17,9 +18,7 @@ interface Negocio {
   activo: boolean;
   portada: string;
   imagenes: string[];
-  //Estado: string;
-  //Municipio: string;
-  idestado: number;     
+  idestado: number;
   idmunicipio: number;
   id_categoria: number;
   id_subcategoria: number;
@@ -27,97 +26,42 @@ interface Negocio {
   subcategoria?: string;
 }
 
-const Negocios = () => {
-  const API_URL = 'https://sistemawebpro.com';
-
-  const [negocios, setNegocios] = useState<Negocio[]>([]);
-  const [negociosFiltrados, setNegociosFiltrados] = useState<Negocio[]>([]);
-  const [terminoBusqueda, setTerminoBusqueda] = useState('');
-  const [paginaActual, setPaginaActual] = useState(1);
-  const negociosPorPagina = 8;
-
-  const navigate = useNavigate();
-//
-  const [formData, setFormData] = useState({
-  idestado: '',
-  idmunicipio: '',
-});
-
-const [estados, setEstados] = useState<Estado[]>([]);
-const [municipios, setMunicipios] = useState<Municipio[]>([]);
-//
-useEffect(() => {
-  axios.get(`${API_URL}/api/ubicacion/estados`)
-  
-    .then(res => {
-      console.log("Estados recibidos:", res.data);  
-      setEstados(res.data);
-    })
-    .catch(err => console.error('Error al obtener estados:', err));
-}, []);
-useEffect(() => {
-  if (formData.idestado) {
-    axios.get(`${API_URL}/api/ubicacion/municipios/${formData.idestado}`)
-      .then(res => setMunicipios(res.data))
-      .catch(err => console.error('Error al obtener municipios:', err));
-  } else {
-    setMunicipios([]);
-    setFormData(prev => ({ ...prev, idmunicipio: '' }));
-  }
-}, [formData.idestado]);
-
-//
 interface Estado {
   idestado: number;
   estado: string;
 }
 
 interface Municipio {
- idmunicipio: number;
+  idmunicipio: number;
   municipio: string;
 }
 
+const Negocios = () => {
+  const API_URL = 'https://sistemawebpro.com';
+  const navigate = useNavigate();
 
+  // Estados
+  const [negocios, setNegocios] = useState<Negocio[]>([]);
+  const [negociosFiltrados, setNegociosFiltrados] = useState<Negocio[]>([]);
+  const [terminoBusqueda, setTerminoBusqueda] = useState('');
+  const [paginaActual, setPaginaActual] = useState(1);
+  const negociosPorPagina = 8;
 
-
-////////////////////////
-
-
-  useEffect(() => {
-    const fetchNegocios = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/api/negocios`);
-        console.log("Negocios recibidos:", response.data);
-        setNegocios(response.data);
-        setNegociosFiltrados(response.data);
-      } catch (error) {
-        console.error('Error al obtener negocios:', error);
-      }
-    };
-
-    fetchNegocios();
-  }, []);
-
-  const handleBuscar = () => {
-    if (terminoBusqueda.trim() !== '') {
-      const filtrados = negocios.filter(n =>
-        n.nombre_comercial.toLowerCase().includes(terminoBusqueda.toLowerCase())
-      );
-      setNegociosFiltrados(filtrados);
-      setPaginaActual(1);
-    } else {
-      setNegociosFiltrados(negocios);
-    }
-  };
-
-  const totalNegocios = negocios.length;
-  const negociosActivos = negocios.filter(n => n.activo).length;
-  const negociosInactivos = totalNegocios - negociosActivos;
+  const [formData, setFormData] = useState({
+    idestado: '',
+    idmunicipio: '',
+  });
+  const [estados, setEstados] = useState<Estado[]>([]);
+  const [municipios, setMunicipios] = useState<Municipio[]>([]);
 
   const [mostrarActivos, setMostrarActivos] = useState(false);
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const [mostrarTodos, setMostrarTodos] = useState(true);
 
+  // Estadísticas
+  const totalNegocios = negocios.length;
+  const negociosActivos = negocios.filter(n => n.activo).length;
+  const negociosInactivos = totalNegocios - negociosActivos;
 
   const cardsData = [
     { img: negociototal, title: totalNegocios.toString(), description: "Total de Negocios" },
@@ -125,91 +69,99 @@ interface Municipio {
     { img: negocioinactivo, title: negociosInactivos.toString(), description: "Negocios Inactivos" },
   ];
 
+  // Paginación
   const totalPaginas = Math.ceil(negociosFiltrados.length / negociosPorPagina);
   const indexInicio = (paginaActual - 1) * negociosPorPagina;
   const indexFin = indexInicio + negociosPorPagina;
   const negociosPaginados = negociosFiltrados.slice(indexInicio, indexFin);
 
+  // Obtener estados
+  useEffect(() => {
+    axios.get(`${API_URL}/api/ubicacion/estados`)
+      .then(res => setEstados(res.data))
+      .catch(err => console.error('Error al obtener estados:', err));
+  }, []);
 
-/**
- * 
- * 
-useEffect(() => {
-  let filtrados = negocios;
-
-  if (terminoBusqueda.trim() !== '') {
-    filtrados = filtrados.filter(n =>
-      n.nombre_comercial.toLowerCase().includes(terminoBusqueda.toLowerCase())
-    );
-  }
-
-  if (mostrarActivos && !mostrarInactivos) {
-    filtrados = filtrados.filter(n => n.activo);
-  } else if (!mostrarActivos && mostrarInactivos) {
-    filtrados = filtrados.filter(n => !n.activo);
-  } else if (mostrarActivos && mostrarInactivos) {
-  
-  }
-
-  setNegociosFiltrados(filtrados);
-  setPaginaActual(1); // Reiniciar a la primera página
-}, [terminoBusqueda, mostrarActivos, mostrarInactivos, negocios]);
-
- * 
- */
-
-
-useEffect(() => {
-  let filtrados = negocios;
-
-  // Si hay texto para búsqueda por nombre
-  if (terminoBusqueda.trim() !== '') {
-    filtrados = filtrados.filter(n =>
-      n.nombre_comercial.toLowerCase().includes(terminoBusqueda.toLowerCase())
-    );
-  }
-
-  if (!mostrarTodos) {
-    if (mostrarActivos) {
-      filtrados = filtrados.filter(n => n.activo);
-    } else if (mostrarInactivos) {
-      filtrados = filtrados.filter(n => !n.activo);
+  // Obtener municipios cuando cambia el estado
+  useEffect(() => {
+    if (formData.idestado) {
+      axios.get(`${API_URL}/api/ubicacion/municipios/${formData.idestado}`)
+        .then(res => setMunicipios(res.data))
+        .catch(err => console.error('Error al obtener municipios:', err));
+    } else {
+      setMunicipios([]);
+      setFormData(prev => ({ ...prev, idmunicipio: '' }));
     }
-  }
+  }, [formData.idestado]);
 
-  if (formData.idestado) {
-    // Aquí comparamos el idestado numérico con formData.idestado convertido a número
-    filtrados = filtrados.filter(n => n.idestado === Number(formData.idestado));
-  }
+  // Obtener negocios
+  useEffect(() => {
+    const fetchNegocios = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/negocios`);
+        setNegocios(res.data);
+        setNegociosFiltrados(res.data);
+      } catch (error) {
+        console.error('Error al obtener negocios:', error);
+      }
+    };
+    fetchNegocios();
+  }, []);
 
-  if (formData.idmunicipio) {
-    filtrados = filtrados.filter(n => n.idmunicipio === Number(formData.idmunicipio));
-  }
+  // Filtrar negocios
+  useEffect(() => {
+    let filtrados = negocios;
 
-  setNegociosFiltrados(filtrados);
-  setPaginaActual(1);
-}, [
-  terminoBusqueda,
-  mostrarActivos,
-  mostrarInactivos,
-  mostrarTodos,
-  formData,
-  negocios,
-]);
+    if (terminoBusqueda.trim() !== '') {
+      filtrados = filtrados.filter(n =>
+        n.nombre_comercial.toLowerCase().includes(terminoBusqueda.toLowerCase())
+      );
+    }
 
+    if (!mostrarTodos) {
+      filtrados = mostrarActivos
+        ? filtrados.filter(n => n.activo)
+        : filtrados.filter(n => !n.activo);
+    }
 
+    if (formData.idestado) {
+      filtrados = filtrados.filter(n => n.idestado === Number(formData.idestado));
+    }
 
+    if (formData.idmunicipio) {
+      filtrados = filtrados.filter(n => n.idmunicipio === Number(formData.idmunicipio));
+    }
+
+    setNegociosFiltrados(filtrados);
+    setPaginaActual(1);
+  }, [terminoBusqueda, mostrarActivos, mostrarInactivos, mostrarTodos, formData, negocios]);
+
+  // Función de búsqueda
+  const handleBuscar = () => {
+    if (terminoBusqueda.trim() === '') {
+      setNegociosFiltrados(negocios);
+    } else {
+      const filtrados = negocios.filter(n =>
+        n.nombre_comercial.toLowerCase().includes(terminoBusqueda.toLowerCase())
+      );
+      setNegociosFiltrados(filtrados);
+    }
+    setPaginaActual(1);
+  };
+
+  // Render
   return (
     <div className="divprincipal">
       <div className="div-custom">
         <h2 className="text-center mt-5">Listado de Negocios</h2>
 
+        {/* Estadísticas */}
         <div className="container mt-4">
-          <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-3">
+          <div className="row row-cols-1 row-cols-md-3 g-3">
             {cardsData.map((card, index) => (
               <div className="col" key={index}>
                 <div className="card d-flex flex-row align-items-center p-3 mb-3">
-                  <img src={card.img} alt={card.title} className="img-fluid rounded-start" width="100" />
+                  <img src={card.img} alt={card.title} width="100" />
                   <div className="ms-3 text-center">
                     <h5 className="card-title">{card.title}</h5>
                     <p className="card-text">{card.description}</p>
@@ -220,6 +172,7 @@ useEffect(() => {
           </div>
         </div>
 
+        {/* Botón nuevo negocio */}
         <button
           className="btn btn-primary position-fixed bottom-0 end-0 m-5"
           onClick={() => navigate('/nuevonegocio')}
@@ -228,150 +181,124 @@ useEffect(() => {
           Nuevo negocio
         </button>
 
+        {/* Filtros */}
         <div className="row mb-4 mt-4 px-3 align-items-end">
-  {/* Input de búsqueda */}
-  <div className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
-    <input
-      className="form-control fs-5"
-      type="search"
-      placeholder="Buscar negocio por nombre"
-      aria-label="Buscar"
-      value={terminoBusqueda}
-      onChange={(e) => setTerminoBusqueda(e.target.value)}
-    />
-  </div>
+          <div className="col-xl-3 mb-3">
+            <input
+              className="form-control fs-5"
+              type="search"
+              placeholder="Buscar negocio por nombre"
+              value={terminoBusqueda}
+              onChange={(e) => setTerminoBusqueda(e.target.value)}
+            />
+          </div>
 
-  {/* Botón buscar */}
-  <div className="col-xl-2 col-md-3 col-sm-6 col-12 mb-3">
-    <button className="btn btn-success w-100 fs-5" onClick={handleBuscar}>
-      Buscar
-    </button>
-  </div>
+          <div className="col-xl-2 mb-3">
+            <button className="btn btn-success w-100 fs-5" onClick={handleBuscar}>
+              Buscar
+            </button>
+          </div>
 
-  {/* Select Estado */}
-  <div className="col-xl-2 col-md-3 col-sm-6 col-12 mb-3">
-<select
-  className="form-select"
-  id="idestado"
-  name="idestado"
-  value={formData.idestado}
-  onChange={(e) =>
-    setFormData((prev) => ({
-      ...prev,
-      idestado: e.target.value,
-      idmunicipio: '', // reinicia municipio
-    }))
-  }
->
-  <option value="">Estado</option>
-  {estados.map((estado) => (
-    <option key={estado.idestado} value={estado.idestado}>
-      {estado.estado}
-    </option>
-  ))}
-</select>
+          <div className="col-xl-2 mb-3">
+            <select
+              className="form-select"
+              value={formData.idestado}
+              onChange={(e) =>
+                setFormData({ ...formData, idestado: e.target.value, idmunicipio: '' })
+              }
+            >
+              <option value="">Estado</option>
+              {estados.map(estado => (
+                <option key={estado.idestado} value={estado.idestado}>{estado.estado}</option>
+              ))}
+            </select>
+          </div>
 
-  </div>
+          <div className="col-xl-2 mb-3">
+            <select
+              className="form-select"
+              value={formData.idmunicipio}
+              onChange={(e) =>
+                setFormData({ ...formData, idmunicipio: e.target.value })
+              }
+              disabled={!formData.idestado}
+            >
+              <option value="">Municipio</option>
+              {municipios.map(m => (
+                <option key={m.idmunicipio} value={m.idmunicipio}>{m.municipio}</option>
+              ))}
+            </select>
+          </div>
 
-  {/* Select Municipio */}
-  <div className="col-xl-2 col-md-3 col-sm-6 col-12 mb-3">
- <select
-  className="form-select"
-  id="idmunicipio"
-  name="idmunicipio"
-  value={formData.idmunicipio}
-  onChange={(e) =>
-    setFormData((prev) => ({
-      ...prev,
-      idmunicipio: e.target.value,
-    }))
-  }
-  disabled={!formData.idestado}
->
-  <option value="">Municipio</option>
-  {municipios.map((mun) => (
-    <option key={mun.idmunicipio} value={mun.idmunicipio}>
-      {mun.municipio}
-    </option>
-  ))}
-</select>
+          {/* Filtros de estado */}
+          <div className="col-xl-3 d-flex gap-4 flex-wrap align-items-center">
+            <div className="form-check form-switch fs-5">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="checkActivos"
+                checked={mostrarActivos}
+                onChange={() => {
+                  setMostrarActivos(true);
+                  setMostrarInactivos(false);
+                  setMostrarTodos(false);
+                }}
+              />
+              <label className="form-check-label" htmlFor="checkActivos">Solo activos</label>
+            </div>
 
-  </div>
+            <div className="form-check form-switch fs-5">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="checkInactivos"
+                checked={mostrarInactivos}
+                onChange={() => {
+                  setMostrarActivos(false);
+                  setMostrarInactivos(true);
+                  setMostrarTodos(false);
+                }}
+              />
+              <label className="form-check-label" htmlFor="checkInactivos">Solo inactivos</label>
+            </div>
 
-  {/* Checkboxes de estado */}
- <div className="col-xl-3 col-md-6 col-12 mb-3 d-flex gap-4 flex-wrap align-items-center">
-  <div className="form-check form-switch fs-5">
-     <input
-    className="form-check-input"
-    type="checkbox"
-    id="checkActivos"
-    checked={mostrarActivos}
-    onChange={() => {
-      setMostrarActivos(true);
-      setMostrarInactivos(false);
-      setMostrarTodos(false);
-    }}
-  />
-    <label className="form-check-label" htmlFor="checkActivos">
-      Solo activos
-    </label>
-  </div>
+            <div className="form-check form-switch fs-5">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="checkTodos"
+                checked={mostrarTodos}
+                onChange={() => {
+                  setMostrarActivos(false);
+                  setMostrarInactivos(false);
+                  setMostrarTodos(true);
+                }}
+              />
+              <label className="form-check-label" htmlFor="checkTodos">Todos</label>
+            </div>
+          </div>
+        </div>
 
-  <div className="form-check form-switch fs-5">
-   <input
-    className="form-check-input"
-    type="checkbox"
-    id="checkInactivos"
-    checked={mostrarInactivos}
-    onChange={() => {
-      setMostrarActivos(false);
-      setMostrarInactivos(true);
-      setMostrarTodos(false);
-    }}
-  />
-    <label className="form-check-label" htmlFor="checkInactivos">
-      Solo inactivos
-    </label>
-  </div>
-
-
-  <div className="form-check form-switch fs-5">
-   <input
-  className="form-check-input"
-  type="checkbox"
-  id="checkTodos"
-  checked={mostrarTodos}
-  onChange={() => {
-    setMostrarActivos(false);
-    setMostrarInactivos(false);
-    setMostrarTodos(true);
-  }}
-/>
-    <label className="form-check-label" htmlFor="checkInactivos">
-      todos
-    </label>
-  </div>
-</div>
-
-</div>
         {/* Tarjetas de negocios */}
         <div className="row">
-          {negociosPaginados.map(negocio => (
-            <div key={negocio.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+          {negociosPaginados.map(n => (
+            <div key={n.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
               <div className="card-portada h-100 text-center">
                 <img
-                  src={negocio.portada && negocio.portada.trim() !== ''
-                    ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
-                    : noimagen}
-                  style={{ width: '90%', height: '250px', objectFit: 'cover' }}
+                  src={
+                    n.portada && n.portada.trim() !== ''
+                      ? `${API_URL}/uploads/${n.idnegocio}/${n.portada}`
+                      : noimagen
+                  }
                   className="card-img-top rounded-4"
+                  style={{ width: '90%', height: '250px', objectFit: 'cover' }}
                   alt="Negocio"
                 />
                 <div className="card-body">
-                  <h5 className="card-title">{negocio.nombre_comercial}</h5>
+                  <h5 className="card-title">{n.nombre_comercial}</h5>
                   <button
                     className="btn btn-primary d-block mx-auto"
-                    onClick={() => navigate(`/DatosNegocio/${negocio.idnegocio}`)}
+                    onClick={() => navigate(`/DatosNegocio/${n.idnegocio}`)}
                   >
                     Ver más
                   </button>
