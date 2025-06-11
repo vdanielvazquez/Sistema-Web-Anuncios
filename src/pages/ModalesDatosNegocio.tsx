@@ -107,21 +107,10 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   };
 
-  const handleCategoriaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log('CATEGORÍA SELECCIONADA:', e.target.value);
-    setEditForm({
-      ...editForm,
-      categoria: parseInt(e.target.value),
-      subcategoria: null, // opcional: limpia subcategoría al cambiar categoría
-    });
-  };
-
-  const handleSubcategoriaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setEditForm({
-      ...editForm,
-      subcategoria: parseInt(e.target.value),
-    });
-  };
+  // Filtra las subcategorías según la categoría seleccionada
+  const subcategoriasFiltradas = subcategorias.filter(
+    (sub) => sub.categoria === editForm.categoria
+  );
 
   return (
     <Modal show={show} onClose={onClose} title="Editar Información del Negocio">
@@ -157,32 +146,46 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
           />
         </div>
         <div className="mb-3">
-          <select
-  className="form-select"
-  value={editForm.categoria ?? ''}
-  onChange={handleCategoriaChange}
->
-  <option value="">Seleccione categoría</option>
-  {categorias.map(cat => (
-    <option key={cat.categoria} value={cat.categoria}>
-  {cat.descripcion}
-</option>
-
-  ))}
-</select>
-
-
+          <label className="form-label">Categoría</label>
           <select
             className="form-select"
-            value={editForm.subcategoria || ''}
-            onChange={handleSubcategoriaChange}
+            value={editForm.categoria ?? ''}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              setEditForm({
+                ...editForm,
+                categoria: isNaN(value) ? null : value,
+                subcategoria: null, // Limpiar subcategoría al cambiar categoría
+              });
+            }}
+          >
+            <option value="">Seleccione categoría</option>
+            {categorias.map(cat => (
+              <option key={cat.categoria} value={cat.categoria}>
+                {cat.descripcion}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Subcategoría</label>
+          <select
+            className="form-select"
+            value={editForm.subcategoria ?? ''}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              setEditForm({
+                ...editForm,
+                subcategoria: isNaN(value) ? null : value,
+              });
+            }}
+            disabled={!editForm.categoria} // Deshabilita si no hay categoría seleccionada
           >
             <option value="">Seleccione subcategoría</option>
-            {subcategorias.map(sub => (
-             <option key={sub.subcategoria} value={sub.subcategoria}>
-  {sub.descripcion}
-</option>
-
+            {subcategoriasFiltradas.map(sub => (
+              <option key={sub.subcategoria} value={sub.subcategoria}>
+                {sub.descripcion}
+              </option>
             ))}
           </select>
         </div>
@@ -198,8 +201,6 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
     </Modal>
   );
 };
-
-
 
 // Modal para reemplazar imagen
 export const ModalEditarImagen: React.FC<{
