@@ -162,9 +162,10 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
 >
   <option value="">Seleccione categoría</option>
   {categorias.map(cat => (
-    <option key={cat.categoria} value={String(cat.categoria)}>
-      {cat.descripcion}
-    </option>
+   <option key={cat.idcategoria} value={String(cat.idcategoria)}>
+  {cat.descripcion}
+</option>
+
   ))}
 </select>
 
@@ -172,7 +173,8 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
         </div>
         <div className="mb-3">
           <label className="form-label">Subcategoría</label>
-       <select
+       // En el select de subcategorías:
+<select
   className="form-select"
   value={editForm.subcategoria !== null && editForm.subcategoria !== undefined ? String(editForm.subcategoria) : ''}
   onChange={(e) => {
@@ -186,7 +188,7 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
 >
   <option value="">Seleccione subcategoría</option>
   {subcategoriasFiltradas.map(sub => (
-    <option key={sub.subcategoria} value={String(sub.subcategoria)}>
+    <option key={sub.idsubcategoria} value={String(sub.idsubcategoria)}>
       {sub.descripcion}
     </option>
   ))}
