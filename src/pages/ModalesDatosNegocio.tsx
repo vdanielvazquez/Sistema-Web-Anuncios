@@ -108,9 +108,10 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
   };
 
   // Filtra las subcategorías según la categoría seleccionada
-  const subcategoriasFiltradas = subcategorias.filter(
-    (sub) => sub.categoria === editForm.categoria
-  );
+ const subcategoriasFiltradas = subcategorias.filter(
+  sub => sub.idcategoria === editForm.categoria
+);
+
 
   return (
     <Modal show={show} onClose={onClose} title="Editar Información del Negocio">
@@ -169,11 +170,6 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
   ))}
 </select>
 
-
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Subcategoría</label>
-       // En el select de subcategorías:
 <select
   className="form-select"
   value={editForm.subcategoria !== null && editForm.subcategoria !== undefined ? String(editForm.subcategoria) : ''}
