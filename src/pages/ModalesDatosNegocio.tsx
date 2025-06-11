@@ -165,8 +165,9 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
   <option value="">Seleccione categoría</option>
   {categorias.map(cat => (
     <option key={cat.categoria} value={cat.categoria}>
-      {cat.descripcion}
-    </option>
+  {cat.descripcion}
+</option>
+
   ))}
 </select>
 
@@ -178,9 +179,10 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
           >
             <option value="">Seleccione subcategoría</option>
             {subcategorias.map(sub => (
-              <option key={sub.subcategoria} value={sub.subcategoria}>
-                {sub.descripcion}
-              </option>
+             <option key={sub.subcategoria} value={sub.subcategoria}>
+  {sub.descripcion}
+</option>
+
             ))}
           </select>
         </div>
