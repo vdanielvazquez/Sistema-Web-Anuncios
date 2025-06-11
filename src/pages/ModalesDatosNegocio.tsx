@@ -147,10 +147,11 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
         </div>
         <div className="mb-3">
           <label className="form-label">Categoría</label>
-         <select
+        <select
   className="form-select"
   value={editForm.categoria !== null && editForm.categoria !== undefined ? String(editForm.categoria) : ''}
   onChange={(e) => {
+    console.log('Seleccionaste categoría:', e.target.value);
     const value = parseInt(e.target.value, 10);
     setEditForm({
       ...editForm,
