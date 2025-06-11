@@ -108,6 +108,7 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
   };
 
   const handleCategoriaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log('CATEGORÍA SELECCIONADA:', e.target.value);
     setEditForm({
       ...editForm,
       categoria: parseInt(e.target.value),
@@ -157,17 +158,18 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
         </div>
         <div className="mb-3">
           <select
-            className="form-select mb-2"
-            value={editForm.categoria || ''}
-            onChange={handleCategoriaChange}
-          >
-            <option value="">Seleccione categoría</option>
-            {categorias.map(cat => (
-              <option key={cat.categoria} value={cat.categoria}>
-                {cat.descripcion}
-              </option>
-            ))}
-          </select>
+  className="form-select"
+  value={editForm.categoria ?? ''}
+  onChange={handleCategoriaChange}
+>
+  <option value="">Seleccione categoría</option>
+  {categorias.map(cat => (
+    <option key={cat.categoria} value={cat.categoria}>
+      {cat.descripcion}
+    </option>
+  ))}
+</select>
+
 
           <select
             className="form-select"
