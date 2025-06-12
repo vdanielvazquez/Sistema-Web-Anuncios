@@ -116,6 +116,7 @@ const NuevoNegocio = () => {
     return null;
   }
 };
+const [telefonoValido, setTelefonoValido] = useState<boolean>(true);
 
   // Carga inicial de clientes y estados
   useEffect(() => {
@@ -255,6 +256,15 @@ useEffect(() => {
 
 const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+     // Validar el campo de teléfono
+  if (name === 'telefono') {
+    const soloNumeros = value.replace(/\D/g, ''); // Elimina todo lo que no sea dígito
+    if (soloNumeros.length <= 10) {
+      setFormData(prev => ({ ...prev, telefono: soloNumeros }));
+      setTelefonoValido(soloNumeros.length === 10);
+    }
+    return; // No continúes con el resto
+  }
     setFormData(prev => {
       const updatedData = { ...prev, [name]: name.startsWith('id') ? Number(value) : value };
       return updatedData;
@@ -369,15 +379,16 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="telefono" className="form-label">Teléfono</label>
-                <input
+               <input
                   type="tel"
-                  className="form-control"
+                  className={`form-control ${formData.telefono ? (telefonoValido ? 'is-valid' : 'is-invalid') : ''}`}
                   id="telefono"
                   name="telefono"
                   value={formData.telefono}
                   onChange={handleChange}
                   required
                 />
+
               </div>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
