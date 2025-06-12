@@ -463,21 +463,23 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="subcategoria" className="form-label">Subcategoría</label>
-                <select
-                  className="form-select"
-                  id="subcategoria"
-                  name="subcategoria"
-                  value={formData.subcategoria ?? ''}
-                  onChange={handleChange}
-                  disabled={!formData.idcategoria}
-                >
-                  <option value="">Seleccione una subcategoría</option>
-                  {subcategorias.map(sub => (
-                    <option key={sub.subcategoria} value={sub.subcategoria}>
-                      {sub.descripcion}
-                    </option>
-                  ))}
-                </select>
+              <select
+  className="form-select"
+  id="subcategoria"
+  name="subcategoria"
+  value={formData.subcategoria ?? ''}
+  onChange={handleChange}
+  required
+>
+  <option value="">Seleccione una subcategoría</option>
+  {subcategorias.map(sub => (
+    <option key={sub.subcategoria} value={sub.subcategoria}>
+      {sub.descripcion}
+    </option>
+  ))}
+</select>
+
+
               </div>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
