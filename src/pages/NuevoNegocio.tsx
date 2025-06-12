@@ -49,7 +49,7 @@ interface Categoria {
 }
 
 interface Subcategoria {
-  subcategoria: number;
+ idsubcategoria: number;
   descripcion: string;
 }
 const iconUbicacion = new L.Icon({
@@ -484,9 +484,9 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 >
   <option value="">Seleccione una subcategoría</option>
   {subcategorias.map((sub) => (
-    <option key={sub.subcategoria} value={sub.subcategoria}>
-      {sub.descripcion}
-    </option>
+     <option key={sub.idsubcategoria} value={sub.idsubcategoria}>
+    {sub.descripcion}
+  </option>
   ))}
 </select>
 
