@@ -370,6 +370,7 @@ const position: [number, number] = hasValidPosition
           setEditForm={setEditForm}
           categorias={categorias}
           subcategorias={subcategorias}
+          setSubcategorias={setSubcategorias}
           onSubmit={handleUpdate}
         />
       </div>

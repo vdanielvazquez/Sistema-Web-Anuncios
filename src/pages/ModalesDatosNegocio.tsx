@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import axios from 'axios';
 
 interface ModalProps {
   show: boolean;
@@ -89,6 +90,7 @@ interface ModalEditarInfoNegocioProps {
   setEditForm: React.Dispatch<React.SetStateAction<any>>;
   categorias: any[];
   subcategorias: any[];
+  setSubcategorias: React.Dispatch<React.SetStateAction<any[]>>;
   onSubmit: (e: React.FormEvent) => void;
 }
 
@@ -99,22 +101,31 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
   setEditForm,
   categorias,
   subcategorias,
+  setSubcategorias,
   onSubmit,
 }) => {
-  if (!show) return null;
+  useEffect(() => {
+    if (editForm.categoria) {
+      axios
+        .get(`https://sistemawebpro.com/api/subcategorias/categoria/${editForm.categoria}`)
+        .then(response => {
+          setSubcategorias(response.data.data);
+        })
+        .catch(error => {
+          console.error("Error al cargar subcategorías:", error);
+        });
+    }
+  }, [editForm.categoria, setSubcategorias]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   };
-console.log('Categoria seleccionada:', editForm.categoria, typeof editForm.categoria);
-console.log('Subcategorias:', subcategorias);
-  // Filtra las subcategorías según la categoría seleccionada
-const subcategoriasFiltradas = subcategorias.filter(
-  sub => sub.idcategoria === Number(editForm.categoria)
-);
 
-console.log('Subcategorias filtradas:', subcategoriasFiltradas);
+  const subcategoriasFiltradas = subcategorias.filter(
+    sub => sub.idcategoria === Number(editForm.categoria)
+  );
 
+  if (!show) return null;
 
   return (
     <Modal show={show} onClose={onClose} title="Editar Información del Negocio">
@@ -129,6 +140,7 @@ console.log('Subcategorias filtradas:', subcategoriasFiltradas);
             onChange={handleInputChange}
           />
         </div>
+
         <div className="mb-3">
           <label className="form-label">Descripción</label>
           <input
@@ -139,6 +151,7 @@ console.log('Subcategorias filtradas:', subcategoriasFiltradas);
             onChange={handleInputChange}
           />
         </div>
+
         <div className="mb-3">
           <label className="form-label">Teléfono</label>
           <input
@@ -149,58 +162,53 @@ console.log('Subcategorias filtradas:', subcategoriasFiltradas);
             onChange={handleInputChange}
           />
         </div>
+
         <div className="mb-3">
           <label className="form-label">Categoría</label>
-        <select
-  className="form-select"
-  value={editForm.categoria !== null && editForm.categoria !== undefined ? String(editForm.categoria) : ''}
-  onChange={(e) => {
-    console.log('Seleccionaste categoría:', e.target.value);
-    const value = parseInt(e.target.value, 10);
-    setEditForm({
-      ...editForm,
-      categoria: isNaN(value) ? null : value,
-      subcategoria: null,
-    });
-  }}
->
-  <option value="">Seleccione categoría</option>
-  {categorias.map(cat => (
-   <option key={cat.idcategoria} value={String(cat.idcategoria)}>
-  {cat.descripcion}
-</option>
-
-  ))}
-</select>
-
-<select
-  className="form-select"
-  value={
-    editForm.subcategoria !== null && editForm.subcategoria !== undefined
-      ? String(editForm.subcategoria)
-      : ''
-  }
-  onChange={(e) => {
-    const value = parseInt(e.target.value, 10);
-    setEditForm({
-      ...editForm,
-      subcategoria: isNaN(value) ? null : value, // ✅ solo subcategoria
-    });
-  }}
-  disabled={!editForm.categoria}
->
-  <option value="">Seleccione subcategoría</option>
-  {subcategoriasFiltradas.map(sub => (
-    <option key={sub.idsubcategoria} value={String(sub.idsubcategoria)}>
-      {sub.descripcion}
-    </option>
-  ))}
-</select>
-
-
-
-
+          <select
+            className="form-select"
+            value={editForm.categoria !== null && editForm.categoria !== undefined ? String(editForm.categoria) : ''}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              setEditForm({
+                ...editForm,
+                categoria: isNaN(value) ? null : value,
+                subcategoria: null,
+              });
+            }}
+          >
+            <option value="">Seleccione categoría</option>
+            {categorias.map(cat => (
+              <option key={cat.idcategoria} value={String(cat.idcategoria)}>
+                {cat.descripcion}
+              </option>
+            ))}
+          </select>
         </div>
+
+        <div className="mb-3">
+          <label className="form-label">Subcategoría</label>
+          <select
+            className="form-select"
+            value={editForm.subcategoria !== null && editForm.subcategoria !== undefined ? String(editForm.subcategoria) : ''}
+            onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              setEditForm({
+                ...editForm,
+                subcategoria: isNaN(value) ? null : value,
+              });
+            }}
+            disabled={!editForm.categoria}
+          >
+            <option value="">Seleccione subcategoría</option>
+            {subcategoriasFiltradas.map(sub => (
+              <option key={sub.idsubcategoria} value={String(sub.idsubcategoria)}>
+                {sub.descripcion}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancelar
