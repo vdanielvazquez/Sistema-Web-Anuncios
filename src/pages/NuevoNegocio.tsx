@@ -160,9 +160,9 @@ const [telefonoValido, setTelefonoValido] = useState<boolean>(true);
       axios.get(`${API_URL}/api/subcategorias/categoria/${formData.idcategoria}`)
         .then(res => {
           if (res.data.success && Array.isArray(res.data.data)) {
-            console.log('Subcategorias:', subcategorias);
+           console.log('Subcategorias recibidas del backend:', res.data.data);
+setSubcategorias(res.data.data);
 
-            setSubcategorias(res.data.data);
           } else {
             console.error('Formato de subcategorías inválido', res.data);
             setSubcategorias([]);
