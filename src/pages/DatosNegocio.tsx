@@ -276,7 +276,7 @@ const position: [number, number] = hasValidPosition
         <div className="col-12 col-md-6">
   <div className="shadow rounded-4" style={{ height: '350px', width: '100%', margin: '15px 0', overflow: 'hidden' }}>
     {hasValidPosition ? (
-      <MapContainer center={position} zoom={20} style={{ height: '100%', width: '100%' }}>
+      <MapContainer center={position} zoom={15} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
