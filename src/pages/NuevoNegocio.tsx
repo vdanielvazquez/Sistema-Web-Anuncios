@@ -302,6 +302,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
       alert(`Por favor completa los siguientes campos: ${missingFields.join(", ")}`);
       return;
     }
+
+    
   // Aquí el log para ver qué datos se envían
   console.log('Datos enviados al backend:', {
     Nombre_comercial,
@@ -461,26 +463,26 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
                 </select>
               </div>
 
-              <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
-                <label htmlFor="subcategoria" className="form-label">Subcategoría</label>
-              <select
-  className="form-select"
-  id="subcategoria"
-  name="subcategoria"
-  value={formData.subcategoria ?? ''}
-  onChange={handleChange}
-  required
->
-  <option value="">Seleccione una subcategoría</option>
-  {subcategorias.map(sub => (
-    <option key={sub.subcategoria} value={sub.subcategoria}>
-      {sub.descripcion}
-    </option>
-  ))}
-</select>
+           <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
+  <label htmlFor="subcategoria" className="form-label">Subcategoría</label>
+  <select
+    className="form-select"
+    id="subcategoria"
+    name="subcategoria"
+    value={formData.subcategoria ?? ''}
+    onChange={handleChange}
+    required
+    disabled={!formData.idcategoria || subcategorias.length === 0}
+  >
+    <option value="">Seleccione una subcategoría</option>
+    {subcategorias.map((subcat) => (
+      <option key={subcat.subcategoria} value={subcat.subcategoria}>
+        {subcat.descripcion}
+      </option>
+    ))}
+  </select>
+</div>
 
-
-              </div>
 
               <div className="col-xl-4 col-md-6 col-sm-12 col-12 mb-3">
                 <label htmlFor="codigop" className="form-label">Código Postal</label>
