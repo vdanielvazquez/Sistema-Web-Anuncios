@@ -45,6 +45,8 @@ const Clientes = () => {
           axios.get(`${API_URL}/clientes`),
           axios.get(`${API_URL}/negocios`)
         ]);
+        console.log('clientesRes.data:', clientesRes.data);
+        console.log('negociosRes.data:', negociosRes.data);
         setClientes(clientesRes.data);
         setNegocios(negociosRes.data);
       } catch (error) {
@@ -85,17 +87,11 @@ const negociosPorCliente = Array.isArray(negocios)
       cliente.telefono.toLowerCase().includes(texto) ||
       cliente.correo.toLowerCase().includes(texto)
     );
-     try {
-      const [clientesRes, negociosRes] = await Promise.all([
-        axios.get(`${API_URL}/clientes`),
-        axios.get(`${API_URL}/negocios`)
-      ]);
-console.log('clientesRes.data:', clientesRes.data);
-      console.log('negociosRes.data:', negociosRes.data);
-     
+
     setClientesFiltrados(filtrados);
     setPaginaActual(1);
   };
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
