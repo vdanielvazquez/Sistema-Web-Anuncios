@@ -252,25 +252,30 @@ useEffect(() => {
   fetchUbicacionPorCP();
 }, [formData.codigop]);
 
-///
 
+/////////
 const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-      
-     // Validar el campo de teléfono
+  const { name, value } = e.target;
+
+  // Validar el campo de teléfono
   if (name === 'telefono') {
     const soloNumeros = value.replace(/\D/g, ''); // Elimina todo lo que no sea dígito
     if (soloNumeros.length <= 10) {
       setFormData(prev => ({ ...prev, telefono: soloNumeros }));
       setTelefonoValido(soloNumeros.length === 10);
     }
-    return; // No continúes con el resto
+    return; // Salir para no ejecutar el resto
   }
-    setFormData(prev => {
-      const updatedData = { ...prev, [name]: name.startsWith('id') ? Number(value) : value };
-      return updatedData;
-    });
-  };
+
+  // Para los demás campos
+  setFormData(prev => {
+    const shouldParseToNumber = ['idcliente', 'idcategoria', 'idestado', 'idmunicipio', 'subcategoria'].includes(name);
+    return {
+      ...prev,
+      [name]: shouldParseToNumber ? Number(value) : value
+    };
+  });
+};
 
 
 
