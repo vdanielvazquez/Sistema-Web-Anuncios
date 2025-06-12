@@ -56,13 +56,23 @@ const Clientes = () => {
 
     cargarDatos();
   }, []);
+///
 
-  // Contar negocios por cliente
-  const negociosPorCliente = negocios.reduce<Record<number, number>>((acc, negocio) => {
+/**
+ * 
+ *   const negociosPorCliente = negocios.reduce<Record<number, number>>((acc, negocio) => {
     acc[negocio.idcliente] = (acc[negocio.idcliente] || 0) + 1;
     return acc;
   }, {});
-
+ */
+  // Contar negocios por cliente
+ 
+const negociosPorCliente = Array.isArray(negocios) 
+  ? negocios.reduce<Record<number, number>>((acc, negocio) => {
+      acc[negocio.idcliente] = (acc[negocio.idcliente] || 0) + 1;
+      return acc;
+    }, {}) 
+  : {};
   const handleBuscar = () => {
     const texto = busqueda.toLowerCase().trim();
     if (texto === '') {
