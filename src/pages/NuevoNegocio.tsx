@@ -302,7 +302,19 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
       alert(`Por favor completa los siguientes campos: ${missingFields.join(", ")}`);
       return;
     }
-
+  // Aquí el log para ver qué datos se envían
+  console.log('Datos enviados al backend:', {
+    Nombre_comercial,
+    telefono,
+    idcliente,
+    idestado,
+    idmunicipio,
+    idcategoria,
+    subcategoria,
+    latitud,
+    longitud,
+    codigop,
+  });
     setLoading(true);
     try {
       await axios.post(`${API_URL}/api/negocios`, {
