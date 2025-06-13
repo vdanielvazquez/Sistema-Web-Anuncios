@@ -330,169 +330,168 @@ const NuevoNegocio = () => {
   return (
    
     <div className="divprincipal mt-4">
-      <div className='div-custom'>
+      <div className='container'>
         <h1>Nuevo Negocio</h1>
       <form onSubmit={handleSubmit}>
-        {/* Nombre comercial */}
-        <div className="mb-3">
-          <label className="form-label">Nombre Comercial</label>
-          <input
-            type="text"
-            className="form-control"
-            name="Nombre_comercial"
-            value={formData.Nombre_comercial}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        {/* Teléfono */}
-        <div className="mb-3">
-          <label className="form-label">Teléfono</label>
-          <input
-            type="text"
-            className={`form-control ${!telefonoValido ? 'is-invalid' : ''}`}
-            name="telefono"
-            value={formData.telefono}
-            onChange={handleChange}
-            maxLength={10}
-            required
-          />
-          {!telefonoValido && <div className="invalid-feedback">Debe contener 10 dígitos.</div>}
-        </div>
-
-        {/* Cliente (búsqueda con sugerencias) */}
-        <div className="mb-3 position-relative">
-          <label className="form-label">Cliente</label>
-          <input
-            type="text"
-            className="form-control"
-            value={clienteInput}
-            onChange={e => {
-              setClienteInput(e.target.value);
-              setFormData(prev => ({ ...prev, idcliente: null }));
-            }}
-            placeholder="Buscar cliente..."
-            autoComplete="off"
-            required
-          />
-          {filteredClientes.length > 0 && (
-            <ul className="list-group position-absolute w-100" style={{ zIndex: 1000, maxHeight: 200, overflowY: 'auto' }}>
-              {filteredClientes.map(cliente => (
-                <li
-                  key={cliente.idcliente}
-                  className="list-group-item list-group-item-action"
-                  onClick={() => handleClienteSelect(cliente)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {cliente.nombre}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        {/* Estado */}
-        <div className="mb-3">
-          <label className="form-label">Estado</label>
-          <select
-            className="form-select"
-            name="idestado"
-            value={formData.idestado || ''}
-            onChange={handleChange}
-            required
+        {/* Primer nivel: Cliente, Nombre comercial, Teléfono */}
+<div className="row">
+  <div className="col-md-4 mb-3">
+    <label className="form-label">Cliente</label>
+    <input
+      type="text"
+      className="form-control"
+      value={clienteInput}
+      onChange={e => {
+        setClienteInput(e.target.value);
+        setFormData(prev => ({ ...prev, idcliente: null }));
+      }}
+      placeholder="Buscar cliente..."
+      autoComplete="off"
+      required
+    />
+    {filteredClientes.length > 0 && (
+      <ul className="list-group position-absolute w-100" style={{ zIndex: 1000, maxHeight: 200, overflowY: 'auto' }}>
+        {filteredClientes.map(cliente => (
+          <li
+            key={cliente.idcliente}
+            className="list-group-item list-group-item-action"
+            onClick={() => handleClienteSelect(cliente)}
+            style={{ cursor: 'pointer' }}
           >
-            <option value="">Seleccione un estado</option>
-            {estados.map(estado => (
-              <option key={estado.idestado} value={estado.idestado}>{estado.estado}</option>
-            ))}
-          </select>
-        </div>
+            {cliente.nombre}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
 
-        {/* Municipio */}
-        <div className="mb-3">
-          <label className="form-label">Municipio</label>
-          <select
-            className="form-select"
-            name="idmunicipio"
-            value={formData.idmunicipio || ''}
-            onChange={handleMunicipioChange}
-            required
-            disabled={!formData.idestado}
-          >
-            <option value="">Seleccione un municipio</option>
-            {municipios.map(mun => (
-              <option key={mun.idmunicipio} value={mun.idmunicipio}>{mun.municipio}</option>
-            ))}
-          </select>
-        </div>
+  <div className="col-md-4 mb-3">
+    <label className="form-label">Nombre Comercial</label>
+    <input
+      type="text"
+      className="form-control"
+      name="Nombre_comercial"
+      value={formData.Nombre_comercial}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-        {/* Categoría */}
-        <div className="mb-3">
-          <label className="form-label">Categoría</label>
-          <select
-            className="form-select"
-            name="idcategoria"
-            value={formData.idcategoria || ''}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Seleccione una categoría</option>
-            {categorias.map(cat => (
-              <option key={cat.idcategoria} value={cat.idcategoria}>{cat.descripcion}</option>
-            ))}
-          </select>
-        </div>
+  <div className="col-md-4 mb-3">
+    <label className="form-label">Teléfono</label>
+    <input
+      type="text"
+      className={`form-control ${!telefonoValido ? 'is-invalid' : ''}`}
+      name="telefono"
+      value={formData.telefono}
+      onChange={handleChange}
+      maxLength={10}
+      required
+    />
+    {!telefonoValido && <div className="invalid-feedback">Debe contener 10 dígitos.</div>}
+  </div>
+</div>
 
-        {/* Subcategoría */}
-        <div className="mb-3">
-          <label className="form-label">Subcategoría</label>
-          <select
-            className="form-select"
-            name="subcategoria"
-            value={formData.subcategoria || ''}
-            onChange={handleChange}
-            required
-            disabled={!formData.idcategoria}
-          >
-            <option value="">Seleccione una subcategoría</option>
-            {subcategorias.map(sub => (
-              <option key={sub.idsubcategoria} value={sub.idsubcategoria}>{sub.descripcion}</option>
-            ))}
-          </select>
-        </div>
+{/* Segundo nivel: Estado, Municipio, Código Postal */}
+<div className="row">
+  <div className="col-md-4 mb-3">
+    <label className="form-label">Estado</label>
+    <select
+      className="form-select"
+      name="idestado"
+      value={formData.idestado || ''}
+      onChange={handleChange}
+      required
+    >
+      <option value="">Seleccione un estado</option>
+      {estados.map(estado => (
+        <option key={estado.idestado} value={estado.idestado}>{estado.estado}</option>
+      ))}
+    </select>
+  </div>
 
-        {/* Código Postal */}
-        <div className="mb-3">
-          <label className="form-label">Código Postal</label>
-          <input
-            type="number"
-            className="form-control"
-            name="codigop"
-            value={formData.codigop ?? ''}
-            onChange={handleChange}
-            min={1000}
-            max={99999}
-            placeholder="Opcional"
-          />
-        </div>
+  <div className="col-md-4 mb-3">
+    <label className="form-label">Municipio</label>
+    <select
+      className="form-select"
+      name="idmunicipio"
+      value={formData.idmunicipio || ''}
+      onChange={handleMunicipioChange}
+      required
+      disabled={!formData.idestado}
+    >
+      <option value="">Seleccione un municipio</option>
+      {municipios.map(mun => (
+        <option key={mun.idmunicipio} value={mun.idmunicipio}>{mun.municipio}</option>
+      ))}
+    </select>
+  </div>
 
-        {/* Mapa */}
-        <div className="mb-3">
-          <label className="form-label">Ubicación en el mapa (haz click para seleccionar)</label>
-          <MapContainer center={[mapCenter.lat, mapCenter.lng]} zoom={13} style={{ height: 400, width: '100%' }}>
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <Marker
-              position={[formData.latitud || mapCenter.lat, formData.longitud || mapCenter.lng]}
-              icon={iconUbicacion}
-            />
-            <MapClickHandler setFormData={setFormData} />
-            <MapCenterUpdater center={mapCenter} />
-          </MapContainer>
-        </div>
+  <div className="col-md-4 mb-3">
+    <label className="form-label">Código Postal</label>
+    <input
+      type="number"
+      className="form-control"
+      name="codigop"
+      value={formData.codigop || ''}
+      onChange={handleChange}
+      placeholder="Ej. 50000"
+    />
+  </div>
+</div>
+
+{/* Tercer nivel: Categoría y Subcategoría */}
+<div className="row">
+  <div className="col-md-6 mb-3">
+    <label className="form-label">Categoría</label>
+    <select
+      className="form-select"
+      name="idcategoria"
+      value={formData.idcategoria || ''}
+      onChange={handleChange}
+      required
+    >
+      <option value="">Seleccione una categoría</option>
+      {categorias.map(cat => (
+        <option key={cat.idcategoria} value={cat.idcategoria}>{cat.descripcion}</option>
+      ))}
+    </select>
+  </div>
+
+  <div className="col-md-6 mb-3">
+    <label className="form-label">Subcategoría</label>
+    <select
+      className="form-select"
+      name="subcategoria"
+      value={formData.subcategoria || ''}
+      onChange={handleChange}
+      required
+      disabled={!formData.idcategoria}
+    >
+      <option value="">Seleccione una subcategoría</option>
+      {subcategorias.map(sub => (
+        <option key={sub.idsubcategoria} value={sub.idsubcategoria}>{sub.descripcion}</option>
+      ))}
+    </select>
+  </div>
+</div>
+
+{/* Mapa grande */}
+<div className="mb-4">
+  <label className="form-label">Ubicación en el mapa</label>
+  <div style={{ height: '400px', width: '100%' }}>
+    <MapContainer center={mapCenter} zoom={13} style={{ height: '100%', width: '100%' }}>
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      {formData.latitud && formData.longitud && (
+        <Marker position={[formData.latitud, formData.longitud]} icon={iconUbicacion} />
+      )}
+      <MapClickHandler setFormData={setFormData} />
+      <MapCenterUpdater center={mapCenter} />
+    </MapContainer>
+  </div>
+</div>
+
+       
 
         {/* Botón guardar */}
         <button type="submit" className="btn btn-primary" disabled={loading}>
@@ -500,7 +499,6 @@ const NuevoNegocio = () => {
         </button>
       </form>
       </div>
-      
     </div>
   );
 };
