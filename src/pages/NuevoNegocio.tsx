@@ -330,7 +330,7 @@ const NuevoNegocio = () => {
   return (
    
     <div className="divprincipal mt-4">
-      <div className='containernegocio'>
+      <div className='div-custom'>
         <h1>Nuevo Negocio</h1>
       <form onSubmit={handleSubmit}>
         {/* Nombre comercial */}
