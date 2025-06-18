@@ -247,7 +247,7 @@ const position: [number, number] = hasValidPosition
       <h2 className="card-title" style={{ fontSize: '1.8rem' }}>{negocio.nombre_comercial}</h2>
       <div className="card-body">
         <p><strong>Descripción:</strong> {negocio.descripcion}</p>
-         <p><strong>Promoción:</strong></p>
+         <p><strong>Promoción:</strong> {negocio.promocion}</p>
         {negocio.categoria || negocio.subcategoria ? (
           <p>
             <strong>Categoría:</strong> {
@@ -264,7 +264,7 @@ const position: [number, number] = hasValidPosition
         <p><strong>Teléfono:</strong> {negocio.telefono}</p>
         <p><strong>Fecha de alta:</strong> {negocio.fecha_de_alta ? new Date(negocio.fecha_de_alta).toLocaleDateString() : 'No disponible'}</p>
         <p> <strong>Estado:</strong><span className={negocio.activo ? 'text-success' : 'text-danger'}>{negocio.activo ? 'Activo' : 'Inactivo'} </span></p>
-         <p> <strong>Patrocinado:</strong><span className={negocio.activo ? 'text-success' : 'text-danger'}>{negocio.activo ? 'Si' : 'No'} </span></p>
+        <p> <strong>Patrocinado:</strong><span className={negocio.activo ? 'text-success' : 'text-danger'}>{negocio.activo ? 'Si' : 'No'} </span></p>
       
       </div>
       <div className="card-footer">
