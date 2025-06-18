@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import ReactPaginate from 'react-paginate';
+import { ModalCategoria, ModalSubcategoria,ModalSuscripcion} from '../pages/ModalesAjustes'; 
+
 
 interface Categoria {
   idcategoria: number;
@@ -32,6 +34,11 @@ const Ajustes: React.FC = () => {
   const [nuevaDescripcion, setNuevaDescripcion] = useState('');
   const [nuevaSubcategoria, setNuevaSubcategoria] = useState('');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<number | undefined>(undefined);
+
+  const [showModalSuscripcion, setShowModalSuscripcion] = useState(false);
+const [descripcionSuscripcion, setDescripcionSuscripcion] = useState('');
+const [precioSuscripcion, setPrecioSuscripcion] = useState('');
+
 
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [tipoMensaje, setTipoMensaje] = useState<'success' | 'danger'>('success');
@@ -129,6 +136,36 @@ const Ajustes: React.FC = () => {
     setTimeout(() => setMensaje(null), 3000);
   };
 
+  const handleGuardarSuscripcion = async () => {
+  if (!descripcionSuscripcion || !precioSuscripcion) {
+    setMensaje('Por favor, completa todos los campos');
+    setTipoMensaje('danger');
+    setTimeout(() => setMensaje(null), 3000);
+    return;
+  }
+
+  try {
+    await axios.post(`${API_URL}/api/suscripciones`, {
+      descripcion: descripcionSuscripcion,
+      precio: parseFloat(precioSuscripcion),
+    });
+
+    setMensaje('Suscripción guardada con éxito');
+    setTipoMensaje('success');
+    setDescripcionSuscripcion('');
+    setPrecioSuscripcion('');
+    setShowModalSuscripcion(false);
+    // TODO: fetchSuscripciones(); si tienes esta función
+  } catch (error) {
+    setMensaje('Error al guardar la suscripción');
+    setTipoMensaje('danger');
+    console.error(error);
+  }
+
+  setTimeout(() => setMensaje(null), 3000);
+};
+
+
   return (
     <div className="divprincipal">
       <div className="div-ajustes">
@@ -160,6 +197,7 @@ const Ajustes: React.FC = () => {
                   <tr>
                     <td colSpan={2}>Cargando...</td>
                   </tr>
+                  
                 ) : (
                   displayedCategorias.map((cat) => (
                     <tr key={cat.idcategoria}>
@@ -237,8 +275,9 @@ const Ajustes: React.FC = () => {
 
           {/* Suscripciones */}
           <div className="col-xl-3 col-md-6 col-sm-12 col-12 mb-3">
-            <button className="btn btn-primary mb-3">Nueva Suscripción</button>
-            <table className="table table-bordered table-striped">
+           <button className="btn btn-primary mb-3" onClick={() => setShowModalSuscripcion(true)}>
+  Nueva Suscripción
+</button> <table className="table table-bordered table-striped">
               <thead className="thead-dark">
                 <tr>
                   <th>Descripcion</th>
@@ -264,81 +303,35 @@ const Ajustes: React.FC = () => {
 
         </div>
 
-        {/* Modal para nueva categoría */}
-        {showModalCategoria && (
-          <div className="modal show fade d-block" tabIndex={-1}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Agregar Categoría</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModalCategoria(false)} />
-                </div>
-                <div className="modal-body">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Descripción de la categoría"
-                    value={nuevaDescripcion}
-                    onChange={(e) => setNuevaDescripcion(e.target.value)}
-                  />
-                </div>
-                <div className="modal-footer">
-                  <button className="btn btn-secondary" onClick={() => setShowModalCategoria(false)}>
-                    Cancelar
-                  </button>
-                  <button className="btn btn-success" onClick={handleGuardar}>
-                    Guardar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+       <ModalCategoria
+  show={showModalCategoria}
+  descripcion={nuevaDescripcion}
+  onChange={setNuevaDescripcion}
+  onClose={() => setShowModalCategoria(false)}
+  onSave={handleGuardar}
+/>
 
-        {/* Modal para nueva subcategoría */}
-        {showModalSubcategoria && (
-          <div className="modal show fade d-block" tabIndex={-1}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Agregar Subcategoría</h5>
-                  <button type="button" className="btn-close" onClick={() => setShowModalSubcategoria(false)} />
-                </div>
-                <div className="modal-body">
-                  <select
-                    className="form-control mb-3"
-                    value={categoriaSeleccionada ?? ''}
-                    onChange={(e) =>
-                      setCategoriaSeleccionada(e.target.value ? Number(e.target.value) : undefined)
-                    }
-                  >
-                    <option value="">Seleccione una categoría</option>
-                    {categorias.map((cat) => (
-                      <option key={cat.idcategoria} value={cat.idcategoria}>
-                        {cat.descripcion}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Descripción de la subcategoría"
-                    value={nuevaSubcategoria}
-                    onChange={(e) => setNuevaSubcategoria(e.target.value)}
-                  />
-                </div>
-                <div className="modal-footer">
-                  <button className="btn btn-secondary" onClick={() => setShowModalSubcategoria(false)}>
-                    Cancelar
-                  </button>
-                  <button className="btn btn-success" onClick={handleGuardarSubcategoria}>
-                    Guardar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+<ModalSubcategoria
+  show={showModalSubcategoria}
+  categorias={categorias}
+  idCategoria={categoriaSeleccionada}
+  descripcion={nuevaSubcategoria}
+  onCategoriaChange={setCategoriaSeleccionada}
+  onDescripcionChange={setNuevaSubcategoria}
+  onClose={() => setShowModalSubcategoria(false)}
+  onSave={handleGuardarSubcategoria}
+/>
+
+<ModalSuscripcion
+  show={showModalSuscripcion}
+  descripcion={descripcionSuscripcion}
+  precio={precioSuscripcion}
+  onDescripcionChange={setDescripcionSuscripcion}
+  onPrecioChange={setPrecioSuscripcion}
+  onClose={() => setShowModalSuscripcion(false)}
+  onSave={handleGuardarSuscripcion}
+/>
+
       </div>
     </div>
   );
