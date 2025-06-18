@@ -264,7 +264,7 @@ const position: [number, number] = hasValidPosition
         <p><strong>Teléfono:</strong> {negocio.telefono}</p>
         <p><strong>Fecha de alta:</strong> {negocio.fecha_de_alta ? new Date(negocio.fecha_de_alta).toLocaleDateString() : 'No disponible'}</p>
         <p> <strong>Estado:</strong><span className={negocio.activo ? 'text-success' : 'text-danger'}>{negocio.activo ? 'Activo' : 'Inactivo'} </span></p>
-        <p> <strong>Patrocinado:</strong><span className={negocio.activo ? 'text-success' : 'text-danger'}>{negocio.activo ? 'Si' : 'No'} </span></p>
+        <p> <strong>Patrocinado:</strong><span className={negocio.patrocinado ? 'text-success' : 'text-danger'}>{negocio.activo ? 'Si' : 'No'} </span></p>
       
       </div>
       <div className="card-footer">
