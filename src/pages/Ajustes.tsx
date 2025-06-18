@@ -145,7 +145,7 @@ const [precioSuscripcion, setPrecioSuscripcion] = useState('');
   }
 
   try {
-    await axios.post(`${API_URL}/api/suscripciones`, {
+    await axios.post(`${API_URL}/api/suscripcion`, {
       descripcion: descripcionSuscripcion,
       precio: parseFloat(precioSuscripcion),
     });
