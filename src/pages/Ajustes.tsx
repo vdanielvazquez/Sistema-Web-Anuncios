@@ -220,7 +220,7 @@ const Ajustes: React.FC = () => {
               previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
               nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
               breakLabel={<span className="px-2">...</span>}
-              pageCount={Math.ceil(categorias.length / itemsPerPage)}
+              pageCount={Math.max(1, Math.ceil(categorias.length / itemsPerPage))}
               onPageChange={handlePageClickCategorias}
               containerClassName="pagination justify-content-center mt-3"
               pageClassName="page-item mx-1"
@@ -262,7 +262,7 @@ const Ajustes: React.FC = () => {
               previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
               nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
               breakLabel={<span className="px-2">...</span>}
-              pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
+              pageCount={Math.max(1, Math.ceil(subcategorias.length / itemsPerPage))}
               onPageChange={handlePageClickSubcategorias}
               containerClassName="pagination justify-content-center mt-3"
               pageClassName="page-item mx-1"
@@ -297,7 +297,7 @@ const Ajustes: React.FC = () => {
                   suscripciones.map((sus) => (
                     <tr key={sus.idsuscripcion}>
                       <td>{sus.descripcion}</td>
-                      <td>${sus.precio.toFixed(2)}</td>
+                      <td>${isNaN(Number(sus.precio)) ? '0.00' : Number(sus.precio).toFixed(2)}</td>
                       <td className="text-center">
                         <button
                           className="btn btn-warning btn-sm"
