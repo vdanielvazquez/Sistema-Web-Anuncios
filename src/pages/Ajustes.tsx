@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import ReactPaginate from 'react-paginate';
-import { ModalCategoria, ModalSubcategoria,ModalSuscripcion} from '../pages/ModalesAjustes'; 
-
+import {
+  ModalCategoria,
+  ModalSubcategoria,
+  ModalSuscripcion,
+} from '../pages/ModalesAjustes';
 
 interface Categoria {
   idcategoria: number;
   descripcion: string;
 }
+
 interface Subcategoria {
   idsubcategoria: number;
   descripcion: string;
@@ -16,60 +20,42 @@ interface Subcategoria {
 }
 
 const Ajustes: React.FC = () => {
-  const [currentPageCategorias, setCurrentPageCategorias] = useState(0);
-  const [currentPageSubcategorias, setCurrentPageSubcategorias] = useState(0);
+  const API_URL = 'https://sistemawebpro.com';
   const itemsPerPage = 5;
 
+  // Estados de datos
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
-
-  // Datos provisionales para evitar error de variables no definidas
   const [suscripciones] = useState<{ id: number; dias: number }[]>([]);
-  
-  const [loading, setLoading] = useState(true);
 
+  // Paginación
+  const [currentPageCategorias, setCurrentPageCategorias] = useState(0);
+  const [currentPageSubcategorias, setCurrentPageSubcategorias] = useState(0);
+
+  // Modales
   const [showModalCategoria, setShowModalCategoria] = useState(false);
   const [showModalSubcategoria, setShowModalSubcategoria] = useState(false);
+  const [showModalSuscripcion, setShowModalSuscripcion] = useState(false);
 
+  // Formularios
   const [nuevaDescripcion, setNuevaDescripcion] = useState('');
   const [nuevaSubcategoria, setNuevaSubcategoria] = useState('');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<number | undefined>(undefined);
+  const [descripcionSuscripcion, setDescripcionSuscripcion] = useState('');
+  const [precioSuscripcion, setPrecioSuscripcion] = useState('');
 
-  const [showModalSuscripcion, setShowModalSuscripcion] = useState(false);
-const [descripcionSuscripcion, setDescripcionSuscripcion] = useState('');
-const [precioSuscripcion, setPrecioSuscripcion] = useState('');
-
-
+  // UI
+  const [loading, setLoading] = useState(true);
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [tipoMensaje, setTipoMensaje] = useState<'success' | 'danger'>('success');
 
-  const API_URL = 'https://sistemawebpro.com';
-
-  // Paginación categorías
-  const displayedCategorias = categorias.slice(
-    currentPageCategorias * itemsPerPage,
-    (currentPageCategorias + 1) * itemsPerPage
-  );
-
-  // Paginación subcategorías
-  const displayedSubcategorias = subcategorias.slice(
-    currentPageSubcategorias * itemsPerPage,
-    (currentPageSubcategorias + 1) * itemsPerPage
-  );
-
-  const handlePageClickCategorias = (event: { selected: number }) => {
-    setCurrentPageCategorias(event.selected);
-  };
-
-  const handlePageClickSubcategorias = (event: { selected: number }) => {
-    setCurrentPageSubcategorias(event.selected);
-  };
-
+  // Carga inicial
   useEffect(() => {
     fetchCategorias();
     fetchSubcategorias();
   }, []);
 
+  // Peticiones
   const fetchCategorias = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/categorias`);
@@ -90,11 +76,10 @@ const [precioSuscripcion, setPrecioSuscripcion] = useState('');
     }
   };
 
+  // Guardar categoría
   const handleGuardar = async () => {
     try {
-      await axios.post(`${API_URL}/api/categorias`, {
-        descripcion: nuevaDescripcion,
-      });
+      await axios.post(`${API_URL}/api/categorias`, { descripcion: nuevaDescripcion });
       setMensaje('Categoría guardada con éxito');
       setTipoMensaje('success');
       setNuevaDescripcion('');
@@ -105,14 +90,15 @@ const [precioSuscripcion, setPrecioSuscripcion] = useState('');
       setTipoMensaje('danger');
       console.error(error);
     }
-
     setTimeout(() => setMensaje(null), 3000);
   };
 
+  // Guardar subcategoría
   const handleGuardarSubcategoria = async () => {
     if (categoriaSeleccionada === undefined) {
       setMensaje('Por favor, selecciona una categoría');
       setTipoMensaje('danger');
+      setTimeout(() => setMensaje(null), 3000);
       return;
     }
 
@@ -136,50 +122,64 @@ const [precioSuscripcion, setPrecioSuscripcion] = useState('');
     setTimeout(() => setMensaje(null), 3000);
   };
 
+  // Guardar suscripción
   const handleGuardarSuscripcion = async () => {
-  if (!descripcionSuscripcion || !precioSuscripcion) {
-    setMensaje('Por favor, completa todos los campos');
-    setTipoMensaje('danger');
+    if (!descripcionSuscripcion || !precioSuscripcion) {
+      setMensaje('Por favor, completa todos los campos');
+      setTipoMensaje('danger');
+      setTimeout(() => setMensaje(null), 3000);
+      return;
+    }
+
+    try {
+      await axios.post(`${API_URL}/api/suscripcion`, {
+        descripcion: descripcionSuscripcion,
+        precio: parseFloat(precioSuscripcion),
+      });
+      setMensaje('Suscripción guardada con éxito');
+      setTipoMensaje('success');
+      setDescripcionSuscripcion('');
+      setPrecioSuscripcion('');
+      setShowModalSuscripcion(false);
+      // fetchSuscripciones(); si se implementa
+    } catch (error) {
+      setMensaje('Error al guardar la suscripción');
+      setTipoMensaje('danger');
+      console.error(error);
+    }
+
     setTimeout(() => setMensaje(null), 3000);
-    return;
-  }
+  };
 
-  try {
-    await axios.post(`${API_URL}/api/suscripcion`, {
-      descripcion: descripcionSuscripcion,
-      precio: parseFloat(precioSuscripcion),
-    });
+  // Paginación
+  const handlePageClickCategorias = (event: { selected: number }) => {
+    setCurrentPageCategorias(event.selected);
+  };
 
-    setMensaje('Suscripción guardada con éxito');
-    setTipoMensaje('success');
-    setDescripcionSuscripcion('');
-    setPrecioSuscripcion('');
-    setShowModalSuscripcion(false);
-    // TODO: fetchSuscripciones(); si tienes esta función
-  } catch (error) {
-    setMensaje('Error al guardar la suscripción');
-    setTipoMensaje('danger');
-    console.error(error);
-  }
+  const handlePageClickSubcategorias = (event: { selected: number }) => {
+    setCurrentPageSubcategorias(event.selected);
+  };
 
-  setTimeout(() => setMensaje(null), 3000);
-};
+  const displayedCategorias = categorias.slice(
+    currentPageCategorias * itemsPerPage,
+    (currentPageCategorias + 1) * itemsPerPage
+  );
 
+  const displayedSubcategorias = subcategorias.slice(
+    currentPageSubcategorias * itemsPerPage,
+    (currentPageSubcategorias + 1) * itemsPerPage
+  );
 
   return (
     <div className="divprincipal">
       <div className="div-ajustes">
         <h2 className="text-center mt-5">Ajustes</h2>
 
-        {mensaje && (
-          <div className={`alert alert-${tipoMensaje}`} role="alert">
-            {mensaje}
-          </div>
-        )}
+        {mensaje && <div className={`alert alert-${tipoMensaje}`}>{mensaje}</div>}
 
         <div className="d-flex flex-wrap justify-content-between">
           {/* Categorías */}
-          <div className="col-xl-3 col-md-6 col-sm-12 col-12 mb-3">
+          <div className="col-xl-3 col-md-6 col-sm-12 mb-3">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalCategoria(true)}>
               Nueva Categoría
             </button>
@@ -187,22 +187,17 @@ const [precioSuscripcion, setPrecioSuscripcion] = useState('');
               <thead className="thead-dark">
                 <tr>
                   <th>Nombre</th>
-                  <th className="text-center" style={{ width: '100px' }}>
-                    Acción
-                  </th>
+                  <th className="text-center" style={{ width: '100px' }}>Acción</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr>
-                    <td colSpan={2}>Cargando...</td>
-                  </tr>
-                  
+                  <tr><td colSpan={2}>Cargando...</td></tr>
                 ) : (
                   displayedCategorias.map((cat) => (
                     <tr key={cat.idcategoria}>
                       <td>{cat.descripcion}</td>
-                      <td className="d-flex justify-content-center" style={{ width: '100px' }}>
+                      <td className="d-flex justify-content-center">
                         <button className="btn btn-warning btn-sm me-2">Editar</button>
                       </td>
                     </tr>
@@ -210,35 +205,33 @@ const [precioSuscripcion, setPrecioSuscripcion] = useState('');
                 )}
               </tbody>
             </table>
-          <ReactPaginate
-            previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
-            nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
-            breakLabel={<span className="px-2">...</span>}
-            pageCount={Math.ceil(categorias.length / itemsPerPage)}
-            onPageChange={handlePageClickCategorias}
-            containerClassName="pagination justify-content-center mt-3"
-            pageClassName="page-item mx-1"
-            pageLinkClassName="page-link"
-            previousClassName="page-item"
-            previousLinkClassName=""
-            nextClassName="page-item"
-            nextLinkClassName=""
-            breakClassName="page-item mx-1"
-            breakLinkClassName="page-link"
-            activeClassName="active"
-            forcePage={currentPageCategorias}
-          />
+            <ReactPaginate
+              previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
+              nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
+              breakLabel={<span className="px-2">...</span>}
+              pageCount={Math.ceil(categorias.length / itemsPerPage)}
+              onPageChange={handlePageClickCategorias}
+              containerClassName="pagination justify-content-center mt-3"
+              pageClassName="page-item mx-1"
+              pageLinkClassName="page-link"
+              previousClassName="page-item"
+              nextClassName="page-item"
+              breakClassName="page-item mx-1"
+              breakLinkClassName="page-link"
+              activeClassName="active"
+              forcePage={currentPageCategorias}
+            />
           </div>
 
           {/* Subcategorías */}
-          <div className="col-xl-3 col-md-6 col-sm-12 col-12 mb-3">
+          <div className="col-xl-3 col-md-6 col-sm-12 mb-3">
             <button className="btn btn-primary mb-3" onClick={() => setShowModalSubcategoria(true)}>
-              Nueva SubCategoría
+              Nueva Subcategoría
             </button>
             <table className="table table-bordered table-striped mt-4">
               <thead className="thead-dark">
                 <tr>
-                  <th>Categoria</th>
+                  <th>Categoría</th>
                   <th>Subcategoría</th>
                 </tr>
               </thead>
@@ -247,91 +240,93 @@ const [precioSuscripcion, setPrecioSuscripcion] = useState('');
                   <tr key={subcat.idsubcategoria}>
                     <td>{categorias.find((cat) => cat.idcategoria === subcat.idcategoria)?.descripcion}</td>
                     <td>{subcat.descripcion}</td>
+                    <td className="text-center">
+                      <button className="btn btn-warning btn-sm">Editar</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          <ReactPaginate
-            previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
-            nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
-            breakLabel={<span className="px-2">...</span>}
-            pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
-            onPageChange={handlePageClickSubcategorias}
-            containerClassName="pagination justify-content-center mt-3"
-            pageClassName="page-item mx-1" // margen horizontal
-            pageLinkClassName="page-link"
-            previousClassName="page-item"
-            previousLinkClassName="" // ya no usas page-link porque es un botón personalizado
-            nextClassName="page-item"
-            nextLinkClassName=""
-            breakClassName="page-item mx-1"
-            breakLinkClassName="page-link"
-            activeClassName="active"
-            disabledClassName="disabled"
-            forcePage={currentPageSubcategorias}
-          />
-
+            <ReactPaginate
+              previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
+              nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
+              breakLabel={<span className="px-2">...</span>}
+              pageCount={Math.ceil(subcategorias.length / itemsPerPage)}
+              onPageChange={handlePageClickSubcategorias}
+              containerClassName="pagination justify-content-center mt-3"
+              pageClassName="page-item mx-1"
+              pageLinkClassName="page-link"
+              previousClassName="page-item"
+              nextClassName="page-item"
+              breakClassName="page-item mx-1"
+              breakLinkClassName="page-link"
+              activeClassName="active"
+              forcePage={currentPageSubcategorias}
+            />
           </div>
 
           {/* Suscripciones */}
-          <div className="col-xl-3 col-md-6 col-sm-12 col-12 mb-3">
-           <button className="btn btn-primary mb-3" onClick={() => setShowModalSuscripcion(true)}>
-  Nueva Suscripción
-</button> <table className="table table-bordered table-striped">
+          <div className="col-xl-3 col-md-6 col-sm-12 mb-3">
+            <button className="btn btn-primary mb-3" onClick={() => setShowModalSuscripcion(true)}>
+              Nueva Suscripción
+            </button>
+            <table className="table table-bordered table-striped">
               <thead className="thead-dark">
                 <tr>
-                  <th>Descripcion</th>
+                  <th>Descripción</th>
                   <th>Número de Negocios</th>
                 </tr>
               </thead>
               <tbody>
                 {suscripciones.length === 0 ? (
                   <tr>
-                    <td>No hay suscripciones</td>
-                    <td>10</td>
+                    <td colSpan={2}>No hay suscripciones</td>
+                    <td className="text-center">
+                      <button className="btn btn-warning btn-sm">Editar</button>
+                    </td>
                   </tr>
                 ) : (
                   suscripciones.map((sus) => (
                     <tr key={sus.id}>
                       <td>{sus.dias}</td>
+                      <td>10</td>
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
           </div>
-
         </div>
 
-       <ModalCategoria
-  show={showModalCategoria}
-  descripcion={nuevaDescripcion}
-  onChange={setNuevaDescripcion}
-  onClose={() => setShowModalCategoria(false)}
-  onSave={handleGuardar}
-/>
+        {/* Modales */}
+        <ModalCategoria
+          show={showModalCategoria}
+          descripcion={nuevaDescripcion}
+          onChange={setNuevaDescripcion}
+          onClose={() => setShowModalCategoria(false)}
+          onSave={handleGuardar}
+        />
 
-<ModalSubcategoria
-  show={showModalSubcategoria}
-  categorias={categorias}
-  idCategoria={categoriaSeleccionada}
-  descripcion={nuevaSubcategoria}
-  onCategoriaChange={setCategoriaSeleccionada}
-  onDescripcionChange={setNuevaSubcategoria}
-  onClose={() => setShowModalSubcategoria(false)}
-  onSave={handleGuardarSubcategoria}
-/>
+        <ModalSubcategoria
+          show={showModalSubcategoria}
+          categorias={categorias}
+          idCategoria={categoriaSeleccionada}
+          descripcion={nuevaSubcategoria}
+          onCategoriaChange={setCategoriaSeleccionada}
+          onDescripcionChange={setNuevaSubcategoria}
+          onClose={() => setShowModalSubcategoria(false)}
+          onSave={handleGuardarSubcategoria}
+        />
 
-<ModalSuscripcion
-  show={showModalSuscripcion}
-  descripcion={descripcionSuscripcion}
-  precio={precioSuscripcion}
-  onDescripcionChange={setDescripcionSuscripcion}
-  onPrecioChange={setPrecioSuscripcion}
-  onClose={() => setShowModalSuscripcion(false)}
-  onSave={handleGuardarSuscripcion}
-/>
-
+        <ModalSuscripcion
+          show={showModalSuscripcion}
+          descripcion={descripcionSuscripcion}
+          precio={precioSuscripcion}
+          onDescripcionChange={setDescripcionSuscripcion}
+          onPrecioChange={setPrecioSuscripcion}
+          onClose={() => setShowModalSuscripcion(false)}
+          onSave={handleGuardarSuscripcion}
+        />
       </div>
     </div>
   );
