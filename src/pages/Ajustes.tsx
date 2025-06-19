@@ -26,7 +26,9 @@ const Ajustes: React.FC = () => {
   // Estados de datos
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
-  const [suscripciones] = useState<{ id: number; dias: number }[]>([]);
+  const [suscripciones, setSuscripciones] = useState<{ idsuscripcion: number; descripcion: string; precio: number }[]>([]);
+  const [precioSuscripcion, setPrecioSuscripcion] = useState('');
+
 
   // Paginación
   const [currentPageCategorias, setCurrentPageCategorias] = useState(0);
@@ -42,7 +44,7 @@ const Ajustes: React.FC = () => {
   const [nuevaSubcategoria, setNuevaSubcategoria] = useState('');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<number | undefined>(undefined);
   const [descripcionSuscripcion, setDescripcionSuscripcion] = useState('');
-  const [precioSuscripcion, setPrecioSuscripcion] = useState('');
+
 
   // UI
   const [loading, setLoading] = useState(true);
@@ -53,6 +55,7 @@ const Ajustes: React.FC = () => {
   useEffect(() => {
     fetchCategorias();
     fetchSubcategorias();
+     fetchSuscripciones();
   }, []);
 
   // Peticiones
@@ -150,7 +153,15 @@ const Ajustes: React.FC = () => {
 
     setTimeout(() => setMensaje(null), 3000);
   };
-
+  // mostrar suscripciones
+  const fetchSuscripciones = async () => {
+  try {
+    const res = await axios.get(`${API_URL}/api/suscripcion`);
+    setSuscripciones(res.data.data); // Ajusta según cómo venga la respuesta
+  } catch (error) {
+    console.error('Error al obtener suscripciones:', error);
+  }
+};
   // Paginación
   const handlePageClickCategorias = (event: { selected: number }) => {
     setCurrentPageCategorias(event.selected);
@@ -278,18 +289,23 @@ const Ajustes: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {suscripciones.length === 0 ? (
-                  <tr>
-                    <td colSpan={2}>No hay suscripciones</td>
-                    <td className="text-center">
-                      <button className="btn btn-warning btn-sm">Editar</button>
-                    </td>
-                  </tr>
+              {suscripciones.length === 0 ? (
+        <tr>
+          <td colSpan={3}>No hay suscripciones registradas</td>
+        </tr>
                 ) : (
                   suscripciones.map((sus) => (
-                    <tr key={sus.id}>
-                      <td>{sus.dias}</td>
-                      <td>10</td>
+                    <tr key={sus.idsuscripcion}>
+                      <td>{sus.descripcion}</td>
+                      <td>${sus.precio.toFixed(2)}</td>
+                      <td className="text-center">
+                        <button
+                          className="btn btn-warning btn-sm"
+                        
+                        >
+                          Editar
+                        </button>
+                      </td>
                     </tr>
                   ))
                 )}
