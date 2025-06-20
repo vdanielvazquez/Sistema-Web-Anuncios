@@ -165,7 +165,7 @@ const Ajustes: React.FC = () => {
     console.error('Error al obtener suscripciones:', error);
   }
 };
-//editar suscripcion
+//modal suscripcion
 const abrirModalEditarSuscripcion = (sus: { idsuscripcion: number; descripcion: string; precio: number }) => {
   setSuscripcionEditando({
     ...sus,
@@ -174,7 +174,7 @@ const abrirModalEditarSuscripcion = (sus: { idsuscripcion: number; descripcion: 
   setShowModalEditarSuscripcion(true);
 };
 
-//
+//editar suscripcion 
 const guardarCambiosSuscripcion = async () => {
   if (!suscripcionEditando) return;
   try {
@@ -191,6 +191,24 @@ const guardarCambiosSuscripcion = async () => {
     setTipoMensaje('danger');
     console.error(error);
   }
+  setTimeout(() => setMensaje(null), 3000);
+};
+//eliminar suscripcion
+const handleEliminarSuscripcion = async (id: number) => {
+  const confirmar = window.confirm('¿Estás seguro de que deseas eliminar esta suscripción?');
+  if (!confirmar) return;
+
+  try {
+    await axios.delete(`${API_URL}/api/suscripcion/${id}`);
+    setMensaje('Suscripción eliminada con éxito');
+    setTipoMensaje('success');
+    fetchSuscripciones();
+  } catch (error) {
+    setMensaje('Error al eliminar la suscripción');
+    setTipoMensaje('danger');
+    console.error(error);
+  }
+
   setTimeout(() => setMensaje(null), 3000);
 };
 
@@ -334,7 +352,8 @@ const guardarCambiosSuscripcion = async () => {
                       <td>{sus.descripcion}</td>
                       <td>${isNaN(Number(sus.precio)) ? '0.00' : Number(sus.precio).toFixed(2)}</td>
                       <td className="text-center">
-                        <button className="btn btn-warning btn-sm" onClick={() => abrirModalEditarSuscripcion(sus)}>Editar</button>
+                        <button className="btn btn-warning btn-sm me-2" onClick={() => abrirModalEditarSuscripcion(sus)}>Editar</button>
+                        <button className="btn btn-danger btn-sm" onClick={() => handleEliminarSuscripcion(sus.idsuscripcion)}>Eliminar</button>
                       </td>
                     </tr>
                   ))
