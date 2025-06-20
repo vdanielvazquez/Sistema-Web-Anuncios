@@ -211,6 +211,45 @@ const handleEliminarSuscripcion = async (id: number) => {
 
   setTimeout(() => setMensaje(null), 3000);
 };
+/////
+// Eliminar categoría
+const handleEliminarCategoria = async (id: number) => {
+  const confirmar = window.confirm('¿Eliminar esta categoría?');
+  if (!confirmar) return;
+
+  try {
+    await axios.delete(`${API_URL}/api/categorias/${id}`);
+    setMensaje('Categoría eliminada con éxito');
+    setTipoMensaje('success');
+    fetchCategorias();
+  } catch (error) {
+    setMensaje('Error al eliminar categoría');
+    setTipoMensaje('danger');
+    console.error(error);
+  }
+
+  setTimeout(() => setMensaje(null), 3000);
+};
+
+// Eliminar subcategoría
+const handleEliminarSubcategoria = async (id: number) => {
+  const confirmar = window.confirm('¿Eliminar esta subcategoría?');
+  if (!confirmar) return;
+
+  try {
+    await axios.delete(`${API_URL}/api/subcategorias/${id}`);
+    setMensaje('Subcategoría eliminada con éxito');
+    setTipoMensaje('success');
+    fetchSubcategorias();
+  } catch (error) {
+    setMensaje('Error al eliminar subcategoría');
+    setTipoMensaje('danger');
+    console.error(error);
+  }
+
+  setTimeout(() => setMensaje(null), 3000);
+};
+
 
   // Paginación
   const handlePageClickCategorias = (event: { selected: number }) => {
@@ -260,6 +299,7 @@ const handleEliminarSuscripcion = async (id: number) => {
                       <td>{cat.descripcion}</td>
                       <td className="d-flex justify-content-center">
                         <button className="btn btn-warning btn-sm me-2">Editar</button>
+                        <button className="btn btn-danger btn-sm" onClick={() => handleEliminarCategoria(cat.idcategoria)}>Eliminar</button>
                       </td>
                     </tr>
                   ))
@@ -303,8 +343,8 @@ const handleEliminarSuscripcion = async (id: number) => {
                     <td>{categorias.find((cat) => cat.idcategoria === subcat.idcategoria)?.descripcion}</td>
                     <td>{subcat.descripcion}</td>
                     <td className="text-center">
-                      <button className="btn btn-warning btn-sm">Editar</button>
-                      <button className="btn btn-danger btn-sm">Eliminar</button>
+                      <button className="btn btn-warning btn-sm me-2">Editar</button>
+                      <button className="btn btn-danger btn-sm" onClick={() => handleEliminarSubcategoria(subcat.idsubcategoria)}>Eliminar</button>
                     </td>
                   </tr>
                 ))}
