@@ -59,15 +59,6 @@ const Clientes = () => {
     cargarDatos();
   }, []);
 ///
-
-/**
- * 
- *   const negociosPorCliente = negocios.reduce<Record<number, number>>((acc, negocio) => {
-    acc[negocio.idcliente] = (acc[negocio.idcliente] || 0) + 1;
-    return acc;
-  }, {});
- */
-  // Contar negocios por cliente
  
 const negociosPorCliente = Array.isArray(negocios) 
   ? negocios.reduce<Record<number, number>>((acc, negocio) => {
@@ -136,6 +127,25 @@ const negociosPorCliente = Array.isArray(negocios)
   const abrirDetalles = (id: number) => {
     navigate(`/DatosCliente/${id}`);
   };
+
+  const handleEliminarCliente = async (id: number) => {
+  const confirmar = window.confirm('¿Estás seguro de eliminar este cliente?');
+  if (!confirmar) return;
+
+  try {
+    await axios.delete(`${API_URL}/clientes/${id}`);
+    // Recargar datos después de eliminar
+    const [clientesRes, negociosRes] = await Promise.all([
+      axios.get(`${API_URL}/clientes`),
+      axios.get(`${API_URL}/negocios`)
+    ]);
+    setClientes(clientesRes.data);
+    setNegocios(negociosRes.data);
+  } catch (error) {
+    console.error('Error al eliminar cliente:', error);
+  }
+};
+
 
   const totalClientes = clientes.length;
   const clientesActivos = clientes.filter(cliente => cliente.activo).length;
@@ -247,6 +257,12 @@ const negociosPorCliente = Array.isArray(negocios)
                         <button className="btn btn-info mx-1" onClick={() => abrirDetalles(cliente.idcliente)}>
                           Detalles
                         </button>
+                        <button
+    className="btn btn-danger mx-1"
+    onClick={() => handleEliminarCliente(cliente.idcliente)}
+  >
+    Eliminar
+  </button>
                       </td>
                     </tr>
                   ))}
