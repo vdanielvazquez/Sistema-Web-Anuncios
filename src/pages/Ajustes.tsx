@@ -38,6 +38,9 @@ const Ajustes: React.FC = () => {
   const [showModalCategoria, setShowModalCategoria] = useState(false);
   const [showModalSubcategoria, setShowModalSubcategoria] = useState(false);
   const [showModalSuscripcion, setShowModalSuscripcion] = useState(false);
+  const [showModalEditarSuscripcion, setShowModalEditarSuscripcion] = useState(false);
+  const [suscripcionEditando, setSuscripcionEditando] = useState<{ idsuscripcion: number; descripcion: string; precio: string } | null>(null);
+
 
   // Formularios
   const [nuevaDescripcion, setNuevaDescripcion] = useState('');
@@ -162,6 +165,35 @@ const Ajustes: React.FC = () => {
     console.error('Error al obtener suscripciones:', error);
   }
 };
+//editar suscripcion
+const abrirModalEditarSuscripcion = (sus: { idsuscripcion: number; descripcion: string; precio: number }) => {
+  setSuscripcionEditando({
+    ...sus,
+    precio: String(sus.precio)
+  });
+  setShowModalEditarSuscripcion(true);
+};
+
+//
+const guardarCambiosSuscripcion = async () => {
+  if (!suscripcionEditando) return;
+  try {
+    await axios.put(`${API_URL}/api/suscripcion/${suscripcionEditando.idsuscripcion}`, {
+      descripcion: suscripcionEditando.descripcion,
+      precio: parseFloat(suscripcionEditando.precio),
+    });
+    setMensaje('Suscripción actualizada con éxito');
+    setTipoMensaje('success');
+    setShowModalEditarSuscripcion(false);
+    fetchSuscripciones();
+  } catch (error) {
+    setMensaje('Error al actualizar la suscripción');
+    setTipoMensaje('danger');
+    console.error(error);
+  }
+  setTimeout(() => setMensaje(null), 3000);
+};
+
   // Paginación
   const handlePageClickCategorias = (event: { selected: number }) => {
     setCurrentPageCategorias(event.selected);
@@ -244,6 +276,7 @@ const Ajustes: React.FC = () => {
                 <tr>
                   <th>Categoría</th>
                   <th>Subcategoría</th>
+                  <th>Acción</th>
                 </tr>
               </thead>
               <tbody>
@@ -253,6 +286,7 @@ const Ajustes: React.FC = () => {
                     <td>{subcat.descripcion}</td>
                     <td className="text-center">
                       <button className="btn btn-warning btn-sm">Editar</button>
+                      <button className="btn btn-danger btn-sm">Eliminar</button>
                     </td>
                   </tr>
                 ))}
@@ -285,7 +319,8 @@ const Ajustes: React.FC = () => {
               <thead className="thead-dark">
                 <tr>
                   <th>Descripción</th>
-                  <th>Número de Negocios</th>
+                  <th>Precio</th>
+                  <th>Acción</th>
                 </tr>
               </thead>
               <tbody>
@@ -299,12 +334,7 @@ const Ajustes: React.FC = () => {
                       <td>{sus.descripcion}</td>
                       <td>${isNaN(Number(sus.precio)) ? '0.00' : Number(sus.precio).toFixed(2)}</td>
                       <td className="text-center">
-                        <button
-                          className="btn btn-warning btn-sm"
-                        
-                        >
-                          Editar
-                        </button>
+                        <button className="btn btn-warning btn-sm" onClick={() => abrirModalEditarSuscripcion(sus)}>Editar</button>
                       </td>
                     </tr>
                   ))
@@ -343,6 +373,22 @@ const Ajustes: React.FC = () => {
           onClose={() => setShowModalSuscripcion(false)}
           onSave={handleGuardarSuscripcion}
         />
+
+        <ModalSuscripcion
+          show={showModalEditarSuscripcion}
+          descripcion={suscripcionEditando?.descripcion || ''}
+          precio={suscripcionEditando?.precio || ''}
+          onDescripcionChange={(val) =>
+            setSuscripcionEditando((prev) => prev ? { ...prev, descripcion: val } : prev)
+          }
+          onPrecioChange={(val) =>
+            setSuscripcionEditando((prev) => prev ? { ...prev, precio: val } : prev)
+          }
+          onClose={() => setShowModalEditarSuscripcion(false)}
+          onSave={guardarCambiosSuscripcion}
+          titulo="Editar Suscripción"
+        />
+
       </div>
     </div>
   );

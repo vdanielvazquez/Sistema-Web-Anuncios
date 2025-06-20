@@ -162,4 +162,66 @@ export const ModalSuscripcion: React.FC<ModalSuscripcionProps> = ({
     </div>
   );
 };
-//
+////
+
+interface ModalSuscripcionProps {
+  show: boolean;
+  descripcion: string;
+  precio: string;
+  onDescripcionChange: (desc: string) => void;
+  onPrecioChange: (precio: string) => void;
+  onClose: () => void;
+  onSave: () => void;
+  titulo?: string;
+}
+
+export const ModalEditarSuscripcion: React.FC<ModalSuscripcionProps> = ({
+  show,
+  descripcion,
+  precio,
+  onDescripcionChange,
+  onPrecioChange,
+  onClose,
+  onSave,
+  titulo = "Agregar Suscripción",
+}) => {
+  if (!show) return null;
+
+  return (
+    <div className="modal show fade d-block" tabIndex={-1}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">{titulo}</h5>
+            <button type="button" className="btn-close" onClick={onClose} />
+          </div>
+          <div className="modal-body">
+            <input
+              type="text"
+              className="form-control mb-3"
+              placeholder="Descripción"
+              value={descripcion}
+              onChange={(e) => onDescripcionChange(e.target.value)}
+            />
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Precio"
+              value={precio}
+              onChange={(e) => onPrecioChange(e.target.value)}
+              min="0"
+            />
+          </div>
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={onClose}>
+              Cancelar
+            </button>
+            <button className="btn btn-success" onClick={onSave}>
+              Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
