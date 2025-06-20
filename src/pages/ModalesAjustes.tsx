@@ -345,3 +345,73 @@ export const ModalEditarSubcategoria: React.FC<ModalEditarSubcategoriaProps> = (
     </div>
   );
 };
+
+
+interface ModalUsuarioProps {
+  show: boolean;
+  nombre: string;
+  contrasena: string;
+  onNombreChange: (value: string) => void;
+  onContrasenaChange: (value: string) => void;
+  onClose: () => void;
+  onSave: () => void;
+  titulo?: string;
+}
+
+export const ModalUsuario: React.FC<ModalUsuarioProps> = ({
+  show,
+  nombre,
+  contrasena,
+  onNombreChange,
+  onContrasenaChange,
+  onClose,
+  onSave,
+  titulo = 'Nuevo Usuario',
+}) => {
+  if (!show) return null;
+
+  return (
+    <div className="modal show fade d-block" tabIndex={-1}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">{titulo}</h5>
+            <button className="btn-close" onClick={onClose}></button>
+          </div>
+          <div className="modal-body">
+            <div className="mb-3">
+              <label className="form-label">Nombre de usuario</label>
+              <input
+                type="text"
+                className="form-control"
+                value={nombre}
+                onChange={(e) => onNombreChange(e.target.value)}
+                placeholder="Escribe el nombre de usuario"
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Contraseña</label>
+              <input
+                type="password"
+                className="form-control"
+                value={contrasena}
+                onChange={(e) => onContrasenaChange(e.target.value)}
+                placeholder="Escribe la contraseña"
+              />
+            </div>
+          </div>
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={onClose}>
+              Cancelar
+            </button>
+            <button className="btn btn-success" onClick={onSave}>
+              Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ModalUsuario;

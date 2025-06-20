@@ -10,7 +10,10 @@ import Ajustes from './pages/Ajustes';
 import DatosCliente from './pages/DatosCliente';
 import DatosNegocio from './pages/DatosNegocio';
 
+
+
 function App() {
+  
   return (
     <div className="App">
       <Router>

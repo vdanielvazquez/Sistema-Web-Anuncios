@@ -8,6 +8,7 @@ import {
   ModalSuscripcion,
   ModalEditarCategoria, 
   ModalEditarSubcategoria,
+  ModalUsuario,
 } from '../pages/ModalesAjustes';
 
 interface Categoria {
@@ -50,6 +51,17 @@ const Ajustes: React.FC = () => {
   const [editarDescripcion, setEditarDescripcion] = useState('');
 
   const [subcategoriaEditando, setSubcategoriaEditando] = useState<Subcategoria | null>(null);
+//usuarios
+interface Usuario {
+  idusuario: number;
+  nombre: string;
+}
+
+const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+const [showModalUsuario, setShowModalUsuario] = useState(false);
+const [usuarioEditando, setUsuarioEditando] = useState<Usuario | null>(null);
+const [nombreUsuario, setNombreUsuario] = useState('');
+const [contrasenaUsuario, setContrasenaUsuario] = useState('');
 
   // Formularios
   const [nuevaDescripcion, setNuevaDescripcion] = useState('');
@@ -68,6 +80,7 @@ const Ajustes: React.FC = () => {
     fetchCategorias();
     fetchSubcategorias();
      fetchSuscripciones();
+     fetchUsuarios();
   }, []);
 
   // Peticiones
@@ -201,6 +214,73 @@ const guardarCambiosSuscripcion = async () => {
     console.error(error);
   }
   setTimeout(() => setMensaje(null), 3000);
+};
+const fetchUsuarios = async () => {
+  try {
+    const res = await axios.get(`${API_URL}/api/usuarios`);
+    setUsuarios(res.data);
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+  }
+};
+
+const abrirModalNuevoUsuario = () => {
+  setUsuarioEditando(null);
+  setNombreUsuario('');
+  setContrasenaUsuario('');
+  setShowModalUsuario(true);
+};
+
+const abrirModalEditarUsuario = (usuario: Usuario) => {
+  setUsuarioEditando(usuario);
+  setNombreUsuario(usuario.nombre);
+  setContrasenaUsuario('');
+  setShowModalUsuario(true);
+};
+
+const guardarUsuario = async () => {
+  try {
+    if (usuarioEditando) {
+      await axios.put(`${API_URL}/api/usuarios/${usuarioEditando.idusuario}`, {
+        nombre: nombreUsuario,
+        contrasena: contrasenaUsuario,
+      });
+      setMensaje('Usuario actualizado con éxito');
+    } else {
+      await axios.post(`${API_URL}/api/usuarios`, {
+        nombre: nombreUsuario,
+        contrasena: contrasenaUsuario,
+      });
+      setMensaje('Usuario creado con éxito');
+    }
+    setTipoMensaje('success');
+    setShowModalUsuario(false);
+    fetchUsuarios();
+  } catch (error) {
+    console.error('Error al guardar usuario:', error);
+    setMensaje('Error al guardar usuario');
+    setTipoMensaje('danger');
+  } finally {
+    setTimeout(() => setMensaje(null), 3000);
+  }
+};
+
+const eliminarUsuario = async (id: number) => {
+  const confirmar = window.confirm('¿Eliminar este usuario?');
+  if (!confirmar) return;
+
+  try {
+    await axios.delete(`${API_URL}/api/usuarios/${id}`);
+    setMensaje('Usuario eliminado con éxito');
+    setTipoMensaje('success');
+    fetchUsuarios();
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error);
+    setMensaje('Error al eliminar usuario');
+    setTipoMensaje('danger');
+  } finally {
+    setTimeout(() => setMensaje(null), 3000);
+  }
 };
 
 ///
@@ -464,6 +544,37 @@ const handleEliminarSubcategoria = async (id: number) => {
               </tbody>
             </table>
           </div>
+
+          {/* Usuarios */}
+<div className="col-xl-3 col-md-6 col-sm-12 mb-3">
+  <button className="btn btn-primary mb-3" onClick={abrirModalNuevoUsuario}>
+    Nuevo Usuario
+  </button>
+  <table className="table table-bordered table-striped">
+    <thead className="thead-dark">
+      <tr>
+        <th>Nombre</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {usuarios.length === 0 ? (
+        <tr><td colSpan={2}>No hay usuarios registrados</td></tr>
+      ) : (
+        usuarios.map((u) => (
+          <tr key={u.idusuario}>
+            <td>{u.nombre}</td>
+            <td className="text-center">
+              <button className="btn btn-warning btn-sm me-2" onClick={() => abrirModalEditarUsuario(u)}>Editar</button>
+              <button className="btn btn-danger btn-sm" onClick={() => eliminarUsuario(u.idusuario)}>Eliminar</button>
+            </td>
+          </tr>
+        ))
+      )}
+    </tbody>
+  </table>
+</div>
+
         </div>
 
         {/* Modales */}
@@ -510,23 +621,33 @@ const handleEliminarSubcategoria = async (id: number) => {
           onSave={guardarCambiosSuscripcion}
           titulo="Editar Suscripción"
         />
-<ModalEditarCategoria
-  show={showModalEditarCategoria}
-  descripcion={editarDescripcion}
-  onChange={setEditarDescripcion}
-  onClose={() => setShowModalEditarCategoria(false)}
-  onSave={guardarCambiosCategoria}
-/>
-<ModalEditarSubcategoria
-  show={showModalEditarSubcategoria}
-  categorias={categorias}
-  idCategoria={editarCategoriaSubcat}
-  descripcion={editarDescripcionSubcat}
-  onCategoriaChange={setEditarCategoriaSubcat}
-  onDescripcionChange={setEditarDescripcionSubcat}
-  onClose={() => setShowModalEditarSubcategoria(false)}
-  onSave={guardarCambiosSubcategoria}
-/>
+        <ModalEditarCategoria
+          show={showModalEditarCategoria}
+          descripcion={editarDescripcion}
+          onChange={setEditarDescripcion}
+          onClose={() => setShowModalEditarCategoria(false)}
+          onSave={guardarCambiosCategoria}
+        />
+        <ModalEditarSubcategoria
+          show={showModalEditarSubcategoria}
+          categorias={categorias}
+          idCategoria={editarCategoriaSubcat}
+          descripcion={editarDescripcionSubcat}
+          onCategoriaChange={setEditarCategoriaSubcat}
+          onDescripcionChange={setEditarDescripcionSubcat}
+          onClose={() => setShowModalEditarSubcategoria(false)}
+          onSave={guardarCambiosSubcategoria}
+        />
+        <ModalUsuario
+          show={showModalUsuario}
+          nombre={nombreUsuario}
+          contrasena={contrasenaUsuario}
+          onNombreChange={setNombreUsuario}
+          onContrasenaChange={setContrasenaUsuario}
+          onClose={() => setShowModalUsuario(false)}
+          onSave={guardarUsuario}
+          titulo={usuarioEditando ? 'Editar Usuario' : 'Nuevo Usuario'}
+        />
 
       </div>
     </div>
