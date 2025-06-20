@@ -54,6 +54,19 @@ const icon = L.icon({
 });
 ////
 
+const eliminarNegocio = async () => {
+  if (!window.confirm('¿Estás seguro de que deseas eliminar este negocio? Esta acción no se puede deshacer.')) return;
+
+  try {
+    await axios.delete(`${API_URL}/api/negocios/${id}`);
+    alert('Negocio eliminado correctamente');
+    // Aquí podrías redirigir a otra página, por ejemplo al listado de negocios
+    window.location.href = '/negocios'; // Cambia esta ruta según tu app
+  } catch (error) {
+    console.error('Error al eliminar negocio:', error);
+    alert('Error al eliminar el negocio');
+  }
+};
 
 ////
   useEffect(() => {
@@ -271,6 +284,9 @@ const position: [number, number] = hasValidPosition
         <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
           Editar Información
         </button>
+         <button className="btn btn-danger mb-3 ms-3" onClick={eliminarNegocio}>
+    Eliminar Negocio
+  </button>
       </div>
     </div>
   </div>
