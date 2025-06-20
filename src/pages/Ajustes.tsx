@@ -6,6 +6,8 @@ import {
   ModalCategoria,
   ModalSubcategoria,
   ModalSuscripcion,
+  ModalEditarCategoria, 
+  ModalEditarSubcategoria,
 } from '../pages/ModalesAjustes';
 
 interface Categoria {
@@ -41,6 +43,13 @@ const Ajustes: React.FC = () => {
   const [showModalEditarSuscripcion, setShowModalEditarSuscripcion] = useState(false);
   const [suscripcionEditando, setSuscripcionEditando] = useState<{ idsuscripcion: number; descripcion: string; precio: string } | null>(null);
 
+  const [showModalEditarCategoria, setShowModalEditarCategoria] = useState(false);
+  const [categoriaEditando, setCategoriaEditando] = useState<Categoria | null>(null);
+
+  const [showModalEditarSubcategoria, setShowModalEditarSubcategoria] = useState(false);
+  const [editarDescripcion, setEditarDescripcion] = useState('');
+
+  const [subcategoriaEditando, setSubcategoriaEditando] = useState<Subcategoria | null>(null);
 
   // Formularios
   const [nuevaDescripcion, setNuevaDescripcion] = useState('');
@@ -193,6 +202,60 @@ const guardarCambiosSuscripcion = async () => {
   }
   setTimeout(() => setMensaje(null), 3000);
 };
+
+///
+const [editarDescripcionSubcat, setEditarDescripcionSubcat] = useState('');
+const [editarCategoriaSubcat, setEditarCategoriaSubcat] = useState<number | undefined>(undefined);
+
+useEffect(() => {
+  if (subcategoriaEditando) {
+    setEditarDescripcionSubcat(subcategoriaEditando.descripcion);
+    setEditarCategoriaSubcat(subcategoriaEditando.idcategoria);
+  }
+}, [subcategoriaEditando]);
+
+const guardarCambiosSubcategoria = async () => {
+  if (!subcategoriaEditando || editarCategoriaSubcat === undefined) return;
+
+  try {
+    await axios.put(`${API_URL}/api/subcategorias/${subcategoriaEditando.idsubcategoria}`, {
+      descripcion: editarDescripcionSubcat,
+      idcategoria: editarCategoriaSubcat,
+    });
+    setMensaje('Subcategoría actualizada con éxito');
+    setTipoMensaje('success');
+    setShowModalEditarSubcategoria(false);
+    fetchSubcategorias();
+  } catch (error) {
+    setMensaje('Error al actualizar la subcategoría');
+    setTipoMensaje('danger');
+    console.error(error);
+  }
+
+  setTimeout(() => setMensaje(null), 3000);
+};
+
+
+const guardarCambiosCategoria = async () => {
+  if (!categoriaEditando) return;
+
+  try {
+    await axios.put(`${API_URL}/api/categorias/${categoriaEditando.idcategoria}`, {
+      descripcion: editarDescripcion,
+    });
+    setMensaje('Categoría actualizada con éxito');
+    setTipoMensaje('success');
+    setShowModalEditarCategoria(false);
+    fetchCategorias();
+  } catch (error) {
+    setMensaje('Error al actualizar la categoría');
+    setTipoMensaje('danger');
+    console.error(error);
+  }
+
+  setTimeout(() => setMensaje(null), 3000);
+};
+
 //eliminar suscripcion
 const handleEliminarSuscripcion = async (id: number) => {
   const confirmar = window.confirm('¿Estás seguro de que deseas eliminar esta suscripción?');
@@ -298,7 +361,7 @@ const handleEliminarSubcategoria = async (id: number) => {
                     <tr key={cat.idcategoria}>
                       <td>{cat.descripcion}</td>
                       <td className="d-flex justify-content-center">
-                        <button className="btn btn-warning btn-sm me-2">Editar</button>
+                        <button className="btn btn-warning btn-sm me-2" onClick={() => {  setCategoriaEditando(cat);  setShowModalEditarCategoria(true); }}>Editar</button>
                         <button className="btn btn-danger btn-sm" onClick={() => handleEliminarCategoria(cat.idcategoria)}>Eliminar</button>
                       </td>
                     </tr>
@@ -343,7 +406,7 @@ const handleEliminarSubcategoria = async (id: number) => {
                     <td>{categorias.find((cat) => cat.idcategoria === subcat.idcategoria)?.descripcion}</td>
                     <td>{subcat.descripcion}</td>
                     <td className="text-center">
-                      <button className="btn btn-warning btn-sm me-2">Editar</button>
+                      <button className="btn btn-warning btn-sm me-2"  onClick={() => {  setSubcategoriaEditando(subcat);  setShowModalEditarSubcategoria(true); }}>Editar</button>
                       <button className="btn btn-danger btn-sm" onClick={() => handleEliminarSubcategoria(subcat.idsubcategoria)}>Eliminar</button>
                     </td>
                   </tr>
@@ -447,6 +510,23 @@ const handleEliminarSubcategoria = async (id: number) => {
           onSave={guardarCambiosSuscripcion}
           titulo="Editar Suscripción"
         />
+<ModalEditarCategoria
+  show={showModalEditarCategoria}
+  descripcion={editarDescripcion}
+  onChange={setEditarDescripcion}
+  onClose={() => setShowModalEditarCategoria(false)}
+  onSave={guardarCambiosCategoria}
+/>
+<ModalEditarSubcategoria
+  show={showModalEditarSubcategoria}
+  categorias={categorias}
+  idCategoria={editarCategoriaSubcat}
+  descripcion={editarDescripcionSubcat}
+  onCategoriaChange={setEditarCategoriaSubcat}
+  onDescripcionChange={setEditarDescripcionSubcat}
+  onClose={() => setShowModalEditarSubcategoria(false)}
+  onSave={guardarCambiosSubcategoria}
+/>
 
       </div>
     </div>

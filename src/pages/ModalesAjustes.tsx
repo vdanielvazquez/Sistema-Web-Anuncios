@@ -225,3 +225,123 @@ export const ModalEditarSuscripcion: React.FC<ModalSuscripcionProps> = ({
     </div>
   );
 };
+
+// ModalEditarCategoria
+interface ModalEditarCategoriaProps {
+  show: boolean;
+  descripcion: string;
+  onChange: (value: string) => void;
+  onClose: () => void;
+  onSave: () => void;
+}
+
+export const ModalEditarCategoria: React.FC<ModalEditarCategoriaProps> = ({
+  show,
+  descripcion,
+  onChange,
+  onClose,
+  onSave,
+}) => {
+  if (!show) return null;
+
+  return (
+    <div className="modal show fade d-block" tabIndex={-1}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Editar Categoría</h5>
+            <button className="btn-close" onClick={onClose}></button>
+          </div>
+          <div className="modal-body">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Nombre de categoría"
+              value={descripcion}
+              onChange={(e) => onChange(e.target.value)}
+            />
+          </div>
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>
+            <button className="btn btn-success" onClick={onSave}>Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ModalEditarSubcategoria
+interface Categoria {
+  idcategoria: number;
+  descripcion: string;
+}
+
+interface ModalEditarSubcategoriaProps {
+  show: boolean;
+  categorias: Categoria[];
+  idCategoria: number | undefined;
+  descripcion: string;
+  onCategoriaChange: (id: number) => void;
+  onDescripcionChange: (value: string) => void;
+  onClose: () => void;
+  onSave: () => void;
+}
+
+export const ModalEditarSubcategoria: React.FC<ModalEditarSubcategoriaProps> = ({
+  show,
+  categorias,
+  idCategoria,
+  descripcion,
+  onCategoriaChange,
+  onDescripcionChange,
+  onClose,
+  onSave,
+}) => {
+  if (!show) return null;
+
+  return (
+    <div className="modal show fade d-block" tabIndex={-1}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Editar Subcategoría</h5>
+            <button className="btn-close" onClick={onClose}></button>
+          </div>
+          <div className="modal-body">
+            <div className="mb-3">
+              <label className="form-label">Categoría</label>
+              <select
+                className="form-select"
+                value={idCategoria ?? ''}
+                onChange={(e) => onCategoriaChange(Number(e.target.value))}
+              >
+                <option value="">Selecciona una categoría</option>
+                {categorias.map((cat) => (
+                  <option key={cat.idcategoria} value={cat.idcategoria}>
+                    {cat.descripcion}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Descripción</label>
+              <input
+                type="text"
+                className="form-control"
+                value={descripcion}
+                onChange={(e) => onDescripcionChange(e.target.value)}
+                placeholder="Nombre de subcategoría"
+              />
+            </div>
+          </div>
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={onClose}>Cancelar</button>
+            <button className="btn btn-success" onClick={onSave}>Guardar Cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
