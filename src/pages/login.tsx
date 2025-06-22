@@ -27,7 +27,8 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div className="divprincipal">
+       <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div className="card shadow p-4" style={{ width: '100%', maxWidth: '400px' }}>
         <h3 className="text-center mb-4">Iniciar Sesión</h3>
         <form onSubmit={handleLogin}>
@@ -58,6 +59,8 @@ const Login = () => {
         </form>
       </div>
     </div>
+    </div>
+   
   );
 };
 
