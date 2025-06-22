@@ -450,21 +450,24 @@ const handleEliminarSubcategoria = async (id: number) => {
               </tbody>
             </table>
             <ReactPaginate
-              previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
-              nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
-              breakLabel={<span className="px-2">...</span>}
+              previousLabel="Anterior"
+              nextLabel="Siguiente"
+              breakLabel="..."
               pageCount={Math.max(1, Math.ceil(categorias.length / itemsPerPage))}
               onPageChange={handlePageClickCategorias}
               containerClassName="pagination justify-content-center mt-3"
-              pageClassName="page-item mx-1"
+              pageClassName="page-item"
               pageLinkClassName="page-link"
-              previousClassName="page-item"
-              nextClassName="page-item"
-              breakClassName="page-item mx-1"
+              previousClassName={`page-item ${currentPageCategorias === 0 ? 'disabled' : ''}`}
+              previousLinkClassName="page-link"
+              nextClassName={`page-item ${currentPageCategorias === Math.ceil(categorias.length / itemsPerPage) - 1 ? 'disabled' : ''}`}
+              nextLinkClassName="page-link"
+              breakClassName="page-item"
               breakLinkClassName="page-link"
               activeClassName="active"
               forcePage={currentPageCategorias}
             />
+
           </div>
 
           {/* Subcategorías */}
@@ -493,22 +496,25 @@ const handleEliminarSubcategoria = async (id: number) => {
                 ))}
               </tbody>
             </table>
-            <ReactPaginate
-              previousLabel={<button className="btn btn-outline-primary btn-sm mx-2">← Anterior</button>}
-              nextLabel={<button className="btn btn-outline-primary btn-sm mx-2">Siguiente →</button>}
-              breakLabel={<span className="px-2">...</span>}
-              pageCount={Math.max(1, Math.ceil(subcategorias.length / itemsPerPage))}
-              onPageChange={handlePageClickSubcategorias}
-              containerClassName="pagination justify-content-center mt-3"
-              pageClassName="page-item mx-1"
-              pageLinkClassName="page-link"
-              previousClassName="page-item"
-              nextClassName="page-item"
-              breakClassName="page-item mx-1"
-              breakLinkClassName="page-link"
-              activeClassName="active"
-              forcePage={currentPageSubcategorias}
-            />
+           <ReactPaginate
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            breakLabel="..."
+            pageCount={Math.max(1, Math.ceil(subcategorias.length / itemsPerPage))}
+            onPageChange={handlePageClickSubcategorias}
+            containerClassName="pagination justify-content-center mt-3"
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName={`page-item ${currentPageSubcategorias === 0 ? 'disabled' : ''}`}
+            previousLinkClassName="page-link"
+            nextClassName={`page-item ${currentPageSubcategorias === Math.ceil(subcategorias.length / itemsPerPage) - 1 ? 'disabled' : ''}`}
+            nextLinkClassName="page-link"
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            activeClassName="active"
+            forcePage={currentPageSubcategorias}
+          />
+
           </div>
 
           {/* Suscripciones */}
