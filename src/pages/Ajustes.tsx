@@ -237,6 +237,31 @@ const abrirModalEditarUsuario = (usuario: Usuario) => {
   setContrasenaUsuario('');
   setShowModalUsuario(true);
 };
+ 
+
+
+// Variables de estado para paginación de suscripciones y usuarios
+const [currentPageSuscripciones, setCurrentPageSuscripciones] = React.useState(0);
+const [currentPageUsuarios, setCurrentPageUsuarios] = React.useState(0);
+
+const handlePageClickSuscripciones = (selectedItem: { selected: number }) => {
+  setCurrentPageSuscripciones(selectedItem.selected);
+};
+
+const handlePageClickUsuarios = (selectedItem: { selected: number }) => {
+  setCurrentPageUsuarios(selectedItem.selected);
+};
+
+// Cálculo para paginar suscripciones y usuarios
+const displayedSuscripciones = suscripciones.slice(
+  currentPageSuscripciones * itemsPerPage,
+  (currentPageSuscripciones + 1) * itemsPerPage
+);
+
+const displayedUsuarios = usuarios.slice(
+  currentPageUsuarios * itemsPerPage,
+  (currentPageUsuarios + 1) * itemsPerPage
+);
 
 const guardarUsuario = async () => {
   try {
@@ -420,9 +445,9 @@ const handleEliminarSubcategoria = async (id: number) => {
 
         {mensaje && <div className={`alert alert-${tipoMensaje}`}>{mensaje}</div>}
 
-        <div className="d-flex flex-wrap justify-content-between">
+       <div className="d-flex flex-wrap justify-content-between gap-4">
           {/* Categorías */}
-          <div className="col-xl-3 col-md-6 col-sm-12 mb-3">
+           <div className="col-xl-3 col-md-6 col-sm-12 mb-4" style={{ minHeight: '500px' }}>
             <button className="btn btn-primary mb-3" onClick={() => setShowModalCategoria(true)}>
               Nueva Categoría
             </button>
@@ -471,7 +496,7 @@ const handleEliminarSubcategoria = async (id: number) => {
           </div>
 
           {/* Subcategorías */}
-          <div className="col-xl-3 col-md-6 col-sm-12 mb-3">
+          <div className="col-xl-3 col-md-6 col-sm-12 mb-4" style={{ minHeight: '500px' }}>
             <button className="btn btn-primary mb-3" onClick={() => setShowModalSubcategoria(true)}>
               Nueva Subcategoría
             </button>
@@ -517,70 +542,105 @@ const handleEliminarSubcategoria = async (id: number) => {
 
           </div>
 
-          {/* Suscripciones */}
-          <div className="col-xl-3 col-md-6 col-sm-12 mb-3">
-            <button className="btn btn-primary mb-3" onClick={() => setShowModalSuscripcion(true)}>
-              Nueva Suscripción
-            </button>
-            <table className="table table-bordered table-striped">
-              <thead className="thead-dark">
-                <tr>
-                  <th>Descripción</th>
-                  <th>Precio</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-              {suscripciones.length === 0 ? (
-        <tr>
-          <td colSpan={3}>No hay suscripciones registradas</td>
-        </tr>
-                ) : (
-                  suscripciones.map((sus) => (
-                    <tr key={sus.idsuscripcion}>
-                      <td>{sus.descripcion}</td>
-                      <td>${isNaN(Number(sus.precio)) ? '0.00' : Number(sus.precio).toFixed(2)}</td>
-                      <td className="text-center">
-                        <button className="btn btn-warning btn-sm me-2" onClick={() => abrirModalEditarSuscripcion(sus)}>Editar</button>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleEliminarSuscripcion(sus.idsuscripcion)}>Eliminar</button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+           {/* Suscripciones */}
+            <div className="col-xl-3 col-md-6 col-sm-12 mb-4" style={{ minHeight: '500px' }}>
+              <button className="btn btn-primary mb-3" onClick={() => setShowModalSuscripcion(true)}>
+                Nueva Suscripción
+              </button>
+              <table className="table table-bordered table-striped">
+                <thead className="thead-dark">
+                  <tr>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayedSuscripciones.length === 0 ? (
+                    <tr><td colSpan={3}>No hay suscripciones registradas</td></tr>
+                  ) : (
+                    displayedSuscripciones.map((sus) => (
+                      <tr key={sus.idsuscripcion}>
+                        <td>{sus.descripcion}</td>
+                        <td>${isNaN(Number(sus.precio)) ? '0.00' : Number(sus.precio).toFixed(2)}</td>
+                        <td className="text-center">
+                          <button className="btn btn-warning btn-sm me-2" onClick={() => abrirModalEditarSuscripcion(sus)}>Editar</button>
+                          <button className="btn btn-danger btn-sm" onClick={() => handleEliminarSuscripcion(sus.idsuscripcion)}>Eliminar</button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
 
-          {/* Usuarios */}
-<div className="col-xl-3 col-md-6 col-sm-12 mb-3">
-  <button className="btn btn-primary mb-3" onClick={abrirModalNuevoUsuario}>
-    Nuevo Usuario
-  </button>
-  <table className="table table-bordered table-striped">
-    <thead className="thead-dark">
-      <tr>
-        <th>Nombre</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody>
-      {usuarios.length === 0 ? (
-        <tr><td colSpan={2}>No hay usuarios registrados</td></tr>
-      ) : (
-        usuarios.map((u) => (
-          <tr key={u.idusuario}>
-            <td>{u.nombre}</td>
-            <td className="text-center">
-              <button className="btn btn-warning btn-sm me-2" onClick={() => abrirModalEditarUsuario(u)}>Editar</button>
-              <button className="btn btn-danger btn-sm" onClick={() => eliminarUsuario(u.idusuario)}>Eliminar</button>
-            </td>
-          </tr>
-        ))
-      )}
-    </tbody>
-  </table>
-</div>
+              <ReactPaginate
+                previousLabel="Anterior"
+                nextLabel="Siguiente"
+                breakLabel="..."
+                pageCount={Math.max(1, Math.ceil(suscripciones.length / itemsPerPage))}
+                onPageChange={handlePageClickSuscripciones}
+                containerClassName="pagination justify-content-center mt-3"
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousClassName={`page-item ${currentPageSuscripciones === 0 ? 'disabled' : ''}`}
+                previousLinkClassName="page-link"
+                nextClassName={`page-item ${currentPageSuscripciones === Math.ceil(suscripciones.length / itemsPerPage) - 1 ? 'disabled' : ''}`}
+                nextLinkClassName="page-link"
+                breakClassName="page-item"
+                breakLinkClassName="page-link"
+                activeClassName="active"
+                forcePage={currentPageSuscripciones}
+              />
+            </div>
 
+            {/* Usuarios */}
+            <div className="col-xl-3 col-md-6 col-sm-12 mb-4" style={{ minHeight: '500px' }}>
+              <button className="btn btn-primary mb-3" onClick={abrirModalNuevoUsuario}>
+                Nuevo Usuario
+              </button>
+              <table className="table table-bordered table-striped">
+                <thead className="thead-dark">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayedUsuarios.length === 0 ? (
+                    <tr><td colSpan={2}>No hay usuarios registrados</td></tr>
+                  ) : (
+                    displayedUsuarios.map((u) => (
+                      <tr key={u.idusuario}>
+                        <td>{u.nombre}</td>
+                        <td className="text-center">
+                          <button className="btn btn-warning btn-sm me-2" onClick={() => abrirModalEditarUsuario(u)}>Editar</button>
+                          <button className="btn btn-danger btn-sm" onClick={() => eliminarUsuario(u.idusuario)}>Eliminar</button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+
+              <ReactPaginate
+                previousLabel="Anterior"
+                nextLabel="Siguiente"
+                breakLabel="..."
+                pageCount={Math.max(1, Math.ceil(usuarios.length / itemsPerPage))}
+                onPageChange={handlePageClickUsuarios}
+                containerClassName="pagination justify-content-center mt-3"
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousClassName={`page-item ${currentPageUsuarios === 0 ? 'disabled' : ''}`}
+                previousLinkClassName="page-link"
+                nextClassName={`page-item ${currentPageUsuarios === Math.ceil(usuarios.length / itemsPerPage) - 1 ? 'disabled' : ''}`}
+                nextLinkClassName="page-link"
+                breakClassName="page-item"
+                breakLinkClassName="page-link"
+                activeClassName="active"
+                forcePage={currentPageUsuarios}
+              />
+            </div>
         </div>
 
         {/* Modales */}
