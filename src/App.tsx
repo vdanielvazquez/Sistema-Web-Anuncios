@@ -6,7 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 
 import Navbar from './pages/navbar';
-import Login from './pages/Login';
+import Login from './pages/login';
 
 import Clientes from './pages/Clientes';
 import Negocios from './pages/Negocios';
