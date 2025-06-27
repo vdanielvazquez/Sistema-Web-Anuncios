@@ -153,12 +153,23 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Promoción</label>
+          <label className="form-label">Promoción o Descuento</label>
           <input
             type="text"
             className="form-control"
             name="promocion"
             value={editForm.promocion || ''}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Condiciones</label>
+          <input
+            type="text"
+            className="form-control"
+            name="promocion"
+            value={editForm.condicion || ''}
             onChange={handleInputChange}
           />
         </div>
