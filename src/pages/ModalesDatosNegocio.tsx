@@ -168,7 +168,7 @@ export const ModalEditarInfoNegocio: React.FC<ModalEditarInfoNegocioProps> = ({
           <input
             type="text"
             className="form-control"
-            name="promocion"
+            name="concicion"
             value={editForm.condicion || ''}
             onChange={handleInputChange}
           />
