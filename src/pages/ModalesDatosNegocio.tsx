@@ -50,6 +50,37 @@ export const ModalPortada: React.FC<{
     </Modal>
   );
 };
+///logo
+// Modal para subir logo
+export const ModalLogo: React.FC<{
+  show: boolean;
+  onClose: () => void;
+  onFileChange: (file: File | null) => void;
+  onSubmit: () => void;
+}> = ({ show, onClose, onFileChange, onSubmit }) => {
+  if (!show) return null;
+  return (
+    <Modal show={show} onClose={onClose} title="Actualizar Logo del Negocio">
+      <div className="mb-3">
+        <label>Selecciona el nuevo logo:</label>
+        <input
+          type="file"
+          className="form-control"
+          accept="image/*"
+          onChange={e => onFileChange(e.target.files?.[0] || null)}
+        />
+      </div>
+      <div className="modal-footer">
+        <button className="btn btn-secondary" onClick={onClose}>
+          Cancelar
+        </button>
+        <button className="btn btn-success" onClick={onSubmit}>
+          Guardar Logo
+        </button>
+      </div>
+    </Modal>
+  );
+};
 
 // Modal Galería
 export const ModalGaleria: React.FC<{

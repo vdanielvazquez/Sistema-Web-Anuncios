@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import noimagen from "../assets/no-img.avif";
-import { ModalPortada, ModalGaleria, ModalEditarImagen,ModalEditarInfoNegocio } from '../pages/ModalesDatosNegocio';
+import { ModalLogo,ModalPortada, ModalGaleria, ModalEditarImagen,ModalEditarInfoNegocio } from '../pages/ModalesDatosNegocio';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 
@@ -67,6 +67,7 @@ const eliminarNegocio = async () => {
     alert('Error al eliminar el negocio');
   }
 };
+////
 
 ////
   useEffect(() => {
@@ -131,6 +132,31 @@ const subirPortada = async () => {
     alert('Error al subir portada');
   }
 };
+//subir logo
+const [mostrarModalLogo, setMostrarModalLogo] = useState(false);
+const [archivoLogo, setArchivoLogo] = useState<File | null>(null);
+
+const subirLogo = async () => {
+  if (!id || !archivoLogo) return;
+
+  const formData = new FormData();
+  formData.append('logo', archivoLogo);
+
+  try {
+    await axios.post(`${API_URL}/api/negocios/imagenes/logo/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    alert('Logo actualizado correctamente');
+    
+    setMostrarModalLogo(false);
+    fetchNegocio(); // Recargar datos del negocio actualizado
+  } catch (error) {
+    console.error('Error al subir logo:', error);
+    alert('Error al subir logo');
+  }
+};
+
+
 //subir galeria
 const subirGaleria = async () => {
   if (!id || galeria.length === 0) return;
@@ -313,6 +339,30 @@ const position: [number, number] = hasValidPosition
     )}
   </div>
 
+   <div className="shadow rounded-4" style={{ height: '350px', width: '100%', margin: '15px 0', overflow: 'hidden' }}>
+   <div className="card h-100 m-3 text-center">
+          <div className="card-header">
+            <h5 className="mb-0">Logo</h5>
+          </div>
+          <div className="card-body p-2">
+            <img
+              src={negocio.logo && negocio.logo.trim() !== '' 
+                ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.logo}`
+                : noimagen}
+              className="img-fluid rounded-4"
+              style={{ height: '250px', objectFit: 'cover', width: '100%' }}
+              alt="Portada del negocio"
+            />
+          </div>
+          <div className="card-footer">
+            <button className="btn btn-primary" onClick={() => setMostrarModalLogo(true)}>
+              Editar Logo
+            </button>
+          </div>
+        </div>
+  </div>
+  
+
   {/* Etiquetas debajo del mapa */}
   <div className="text-center mt-3">
     <div className="row">
@@ -393,6 +443,13 @@ const position: [number, number] = hasValidPosition
           setSubcategorias={setSubcategorias}
           onSubmit={handleUpdate}
         />
+        <ModalLogo
+  show={mostrarModalLogo}
+  onClose={() => setMostrarModalLogo(false)}
+  onFileChange={setArchivoLogo}
+  onSubmit={subirLogo}
+/>
+
       </div>
     </div>
   );
