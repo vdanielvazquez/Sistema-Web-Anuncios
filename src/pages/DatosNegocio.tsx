@@ -260,7 +260,8 @@ const position: [number, number] = hasValidPosition
       <h2 className="card-title" style={{ fontSize: '1.8rem' }}>{negocio.nombre_comercial}</h2>
       <div className="card-body">
         <p><strong>Descripción:</strong> {negocio.descripcion}</p>
-         <p><strong>Promoción:</strong> {negocio.promocion}</p>
+         <p><strong>Promoción O Descuento:</strong> {negocio.promocion}</p>
+          <p><strong>Condiciones:</strong> {negocio.condicion}</p>
         {negocio.categoria || negocio.subcategoria ? (
           <p>
             <strong>Categoría:</strong> {
