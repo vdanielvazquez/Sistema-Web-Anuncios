@@ -416,29 +416,34 @@ const position: [number, number] = hasValidPosition
       </div>
     </div>
   </div>
-   <div className="shadow rounded-4" style={{ height: '450px', width: '100%', margin: '15px 0', overflow: 'hidden' }}>
-   <div className="card h-100 m-3 text-center">
-          <div className="card-header">
-            <h5 className="mb-0">Logo</h5>
-          </div>
-          <div className="card-body p-2">
-            <img
-              src={negocio.logo && negocio.logo.trim() !== '' 
-                ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.logo}`
-                : noimagen}
-              className="img-fluid rounded-4"
-              style={{ height: '250px', objectFit: 'cover', width: '100%' }}
-              alt="Portada del negocio"
-            />
-          </div>
-          <div className="card-footer">
-            <button className="btn btn-primary" onClick={() => setMostrarModalLogo(true)}>
-              Editar Logo
-            </button>
-          </div>
-        </div>
+<div className="shadow-lg rounded-4 bg-white p-3 mb-4" style={{ maxWidth: '400px', margin: '0 auto' }}>
+  <div className="text-center mb-3">
+    <h5 className="fw-bold text-primary">Logo del Negocio</h5>
   </div>
-
+  <div className="d-flex justify-content-center align-items-center" style={{ height: '250px' }}>
+    <img
+      src={
+        negocio.logo && negocio.logo.trim() !== ''
+          ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.logo}`
+          : noimagen
+      }
+      alt="Logo del negocio"
+      className="img-fluid rounded-circle shadow"
+      style={{
+        width: '200px',
+        height: '200px',
+        objectFit: 'cover',
+        border: '4px solid #0d6efd',
+        backgroundColor: '#f8f9fa'
+      }}
+    />
+  </div>
+  <div className="text-center mt-4">
+    <button className="btn btn-outline-primary px-4" onClick={() => setMostrarModalLogo(true)}>
+      <i className="bi bi-pencil-square me-2"></i>Editar Logo
+    </button>
+  </div>
+</div>
 </div>
 
 </div>
