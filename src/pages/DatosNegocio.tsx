@@ -236,6 +236,28 @@ const reemplazarImagen = async () => {
       });
   }
 }, [negocio]);
+///7
+const toggleActivo = async () => {
+  try {
+    const respuesta = await axios.put(`${API_URL}/api/negocios/${negocio.idnegocio}/activo`, {
+      activo: !negocio.activo,
+    });
+    setNegocio(respuesta.data.cliente); // Actualiza el estado local
+  } catch (error) {
+    console.error('Error al cambiar estado activo:', error);
+  }
+};
+
+const togglePatrocinado = async () => {
+  try {
+    const respuesta = await axios.put(`${API_URL}/api/negocios/${negocio.idnegocio}/patrocinado`, {
+      patrocinado: !negocio.patrocinado,
+    });
+    setNegocio(respuesta.data.cliente); // Actualiza el estado local
+  } catch (error) {
+    console.error('Error al cambiar estado patrocinado:', error);
+  }
+};
 
 //
 //
@@ -316,24 +338,36 @@ const position: [number, number] = hasValidPosition
 
       <p><strong>Teléfono:</strong> {negocio.telefono}</p>
       <p><strong>Fecha de alta:</strong> {negocio.fecha_de_alta ? new Date(negocio.fecha_de_alta).toLocaleDateString() : 'No disponible'}</p>
-      <p>
-        <strong>Estado:</strong>{' '}
-        <span className={negocio.activo ? 'text-success' : 'text-danger'}>
-          {negocio.activo ? 'Activo' : 'Inactivo'}
-        </span>
-        <div className="form-check form-switch">
-            <input className="form-check-input"  type="checkbox" checked={negocio.activo}/>
-         </div>
-      </p>
-      <p>
-        <strong>Patrocinado:</strong>{' '}
-        <span className={negocio.patrocinado ? 'text-success' : 'text-danger'}>
-          {negocio.patrocinado ? 'Sí' : 'No'}
-        </span>
-         <div className="form-check form-switch">
-            <input className="form-check-input"  type="checkbox" checked={negocio.activo}/>
-         </div>
-      </p>
+     <p>
+  <strong>Estado:</strong>{' '}
+  <span className={negocio.activo ? 'text-success' : 'text-danger'}>
+    {negocio.activo ? 'Activo' : 'Inactivo'}
+  </span>
+  <div className="form-check form-switch">
+    <input
+      className="form-check-input"
+      type="checkbox"
+      checked={negocio.activo}
+      onChange={toggleActivo}
+    />
+  </div>
+</p>
+
+<p>
+  <strong>Patrocinado:</strong>{' '}
+  <span className={negocio.patrocinado ? 'text-success' : 'text-danger'}>
+    {negocio.patrocinado ? 'Sí' : 'No'}
+  </span>
+  <div className="form-check form-switch">
+    <input
+      className="form-check-input"
+      type="checkbox"
+      checked={negocio.patrocinado}
+      onChange={togglePatrocinado}
+    />
+  </div>
+</p>
+
     </div>
 
     <div className="card-footer text-center">
