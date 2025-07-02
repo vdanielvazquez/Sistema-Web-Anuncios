@@ -263,17 +263,8 @@ const Negocios = () => {
             </div>
 
             <div className="form-check form-switch fs-5">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                id="checkTodos"
-                checked={mostrarTodos}
-                onChange={() => {
-                  setMostrarActivos(false);
-                  setMostrarInactivos(false);
-                  setMostrarTodos(true);
-                }}
-              />
+              <input  className="form-check-input"  type="checkbox" id="checkTodos" checked={mostrarTodos}
+                onChange={() => { setMostrarActivos(false); setMostrarInactivos(false);  setMostrarTodos(true); }} />
               <label className="form-check-label" htmlFor="checkTodos">Todos</label>
             </div>
           </div>
@@ -284,22 +275,11 @@ const Negocios = () => {
           {negociosPaginados.map(n => (
             <div key={n.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
               <div className="card-portada h-100 text-center">
-                <img
-                  src={
-                    n.portada && n.portada.trim() !== ''
-                      ? `${API_URL}/uploads/${n.idnegocio}/${n.portada}`
-                      : noimagen
-                  }
-                  className="card-img-top rounded-4 shadow"
-                  style={{ width: '90%', height: '250px', objectFit: 'cover' }}
-                  alt="Negocio"
-                />
+                <img  src={  n.portada && n.portada.trim() !== '' ? `${API_URL}/uploads/${n.idnegocio}/${n.portada}` : noimagen                  }
+                  className="card-img-top rounded-4 shadow" style={{ width: '90%', height: '250px', objectFit: 'cover' }} alt="Negocio" />
                 <div className="card-body mt-5">
                   <h5 className="card-title">{n.nombre_comercial}</h5>
-                  <button
-                    className="btn btn-primary d-block mx-auto"
-                    onClick={() => navigate(`/DatosNegocio/${n.idnegocio}`)}
-                  >
+                  <button  className="btn btn-primary d-block mx-auto mt-3"  onClick={() => navigate(`/DatosNegocio/${n.idnegocio}`)} >
                     Ver más
                   </button>
                 </div>

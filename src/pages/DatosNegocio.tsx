@@ -362,7 +362,20 @@ const position: [number, number] = hasValidPosition
       <p className="text-center pt-5">No hay coordenadas disponibles para mostrar el mapa</p>
     )}
   </div>
-
+ {/* Etiquetas debajo del mapa */}
+  <div className="text-center mt-3">
+    <div className="row">
+      <div className="col-md-4">
+        <p className="bg-light rounded p-2"><strong>Estado:</strong> {negocio.estado}</p>
+      </div>
+      <div className="col-md-4">
+        <p className="bg-light rounded p-2"><strong>Municipio:</strong> {negocio.municipio}</p>
+      </div>
+      <div className="col-md-4">
+        <p className="bg-light rounded p-2"><strong>Código Postal:</strong> {negocio.codigop}</p>
+      </div>
+    </div>
+  </div>
    <div className="shadow rounded-4" style={{ height: '350px', width: '100%', margin: '15px 0', overflow: 'hidden' }}>
    <div className="card h-100 m-3 text-center">
           <div className="card-header">
@@ -385,22 +398,7 @@ const position: [number, number] = hasValidPosition
           </div>
         </div>
   </div>
-  
 
-  {/* Etiquetas debajo del mapa */}
-  <div className="text-center mt-3">
-    <div className="row">
-      <div className="col-md-4">
-        <p className="bg-light rounded p-2"><strong>Estado:</strong> {negocio.estado}</p>
-      </div>
-      <div className="col-md-4">
-        <p className="bg-light rounded p-2"><strong>Municipio:</strong> {negocio.municipio}</p>
-      </div>
-      <div className="col-md-4">
-        <p className="bg-light rounded p-2"><strong>Código Postal:</strong> {negocio.codigop}</p>
-      </div>
-    </div>
-  </div>
 </div>
 
 </div>
