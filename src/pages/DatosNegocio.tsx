@@ -280,43 +280,67 @@ const position: [number, number] = hasValidPosition
 
 
         <div className="row">
-  {/* Información del negocio */}
-  <div className="col-12 col-md-6">
-    <div className="card shadow" style={{ height: '80%', padding: '20px', margin: '15px', textAlign: 'center', fontSize: '1.4rem' }}>
-      <h2 className="card-title" style={{ fontSize: '1.8rem' }}>{negocio.nombre_comercial}</h2>
-      <div className="card-body">
-        <p><strong>Descripción:</strong> {negocio.descripcion}</p>
-         <p><strong>Promoción o Descuento:</strong> {negocio.promocion}</p>
-          <p><strong>Condiciones:</strong> {negocio.condicion}</p>
-        {negocio.categoria || negocio.subcategoria ? (
-          <p>
-            <strong>Categoría:</strong> {
-              categorias.find(c => c.idcategoria === negocio.categoria)?.descripcion || 'Sin categoría'
-            }<br />
-            <strong>Subcategoría:</strong> {
-              subcategorias.find(s => s.idsubcategoria === negocio.subcategoria)?.descripcion || 'Sin subcategoría'
-            }
-          </p>
+ {/* Información del negocio */}
+<div className="col-12 col-md-6">
+  <div
+    className="card shadow"
+    style={{
+      height: '80%',
+      padding: '20px',
+      margin: '15px',
+      fontSize: '1.4rem'
+    }}
+  >
+    {/* Título centrado */}
+    <h2 className="card-title text-center" style={{ fontSize: '1.8rem' }}>
+      {negocio.nombre_comercial}
+    </h2>
 
-        ) : (
-          <p>No tiene categorías asociadas</p>
-        )}
-        <p><strong>Teléfono:</strong> {negocio.telefono}</p>
-        <p><strong>Fecha de alta:</strong> {negocio.fecha_de_alta ? new Date(negocio.fecha_de_alta).toLocaleDateString() : 'No disponible'}</p>
-        <p> <strong>Estado:</strong><span className={negocio.activo ? 'text-success' : 'text-danger'}>{negocio.activo ? 'Activo' : 'Inactivo'} </span></p>
-        <p> <strong>Patrocinado:</strong><span className={negocio.patrocinado ? 'text-success' : 'text-danger'}>{negocio.patrocinado ? 'Si' : 'No'} </span></p>
-      
-      </div>
-      <div className="card-footer">
-        <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
-          Editar Información
-        </button>
-         <button className="btn btn-danger mb-3 ms-3" onClick={eliminarNegocio}>
-    Eliminar Negocio
-  </button>
-      </div>
+    {/* Cuerpo alineado a la izquierda */}
+    <div className="card-body text-start">
+      <p><strong>Descripción:</strong> {negocio.descripcion}</p>
+      <p><strong>Promoción o Descuento:</strong> {negocio.promocion}</p>
+      <p><strong>Condiciones:</strong> {negocio.condicion}</p>
+
+      {negocio.categoria || negocio.subcategoria ? (
+        <p>
+          <strong>Categoría:</strong>{' '}
+          {categorias.find(c => c.idcategoria === negocio.categoria)?.descripcion || 'Sin categoría'}
+          <br />
+          <strong>Subcategoría:</strong>{' '}
+          {subcategorias.find(s => s.idsubcategoria === negocio.subcategoria)?.descripcion || 'Sin subcategoría'}
+        </p>
+      ) : (
+        <p>No tiene categorías asociadas</p>
+      )}
+
+      <p><strong>Teléfono:</strong> {negocio.telefono}</p>
+      <p><strong>Fecha de alta:</strong> {negocio.fecha_de_alta ? new Date(negocio.fecha_de_alta).toLocaleDateString() : 'No disponible'}</p>
+      <p>
+        <strong>Estado:</strong>{' '}
+        <span className={negocio.activo ? 'text-success' : 'text-danger'}>
+          {negocio.activo ? 'Activo' : 'Inactivo'}
+        </span>
+      </p>
+      <p>
+        <strong>Patrocinado:</strong>{' '}
+        <span className={negocio.patrocinado ? 'text-success' : 'text-danger'}>
+          {negocio.patrocinado ? 'Sí' : 'No'}
+        </span>
+      </p>
+    </div>
+
+    <div className="card-footer text-center">
+      <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
+        Editar Información
+      </button>
+      <button className="btn btn-danger mb-3 ms-3" onClick={eliminarNegocio}>
+        Eliminar Negocio
+      </button>
     </div>
   </div>
+</div>
+
 
   {/* Mapa */}
         <div className="col-12 col-md-6">

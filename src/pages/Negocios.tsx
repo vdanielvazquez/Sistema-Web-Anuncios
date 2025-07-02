@@ -283,7 +283,7 @@ const Negocios = () => {
         <div className="row">
           {negociosPaginados.map(n => (
             <div key={n.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-              <div className="card-portada h-100 text-center">
+              <div className="card-portada h-100 text-center shadow">
                 <img
                   src={
                     n.portada && n.portada.trim() !== ''
