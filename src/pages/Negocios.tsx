@@ -283,18 +283,18 @@ const Negocios = () => {
         <div className="row">
           {negociosPaginados.map(n => (
             <div key={n.idnegocio} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-              <div className="card-portada h-100 text-center shadow">
+              <div className="card-portada h-100 text-center">
                 <img
                   src={
                     n.portada && n.portada.trim() !== ''
                       ? `${API_URL}/uploads/${n.idnegocio}/${n.portada}`
                       : noimagen
                   }
-                  className="card-img-top rounded-4 shadow-sm"
+                  className="card-img-top rounded-4 shadow"
                   style={{ width: '90%', height: '250px', objectFit: 'cover' }}
                   alt="Negocio"
                 />
-                <div className="card-body">
+                <div className="card-body mt-5">
                   <h5 className="card-title">{n.nombre_comercial}</h5>
                   <button
                     className="btn btn-primary d-block mx-auto"
