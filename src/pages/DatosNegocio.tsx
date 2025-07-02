@@ -321,12 +321,18 @@ const position: [number, number] = hasValidPosition
         <span className={negocio.activo ? 'text-success' : 'text-danger'}>
           {negocio.activo ? 'Activo' : 'Inactivo'}
         </span>
+        <div className="form-check form-switch">
+            <input className="form-check-input"  type="checkbox" checked={negocio.activo}/>
+         </div>
       </p>
       <p>
         <strong>Patrocinado:</strong>{' '}
         <span className={negocio.patrocinado ? 'text-success' : 'text-danger'}>
           {negocio.patrocinado ? 'Sí' : 'No'}
         </span>
+         <div className="form-check form-switch">
+            <input className="form-check-input"  type="checkbox" checked={negocio.activo}/>
+         </div>
       </p>
     </div>
 
@@ -376,7 +382,7 @@ const position: [number, number] = hasValidPosition
       </div>
     </div>
   </div>
-   <div className="shadow rounded-4" style={{ height: '350px', width: '100%', margin: '15px 0', overflow: 'hidden' }}>
+   <div className="shadow rounded-4" style={{ height: '450px', width: '100%', margin: '15px 0', overflow: 'hidden' }}>
    <div className="card h-100 m-3 text-center">
           <div className="card-header">
             <h5 className="mb-0">Logo</h5>

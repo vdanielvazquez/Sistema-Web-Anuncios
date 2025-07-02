@@ -245,12 +245,7 @@ const negociosPorCliente = Array.isArray(negocios)
                         {cliente.activo ? 'Activo' : 'Inactivo'}</td>
                       <td>
                         <div className="form-check form-switch">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            checked={cliente.activo}
-                            onChange={() => handleToggleActivo(cliente.idcliente, cliente.activo)}
-                          />
+                          <input className="form-check-input" type="checkbox" checked={cliente.activo}  onChange={() => handleToggleActivo(cliente.idcliente, cliente.activo)} />
                         </div>
                       </td>
                       <td>
