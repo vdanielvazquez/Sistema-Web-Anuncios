@@ -122,6 +122,7 @@ const NuevoNegocio = () => {
       return null;
     }
   };
+///
 
   // Carga inicial de clientes y estados
   useEffect(() => {
