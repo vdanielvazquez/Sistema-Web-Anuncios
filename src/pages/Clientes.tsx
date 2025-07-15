@@ -173,7 +173,7 @@ const negociosPorCliente = Array.isArray(negocios)
 
         {/* Tarjetas */}
         <div className="container mt-4">
-        <div className="row justify-content-center row-cols-1 row-cols-md-3 g-4">
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
           {cardsData.map((card, index) => (
             <div className="col d-flex justify-content-center" key={index}>
               <div className="card d-flex flex-row align-items-center p-3 shadow-sm" style={{ maxWidth: '100%' }}>
