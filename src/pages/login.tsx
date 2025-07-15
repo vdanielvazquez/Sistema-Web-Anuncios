@@ -29,7 +29,7 @@ const Login = () => {
 
   return (
     <div className="page-login">
-      <div className="container">
+      <div className="login-container">
           <div className="heading">Iniciar Sesión</div>
           <form onSubmit={handleLogin}  className="form">
             <input  type="text"  className="input" value={nombre} onChange={(e) => setNombre(e.target.value)} required  autoFocus/>

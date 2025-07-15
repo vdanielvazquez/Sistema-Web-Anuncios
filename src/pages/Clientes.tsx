@@ -173,20 +173,21 @@ const negociosPorCliente = Array.isArray(negocios)
 
         {/* Tarjetas */}
         <div className="container mt-4">
-          <div className="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-3">
-            {cardsData.map((card, index) => (
-              <div className="col" key={index}>
-                <div className="card d-flex flex-row align-items-center p-3 shadow-sm">
-                  <img src={card.img} alt={card.title} width="100" />
-                  <div className="flex-fill text-center">
-                    <h5 className="card-title">{card.title}</h5>
-                    <p className="card-text">{card.description}</p>
-                  </div>
+        <div className="row justify-content-center row-cols-1 row-cols-md-3 g-4">
+          {cardsData.map((card, index) => (
+            <div className="col d-flex justify-content-center" key={index}>
+              <div className="card d-flex flex-row align-items-center p-3 shadow-sm" style={{ maxWidth: '100%' }}>
+                <img src={card.img} alt={card.title} width="100" />
+                <div className="flex-fill text-center">
+                  <h5 className="card-title">{card.title}</h5>
+                  <p className="card-text">{card.description}</p>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
+      </div>
+
 
         {/* Barra de búsqueda y botón */}
         <div className="container mt-4">
