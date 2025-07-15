@@ -174,9 +174,9 @@ const negociosPorCliente = Array.isArray(negocios)
         
        {/* Tarjetas estilo estadísticas */}
       <div className="container mt-4">
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+        <div className="row row-cols-1 row-cols-md-3 g-3">
           {cardsData.map((card, index) => (
-            <div className="col d-flex justify-content-center" key={index}>
+            <div className="col" key={index}>
               <div className="card d-flex flex-row align-items-center p-3 shadow-sm w-100" style={{ maxWidth: '100%' }}>
                 <img src={card.img} alt={card.title} width="100" />
                 <div className="flex-fill text-center">
@@ -188,7 +188,6 @@ const negociosPorCliente = Array.isArray(negocios)
           ))}
         </div>
       </div>
-
 
 
         {/* Barra de búsqueda y botón */}
