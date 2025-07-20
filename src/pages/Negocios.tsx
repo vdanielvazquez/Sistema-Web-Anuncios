@@ -151,8 +151,7 @@ const Negocios = () => {
 
   // Render
   return (
-    <div className="divprincipal">
-      <div className="div-custom">
+     <div className="divprincipal">
         <h2 className="text-center mt-5">Listado de Negocios</h2>
 
         {/* Estadísticas */}
@@ -317,7 +316,6 @@ const Negocios = () => {
           <p className="text-center">No hay negocios registrados aún.</p>
         )}
       </div>
-    </div>
   );
 };
 
