@@ -167,9 +167,8 @@ const negociosPorCliente = Array.isArray(negocios)
   const clientesPaginados = clientesParaMostrar.slice(indexPrimerCliente, indexUltimoCliente);
 
   return (
-    <div className="divprincipal">
-      <div className="div-custom">
-        <h2 className="text-center mt-5">Listado de Clientes</h2>
+     <div className="div-custom">
+        <h2 className="text-center">Listado de Clientes</h2>
 
         
        {/* Tarjetas estilo estadísticas */}
@@ -339,7 +338,6 @@ const negociosPorCliente = Array.isArray(negocios)
         )}
 
       </div>
-    </div>
   );
 };
 
