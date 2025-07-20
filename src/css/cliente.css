@@ -1,5 +1,8 @@
-.divclientes{
-  margin-left: 100px;
-  margin-right: 100px;
+.div-custom {
+  display: flex;
+  flex-direction: column; /* coloca elementos en columna */
+  align-items: stretch;   /* evita centrado horizontal */
+  justify-content: flex-start; /* evita centrado vertical */
+  min-height: 100vh; /* asegura que no se quede flotando arriba por contenido corto */
 }
 
