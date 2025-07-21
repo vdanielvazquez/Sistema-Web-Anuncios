@@ -231,12 +231,13 @@ const abrirModalNuevoUsuario = () => {
   setShowModalUsuario(true);
 };
 
+/*
 const abrirModalEditarUsuario = (usuario: Usuario) => {
   setUsuarioEditando(usuario);
   setNombreUsuario(usuario.nombre);
   setContrasenaUsuario('');
   setShowModalUsuario(true);
-};
+};*/
  
 
 
@@ -289,7 +290,7 @@ const guardarUsuario = async () => {
     setTimeout(() => setMensaje(null), 3000);
   }
 };
-
+/*
 const eliminarUsuario = async (id: number) => {
   const confirmar = window.confirm('¿Eliminar este usuario?');
   if (!confirmar) return;
@@ -306,7 +307,7 @@ const eliminarUsuario = async (id: number) => {
   } finally {
     setTimeout(() => setMensaje(null), 3000);
   }
-};
+};*/
 
 ///
 const [editarDescripcionSubcat, setEditarDescripcionSubcat] = useState('');
@@ -613,8 +614,9 @@ const handleEliminarSubcategoria = async (id: number) => {
                       <tr key={u.idusuario}>
                         <td>{u.nombre}</td>
                         <td className="text-center">
-                          <button className="btn btn-warning btn-sm me-2" onClick={() => abrirModalEditarUsuario(u)}>Editar</button>
-                          <button className="btn btn-danger btn-sm" onClick={() => eliminarUsuario(u.idusuario)}>Eliminar</button>
+                           {/*  <button className="btn btn-warning btn-sm me-2" onClick={() => abrirModalEditarUsuario(u)}>Editar</button> 
+                           <button className="btn btn-danger btn-sm" onClick={() => eliminarUsuario(u.idusuario)}>Eliminar</button>
+                           */}                         
                         </td>
                       </tr>
                     ))
