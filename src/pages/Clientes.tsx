@@ -168,7 +168,7 @@ const negociosPorCliente = Array.isArray(negocios)
 
   return (
      <div className="div-custom">
-        <h2 className="text-center">Listado de Clientes</h2>
+        <h2 className="text-center mt-5">Listado de Clientes</h2>
        {/* Tarjetas estilo estadísticas */}
       <div className="container mt-1">
         <div className="row row-cols-1 row-cols-md-3 g-3">
