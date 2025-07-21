@@ -203,7 +203,7 @@ const NuevoNegocio = () => {
      // Espera un pequeño tiempo antes de limpiar las sugerencias
   setTimeout(() => {
     setFilteredClientes([]);
-  }, 100); // 100 ms suele ser suficiente
+  }, 400); // 100 ms suele ser suficiente
   };
 
   // Cambios en municipio, incluye geocodificación
@@ -335,9 +335,10 @@ const NuevoNegocio = () => {
 
   return (
    
-    <div className="divprincipal mt-4">
+    <div className="div-custom">
       <div className='container'>
-        <h1>Nuevo Negocio</h1>
+       
+        <h2 className="text-center mt-5">Nuevo Negocio</h2>
       <form onSubmit={handleSubmit}>
         {/* Primer nivel: Cliente, Nombre comercial, Teléfono */}
 <div className="row">
