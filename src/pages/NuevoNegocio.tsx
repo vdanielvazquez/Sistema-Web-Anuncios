@@ -199,6 +199,11 @@ const NuevoNegocio = () => {
     setFormData(prev => ({ ...prev, idcliente: cliente.idcliente }));
     setClienteInput(cliente.nombre);
     setFilteredClientes([]);
+
+     // Espera un pequeño tiempo antes de limpiar las sugerencias
+  setTimeout(() => {
+    setFilteredClientes([]);
+  }, 100); // 100 ms suele ser suficiente
   };
 
   // Cambios en municipio, incluye geocodificación

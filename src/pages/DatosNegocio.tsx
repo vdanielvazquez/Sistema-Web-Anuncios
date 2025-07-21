@@ -405,15 +405,7 @@ const position: [number, number] = hasValidPosition
  {/* Etiquetas debajo del mapa */}
   <div className="text-center mt-3">
     <div className="row">
-      <div className="col-md-4">
-        <p className="bg-light rounded p-2"><strong>Estado:</strong> {negocio.estado}</p>
-      </div>
-      <div className="col-md-4">
-        <p className="bg-light rounded p-2"><strong>Municipio:</strong> {negocio.municipio}</p>
-      </div>
-      <div className="col-md-4">
-        <p className="bg-light rounded p-2"><strong>Código Postal:</strong> {negocio.codigop}</p>
-      </div>
+      
     </div>
   </div>
 <div className="shadow-lg rounded-4 bg-white p-3 mb-4" style={{ maxWidth: '400px', margin: '0 auto' }}>
