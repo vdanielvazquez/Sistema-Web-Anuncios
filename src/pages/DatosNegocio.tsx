@@ -178,7 +178,7 @@ const subirGaleria = async () => {
 const eliminarImagen = async (filename: string) => {
   if (!window.confirm('¿Estás seguro de que deseas eliminar esta imagen?')) return;
   try {
-    await axios.delete(`${API_URL}/api/imagenes/${id}/${filename}`);
+    await axios.delete(`${API_URL}/api/imagenes/galeria/${id}/${filename}`);
     alert('Imagen eliminada correctamente');
     fetchNegocio(); // recarga galería
   } catch (error) {
