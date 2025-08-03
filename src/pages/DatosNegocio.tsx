@@ -164,7 +164,7 @@ const subirGaleria = async () => {
   galeria.forEach((file) => formData.append('galeria', file));
 
   try {
-    await axios.post(`${API_URL}/api/imagenes/imagenes/galeria/${id}`, formData, {
+    await axios.post(`${API_URL}/api/imagenes/galeria/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Galería subida con éxito');
@@ -178,7 +178,7 @@ const subirGaleria = async () => {
 const eliminarImagen = async (filename: string) => {
   if (!window.confirm('¿Estás seguro de que deseas eliminar esta imagen?')) return;
   try {
-    await axios.delete(`${API_URL}/api/imagenes/imagenes/${id}/${filename}`);
+    await axios.delete(`${API_URL}/api/imagenes/${id}/${filename}`);
     alert('Imagen eliminada correctamente');
     fetchNegocio(); // recarga galería
   } catch (error) {
@@ -193,7 +193,7 @@ const reemplazarImagen = async () => {
   formData.append('imagen', imagenNueva);
 
   try {
-    await axios.put(`${API_URL}/api/imagenes/imagenes/galeria/${id}/${imagenAEditar}`, formData, {
+    await axios.put(`${API_URL}/api/imagenes/galeria/${id}/${imagenAEditar}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Imagen reemplazada correctamente');
