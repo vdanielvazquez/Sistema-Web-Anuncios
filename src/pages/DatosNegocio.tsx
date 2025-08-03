@@ -120,7 +120,7 @@ const subirPortada = async () => {
   formData.append('portada', portada);
 
   try {
-    await axios.post(`${API_URL}/api/negocios/imagenes/portada/${id}`, formData, {
+    await axios.post(`${API_URL}/api/imagenes/imagenes/portada/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Portada subida con éxito');
@@ -143,7 +143,7 @@ const subirLogo = async () => {
   formData.append('logo', archivoLogo);
 
   try {
-    await axios.post(`${API_URL}/api/negocios/imagenes/logo/${id}`, formData, {
+    await axios.post(`${API_URL}/api/imagenes/imagenes/logo/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     alert('Logo actualizado correctamente');
