@@ -265,7 +265,7 @@ const togglePatrocinado = async () => {
 useEffect(() => {
   const fetchSuscripciones = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/suscripciones`);
+      const response = await axios.get(`${API_URL}/api/suscripcion`);
       setSuscripciones(response.data); // aquí asumo que tu API devuelve un array
     } catch (error) {
       console.error('Error al obtener suscripciones:', error);
