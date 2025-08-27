@@ -278,21 +278,22 @@ useEffect(() => {
   fetchSuscripciones();
 }, []);
 
-
 const handleUpdateSuscripcion = async (idsuscripcion: number) => {
   try {
-    console.log('Enviando suscripción:', idsuscripcion);
-    const response = await axios.put(`${API_URL}/api/negocios/${negocio.id}/suscripcion`, {
-      idsuscripcion
-    });
+    console.log('Enviando suscripción:', idsuscripcion, 'Negocio ID:', negocio.idnegocio);
+    const response = await axios.put(
+      `${API_URL}/api/negocios/${negocio.idnegocio}/suscripcion`,
+      { idsuscripcion }
+    );
 
-    setNegocio(response.data.negocio); // actualiza estado con la respuesta del backend
+    setNegocio(response.data.negocio); // o response.data.cliente según tu backend
     alert('Suscripción actualizada correctamente');
-  } catch (error) {
-    console.error('Error al actualizar la suscripción:', error);
+  } catch (error: any) {
+    console.error('Error al actualizar la suscripción:', error.response?.data || error.message);
     alert('Ocurrió un error al actualizar la suscripción');
   }
 };
+
 
 //
   if (!negocio) return <p>Cargando...</p>;
