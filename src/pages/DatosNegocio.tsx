@@ -38,6 +38,8 @@ const DatosNegocio = () => {
   const [suscripciones, setSuscripciones] = useState<any[]>([]);
 
 
+
+
   interface Subcategoria {
   idsubcategoria: number;
   descripcion: string;
@@ -266,7 +268,8 @@ useEffect(() => {
   const fetchSuscripciones = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/suscripcion`);
-      setSuscripciones(response.data); // aquí asumo que tu API devuelve un array
+      setSuscripciones(response.data.data);
+ // aquí asumo que tu API devuelve un array
     } catch (error) {
       console.error('Error al obtener suscripciones:', error);
     }
@@ -404,18 +407,20 @@ const position: [number, number] = hasValidPosition
     {negocio.suscripcion ? negocio.suscripcion : 'Sin suscripción'}
   </span>
 
-  <select
-    className="form-select mt-2"
-    value={negocio.suscripcion || ''}
-    onChange={(e) => handleUpdateSuscripcion(Number(e.target.value))}
-  >
-    <option value="">-- Seleccionar suscripción --</option>
-    {suscripciones.map((s) => (
+<select
+  className="form-select mt-2"
+  value={negocio.suscripcion || ''}
+  onChange={(e) => handleUpdateSuscripcion(Number(e.target.value))}
+>
+  <option value="">-- Seleccionar suscripción --</option>
+  {Array.isArray(suscripciones) &&
+    suscripciones.map((s) => (
       <option key={s.idsuscripcion} value={s.idsuscripcion}>
         {s.descripcion} - ${s.precio}
       </option>
     ))}
-  </select>
+</select>
+
 </p>
 
 
