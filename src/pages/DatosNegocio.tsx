@@ -35,6 +35,7 @@ const DatosNegocio = () => {
   
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
   const [categorias, setCategorias] = useState<any[]>([]);
+  const [suscripciones, setSuscripciones] = useState<any[]>([]);
 
 
   interface Subcategoria {
@@ -260,6 +261,36 @@ const togglePatrocinado = async () => {
 };
 
 //
+
+useEffect(() => {
+  const fetchSuscripciones = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/suscripciones`);
+      setSuscripciones(response.data); // aquí asumo que tu API devuelve un array
+    } catch (error) {
+      console.error('Error al obtener suscripciones:', error);
+    }
+  };
+
+  fetchSuscripciones();
+}, []);
+
+
+const handleUpdateSuscripcion = async (idsuscripcion: number) => {
+  try {
+    console.log('Enviando suscripción:', idsuscripcion);
+    const response = await axios.put(`${API_URL}/api/negocios/${negocio.id}/suscripcion`, {
+      idsuscripcion
+    });
+
+    setNegocio(response.data.negocio); // actualiza estado con la respuesta del backend
+    alert('Suscripción actualizada correctamente');
+  } catch (error) {
+    console.error('Error al actualizar la suscripción:', error);
+    alert('Ocurrió un error al actualizar la suscripción');
+  }
+};
+
 //
   if (!negocio) return <p>Cargando...</p>;
 //
@@ -367,6 +398,26 @@ const position: [number, number] = hasValidPosition
     />
   </div>
 </p>
+<p>
+  <strong>Suscripción:</strong>{' '}
+  <span className="text-primary">
+    {negocio.suscripcion ? negocio.suscripcion : 'Sin suscripción'}
+  </span>
+
+  <select
+    className="form-select mt-2"
+    value={negocio.suscripcion || ''}
+    onChange={(e) => handleUpdateSuscripcion(Number(e.target.value))}
+  >
+    <option value="">-- Seleccionar suscripción --</option>
+    {suscripciones.map((s) => (
+      <option key={s.idsuscripcion} value={s.idsuscripcion}>
+        {s.descripcion} - ${s.precio}
+      </option>
+    ))}
+  </select>
+</p>
+
 
     </div>
 
