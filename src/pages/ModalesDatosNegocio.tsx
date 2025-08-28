@@ -88,7 +88,8 @@ export const ModalGaleria: React.FC<{
   onClose: () => void;
   onUpload: (files: File[]) => void;
   onSubmit: () => void;
-}> = ({ show, onClose, onUpload, onSubmit }) => {
+  children?: React.ReactNode; // <-- agregar children opcional
+}> = ({ show, onClose, onUpload, onSubmit, children }) => {
   return (
     <Modal show={show} onClose={onClose} title="Agregar Fotos a la galería">
       <div className="mb-2">
@@ -100,6 +101,10 @@ export const ModalGaleria: React.FC<{
           onChange={e => onUpload(Array.from(e.target.files || []))}
         />
       </div>
+
+      {/* Renderizamos los children, que puede ser la barra de progreso */}
+      {children}
+
       <div className="modal-footer">
         <button className="btn btn-secondary" onClick={onClose}>
           Cancelar

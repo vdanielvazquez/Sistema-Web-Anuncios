@@ -3,11 +3,12 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import '../css/datosnegocio.css';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import noimagen from "../assets/no-img.avif";
 import { ModalLogo,ModalPortada, ModalGaleria, ModalEditarImagen,ModalEditarInfoNegocio } from '../pages/ModalesDatosNegocio';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
+import axios from 'axios';
+import type { AxiosProgressEvent } from 'axios';
 
 
 
@@ -31,6 +32,7 @@ const DatosNegocio = () => {
   const [showModalPortada, setShowModalPortada] = useState(false);
   const [showModalGaleria, setShowModalGaleria] = useState(false);
   const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   
   const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
@@ -160,23 +162,39 @@ const subirLogo = async () => {
 };
 
 
-//subir galeria
+// subir galería
 const subirGaleria = async () => {
-  if (!id || galeria.length === 0) return;
-  const formData = new FormData();
-  galeria.forEach((file) => formData.append('galeria', file));
-
   try {
-    await axios.post(`${API_URL}/api/imagenes/galeria/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    alert('Galería subida con éxito');
-    fetchNegocio(); // Recargar datos
+    const formData = new FormData();
+    galeria.forEach((file) => formData.append('imagenes', file));
+
+    await axios.post(
+      `${API_URL}/api/imagenes/galeria/${negocio.idnegocio}`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+          if (progressEvent.total) { // total puede ser undefined
+            const percent = Math.round((progressEvent.loaded! * 100) / progressEvent.total);
+            setUploadProgress(percent);
+          }
+        },
+      }
+    );
+
+    fetchNegocio();           // refresca la galería
+    setShowModalGaleria(false); // cierra el modal
+    setUploadProgress(0);     // resetea barra
+    setGaleria([]);           // limpia archivos
+    alert('Imágenes subidas correctamente');
   } catch (error) {
     console.error('Error al subir galería:', error);
     alert('Error al subir galería');
+    setUploadProgress(0);
   }
 };
+
+
 //eliminar img
 const eliminarImagen = async (filename: string) => {
   if (!window.confirm('¿Estás seguro de que deseas eliminar esta imagen?')) return;
@@ -535,12 +553,29 @@ const position: [number, number] = hasValidPosition
           onSubmit={subirPortada}
         />
 
-        <ModalGaleria
-          show={showModalGaleria}
-          onClose={() => setShowModalGaleria(false)}
-          onUpload={setGaleria}
-          onSubmit={subirGaleria}
-        />
+      <ModalGaleria
+  show={showModalGaleria}
+  onClose={() => setShowModalGaleria(false)}
+  onUpload={setGaleria}
+  onSubmit={subirGaleria}
+>
+  {uploadProgress > 0 && (
+    <div className="progress mb-3">
+      <div
+        className="progress-bar"
+        role="progressbar"
+        style={{ width: `${uploadProgress}%` }}
+        aria-valuenow={uploadProgress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        {uploadProgress}%
+      </div>
+    </div>
+  )}
+</ModalGaleria>
+
+        
         {showModalEditar && (
           <ModalEditarImagen
             show={showModalEditar}
@@ -560,11 +595,11 @@ const position: [number, number] = hasValidPosition
           onSubmit={handleUpdate}
         />
         <ModalLogo
-  show={mostrarModalLogo}
-  onClose={() => setMostrarModalLogo(false)}
-  onFileChange={setArchivoLogo}
-  onSubmit={subirLogo}
-/>
+        show={mostrarModalLogo}
+        onClose={() => setMostrarModalLogo(false)}
+        onFileChange={setArchivoLogo}
+        onSubmit={subirLogo}
+        />
 
       </div>
     </div>
