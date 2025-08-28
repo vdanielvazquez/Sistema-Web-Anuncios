@@ -4,615 +4,399 @@ import '../css/datosnegocio.css';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import noimagen from "../assets/no-img.avif";
-import { ModalLogo,ModalPortada, ModalGaleria, ModalEditarImagen,ModalEditarInfoNegocio } from '../pages/ModalesDatosNegocio';
+import { 
+  ModalLogo,
+  ModalPortada,
+  ModalGaleria,
+  ModalEditarImagen,
+  ModalEditarInfoNegocio
+} from '../pages/ModalesDatosNegocio';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import axios from 'axios';
 import type { AxiosProgressEvent } from 'axios';
 
-
-
-const DatosNegocio = () => {
-  const API_URL = 'https://sistemawebpro.com';
-
-
-  const { id } = useParams();
-  const [negocio, setNegocio] = useState<any>(null);
-
-  const [editForm, setEditForm] = useState<any>({});
-
-  const [portada, setPortada] = useState<File | null>(null);
-  const [galeria, setGaleria] = useState<File[]>([]);
-
-
-  const [imagenAEditar, setImagenAEditar] = useState<string | null>(null);
-  const [imagenNueva, setImagenNueva] = useState<File | null>(null);
-  const [showModalEditar, setShowModalEditar] = useState(false);
- 
-  const [showModalPortada, setShowModalPortada] = useState(false);
-  const [showModalGaleria, setShowModalGaleria] = useState(false);
-  const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-
-  
-  const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
-  const [categorias, setCategorias] = useState<any[]>([]);
-  const [suscripciones, setSuscripciones] = useState<any[]>([]);
-
-
-
-
-  interface Subcategoria {
+// Tipado básico
+interface Subcategoria {
   idsubcategoria: number;
   descripcion: string;
 }
 
-  // Corrige el icono del marcador por defecto en Leaflet + React (problema común)
-const icon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-////
+interface Negocio {
+  idnegocio: number;
+  nombre_comercial: string;
+  descripcion: string;
+  promocion?: string;
+  condicion?: string;
+  categoria?: number;
+  subcategoria?: number;
+  telefono?: string;
+  fecha_de_alta?: string;
+  activo?: boolean;
+  patrocinado?: boolean;
+  suscripcion?: string;
+  latitud?: number | string;
+  longitud?: number | string;
+  portada?: string;
+  logo?: string;
+  imagenes?: string[];
+}
 
-const eliminarNegocio = async () => {
-  if (!window.confirm('¿Estás seguro de que deseas eliminar este negocio? Esta acción no se puede deshacer.')) return;
+const DatosNegocio: React.FC = () => {
+  const API_URL = 'https://sistemawebpro.com';
+  const { id } = useParams<{ id: string }>();
 
-  try {
-    await axios.delete(`${API_URL}/api/negocios/${id}`);
-    alert('Negocio eliminado correctamente');
-    // Aquí podrías redirigir a otra página, por ejemplo al listado de negocios
-    window.location.href = '/negocios'; // Cambia esta ruta según tu app
-  } catch (error) {
-    console.error('Error al eliminar negocio:', error);
-    alert('Error al eliminar el negocio');
-  }
-};
-////
+  const [negocio, setNegocio] = useState<Negocio | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Negocio>>({});
 
-////
+  const [portada, setPortada] = useState<File | null>(null);
+  const [galeria, setGaleria] = useState<File[]>([]);
+  const [imagenAEditar, setImagenAEditar] = useState<string | null>(null);
+  const [imagenNueva, setImagenNueva] = useState<File | null>(null);
+  
+  const [showModalEditar, setShowModalEditar] = useState(false);
+  const [showModalPortada, setShowModalPortada] = useState(false);
+  const [showModalGaleria, setShowModalGaleria] = useState(false);
+  const [showModalInfoNegocio, setShowModalInfoNegocio] = useState(false);
+  const [mostrarModalLogo, setMostrarModalLogo] = useState(false);
+  const [archivoLogo, setArchivoLogo] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
+  const [categorias, setCategorias] = useState<any[]>([]);
+  const [suscripciones, setSuscripciones] = useState<any[]>([]);
+
+  // Icono de Leaflet
+  const icon = L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+  // Cargar negocio
+  const fetchNegocio = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
+      setNegocio(response.data);
+      setEditForm(response.data);
+    } catch (error) {
+      console.error('Error al obtener el negocio:', error);
+    }
+  };
+
+  useEffect(() => { fetchNegocio(); }, [id]);
+
+  // Cargar categorías
   useEffect(() => {
     axios.get(`${API_URL}/api/categorias`)
-      .then(res => {
-        console.log(res.data);  // Confirma la estructura
-      setCategorias(res.data.data); // Corregido
-      })
-      .catch(error => console.error('Error al obtener categorías:', error));
+      .then(res => setCategorias(res.data.data))
+      .catch(err => console.error('Error al obtener categorías:', err));
   }, []);
-  
+
+  // Subcategorías cuando cambia categoría
   useEffect(() => {
-    if (editForm.id_categoria) {
-      axios.get(`${API_URL}/api/subcategorias/categoria/${editForm.id_categoria}`)
-        .then(response => {
-          setSubcategorias(response.data.data);// Establecer las subcategorías
-        })
-        .catch(error => {
-          if (error.response) {
-          } else if (error.request) {
-            console.error("No se recibió respuesta:", error.request);
-          } else {
-            console.error("Error de configuración:", error.message);
-          }
-        });
+    const idCat = editForm.categoria || negocio?.categoria;
+    if (idCat) {
+      axios.get(`${API_URL}/api/subcategorias/categoria/${idCat}`)
+        .then(res => setSubcategorias(res.data.data))
+        .catch(err => console.error('Error al cargar subcategorías:', err));
     }
-  }, [editForm.id_categoria]); // Este useEffect se dispara cuando el id_categoria cambia
-  
-    //mostrar img
-    const fetchNegocio = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/api/negocios/imagenes/${id}`);
-        setNegocio(response.data);
-        setEditForm(response.data);
-      } catch (error) {
-        console.error('Error al obtener el negocio:', error);
-      }
-    }; 
-    useEffect(() => {
-      fetchNegocio();
-    }, [id]);
+  }, [editForm.categoria, negocio?.categoria]);
 
-//
+  // Suscripciones
+  useEffect(() => {
+    axios.get(`${API_URL}/api/suscripcion`)
+      .then(res => setSuscripciones(res.data.data))
+      .catch(err => console.error('Error al cargar suscripciones:', err));
+  }, []);
 
+  // Validar posición
+  const hasValidPosition = negocio?.latitud !== undefined && negocio?.latitud !== null &&
+                           negocio?.longitud !== undefined && negocio?.longitud !== null &&
+                           !isNaN(Number(negocio.latitud)) && !isNaN(Number(negocio.longitud));
 
-//subir portada
-const subirPortada = async () => {
-  if (!id || !portada) return;
-  const formData = new FormData();
-  formData.append('portada', portada);
+  const position: [number, number] = hasValidPosition
+    ? [Number(negocio!.latitud), Number(negocio!.longitud)]
+    : [0, 0];
 
-  try {
-    await axios.post(`${API_URL}/api/imagenes/imagenes/portada/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    alert('Portada subida con éxito');
-    
-    setShowModalPortada(false);
-    fetchNegocio(); // Recargar datos
-  } catch (error) {
-    console.error('Error al subir portada:', error);
-    alert('Error al subir portada');
-  }
-};
-//subir logo
-const [mostrarModalLogo, setMostrarModalLogo] = useState(false);
-const [archivoLogo, setArchivoLogo] = useState<File | null>(null);
+  if (!negocio) return <p>Cargando...</p>;
 
-const subirLogo = async () => {
-  if (!id || !archivoLogo) return;
+  // Toggle activo/patrocinado sin perder galería
+  const toggleActivo = async () => {
+    try {
+      await axios.put(`${API_URL}/api/negocios/${negocio.idnegocio}/activo`, { activo: !negocio.activo });
+      setNegocio(prev => prev ? { ...prev, activo: !prev.activo } : prev);
+    } catch (err) {
+      console.error('Error toggle activo:', err);
+    }
+  };
 
-  const formData = new FormData();
-  formData.append('logo', archivoLogo);
+  const togglePatrocinado = async () => {
+    try {
+      await axios.put(`${API_URL}/api/negocios/${negocio.idnegocio}/patrocinado`, { patrocinado: !negocio.patrocinado });
+      setNegocio(prev => prev ? { ...prev, patrocinado: !prev.patrocinado } : prev);
+    } catch (err) {
+      console.error('Error toggle patrocinado:', err);
+    }
+  };
 
-  try {
-    await axios.post(`${API_URL}/api/imagenes/imagenes/logo/${id}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    alert('Logo actualizado correctamente');
-    
-    setMostrarModalLogo(false);
-    fetchNegocio(); // Recargar datos del negocio actualizado
-  } catch (error) {
-    console.error('Error al subir logo:', error);
-    alert('Error al subir logo');
-  }
-};
-
-
-
-// subir galería
-const subirGaleria = async () => {
-  try {
+  // Subir portada
+  const subirPortada = async () => {
+    if (!portada) return;
     const formData = new FormData();
-    galeria.forEach((file) => formData.append("galeria", file)); // 👈 importante: "imagenes"
+    formData.append('portada', portada);
+    try {
+      await axios.post(`${API_URL}/api/imagenes/imagenes/portada/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setShowModalPortada(false);
+      fetchNegocio();
+      alert('Portada subida');
+    } catch (err) {
+      console.error(err); alert('Error al subir portada');
+    }
+  };
 
-    await axios.post(
-      `${API_URL}/api/imagenes/galeria/${negocio.idnegocio}`,
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" }, // 👈 importante mantenerlo
-        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-          if (progressEvent.total) {
-            const percent = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setUploadProgress(percent);
-          }
-        },
-      }
-    );
+  // Subir logo
+  const subirLogo = async () => {
+    if (!archivoLogo) return;
+    const formData = new FormData();
+    formData.append('logo', archivoLogo);
+    try {
+      await axios.post(`${API_URL}/api/imagenes/imagenes/logo/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setMostrarModalLogo(false);
+      fetchNegocio();
+      alert('Logo actualizado');
+    } catch (err) {
+      console.error(err); alert('Error al subir logo');
+    }
+  };
 
-    // refrescar vista
-    fetchNegocio();
-    setShowModalGaleria(false);
-    setUploadProgress(0);
-    setGaleria([]);
-    alert("Imágenes subidas correctamente");
-  } catch (error) {
-    console.error("Error al subir galería:", error);
-    alert("Error al subir galería");
-    setUploadProgress(0);
-  }
-};
+  // Subir galería
+  const subirGaleria = async () => {
+    if (!galeria.length) return;
+    const formData = new FormData();
+    galeria.forEach(file => formData.append("galeria", file));
+    try {
+      await axios.post(`${API_URL}/api/imagenes/galeria/${negocio.idnegocio}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (e: AxiosProgressEvent) => {
+          if (e.total) setUploadProgress(Math.round((e.loaded * 100) / e.total));
+        }
+      });
+      setShowModalGaleria(false);
+      setGaleria([]);
+      setUploadProgress(0);
+      fetchNegocio();
+      alert('Galería subida');
+    } catch (err) {
+      console.error(err);
+      setUploadProgress(0);
+      alert('Error al subir galería');
+    }
+  };
 
+  // Eliminar imagen
+  const eliminarImagen = async (filename: string) => {
+    if (!window.confirm('¿Eliminar imagen?')) return;
+    try {
+      await axios.delete(`${API_URL}/api/imagenes/galeria/${id}/${filename}`);
+      fetchNegocio();
+      alert('Imagen eliminada');
+    } catch (err) {
+      console.error(err); alert('Error al eliminar');
+    }
+  };
 
+  // Reemplazar imagen
+  const reemplazarImagen = async () => {
+    if (!imagenAEditar || !imagenNueva) return;
+    const formData = new FormData();
+    formData.append('imagen', imagenNueva);
+    try {
+      await axios.put(`${API_URL}/api/imagenes/galeria/${id}/${imagenAEditar}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setShowModalEditar(false);
+      fetchNegocio();
+      alert('Imagen reemplazada');
+    } catch (err) {
+      console.error(err); alert('Error al reemplazar imagen');
+    }
+  };
 
-
-//eliminar img
-const eliminarImagen = async (filename: string) => {
-  if (!window.confirm('¿Estás seguro de que deseas eliminar esta imagen?')) return;
-  try {
-    await axios.delete(`${API_URL}/api/imagenes/galeria/${id}/${filename}`);
-    alert('Imagen eliminada correctamente');
-    fetchNegocio(); // recarga galería
-  } catch (error) {
-    console.error('Error al eliminar imagen:', error);
-    alert('Error al eliminar la imagen');
-  }
-};
-//reemplazar img
-const reemplazarImagen = async () => {
-  if (!id || !imagenAEditar || !imagenNueva) return;
-  const formData = new FormData();
-  formData.append('imagen', imagenNueva);
-
-  try {
-    await axios.put(`${API_URL}/api/imagenes/galeria/${id}/${imagenAEditar}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    alert('Imagen reemplazada correctamente');
-    setShowModalEditar(false);
-    fetchNegocio();
-  } catch (error) {
-    console.error('Error al reemplazar imagen:', error);
-    alert('Error al reemplazar imagen');
-  }
-};
-''
-
-
-//actualizar info
+  // Actualizar info negocio
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log('Enviando datos:', editForm); 
       await axios.put(`${API_URL}/api/negocios/${id}`, editForm);
-      
-      setNegocio(editForm); // actualiza la vista con los nuevos datos
-      alert('Negocio actualizado correctamente');
-       setShowModalEditar(false);
-    } catch (error) {
-      console.error('Error al actualizar el negocio:', error);
-      alert('Ocurrió un error al actualizar');
+      setNegocio(prev => prev ? { ...prev, ...editForm } : prev);
+      setShowModalInfoNegocio(false);
+      alert('Negocio actualizado');
+    } catch (err) {
+      console.error(err); alert('Error al actualizar negocio');
     }
   };
 
-
-//
-  useEffect(() => {
-  if (negocio?.categoria) {
-    axios.get(`${API_URL}/api/subcategorias/categoria/${negocio.categoria}`)
-      .then(response => {
-        setSubcategorias(response.data.data);
-      })
-      .catch(error => {
-        console.error("Error al cargar subcategorías:", error);
-      });
-  }
-}, [negocio]);
-///7
-const toggleActivo = async () => {
-  try {
-    const respuesta = await axios.put(`${API_URL}/api/negocios/${negocio.idnegocio}/activo`, {
-      activo: !negocio.activo,
-    });
-    setNegocio(respuesta.data.cliente); // Actualiza el estado local
-  } catch (error) {
-    console.error('Error al cambiar estado activo:', error);
-  }
-};
-
-const togglePatrocinado = async () => {
-  try {
-    const respuesta = await axios.put(`${API_URL}/api/negocios/${negocio.idnegocio}/patrocinado`, {
-      patrocinado: !negocio.patrocinado,
-    });
-    setNegocio(respuesta.data.cliente); // Actualiza el estado local
-  } catch (error) {
-    console.error('Error al cambiar estado patrocinado:', error);
-  }
-};
-
-//
-
-useEffect(() => {
-  const fetchSuscripciones = async () => {
+  // Actualizar suscripción
+  const handleUpdateSuscripcion = async (idsuscripcion: number) => {
     try {
-      const response = await axios.get(`${API_URL}/api/suscripcion`);
-      setSuscripciones(response.data.data);
- // aquí asumo que tu API devuelve un array
-    } catch (error) {
-      console.error('Error al obtener suscripciones:', error);
+      const resp = await axios.put(`${API_URL}/api/negocios/${negocio.idnegocio}/suscripcion`, { idsuscripcion });
+      setNegocio(prev => prev ? { ...prev, suscripcion: resp.data.negocio?.suscripcion } : prev);
+      alert('Suscripción actualizada');
+    } catch (err: any) {
+      console.error(err); alert('Error al actualizar suscripción');
     }
   };
 
-  fetchSuscripciones();
-}, []);
-
-const handleUpdateSuscripcion = async (idsuscripcion: number) => {
-  try {
-    console.log('Enviando suscripción:', idsuscripcion, 'Negocio ID:', negocio.idnegocio);
-    const response = await axios.put(
-      `${API_URL}/api/negocios/${negocio.idnegocio}/suscripcion`,
-      { idsuscripcion }
-    );
-
-    setNegocio(response.data.negocio); // o response.data.cliente según tu backend
-    alert('Suscripción actualizada correctamente');
-  } catch (error: any) {
-    console.error('Error al actualizar la suscripción:', error.response?.data || error.message);
-    alert('Ocurrió un error al actualizar la suscripción');
-  }
-};
-
-
-//
-  if (!negocio) return <p>Cargando...</p>;
-//
-const hasValidPosition = negocio.latitud !== undefined && negocio.latitud !== null &&
-                         negocio.longitud !== undefined && negocio.longitud !== null &&
-                         !isNaN(Number(negocio.latitud)) && !isNaN(Number(negocio.longitud));
-
-const position: [number, number] = hasValidPosition
-  ? [Number(negocio.latitud), Number(negocio.longitud)]
-  : [0, 0];
-//mapa
+  // Eliminar negocio
+  const eliminarNegocio = async () => {
+    if (!window.confirm('¿Eliminar negocio?')) return;
+    try {
+      await axios.delete(`${API_URL}/api/negocios/${id}`);
+      alert('Negocio eliminado');
+      window.location.href = '/negocios';
+    } catch (err) { console.error(err); alert('Error al eliminar'); }
+  };
 
   return (
     <div className="divprincipal">
       <div className="container">
         <h2 className="text-center mt-5">Detalles del Negocio</h2>
-      <div className="row">
-        <div className="card h-100 m-3 text-center">
-          <div className="card-header">
-            <h5 className="mb-0">Portada</h5>
-          </div>
-          <div className="card-body p-2">
-            <img
-              src={negocio.portada && negocio.portada.trim() !== '' 
-                ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
-                : noimagen}
-              className="img-fluid rounded-4"
-              style={{ height: '250px', objectFit: 'cover', width: '100%' }}
-              alt="Portada del negocio"
-            />
-          </div>
-          <div className="card-footer">
-            <button className="btn btn-primary" onClick={() => setShowModalPortada(true)}>
-              Editar Portada
-            </button>
+
+        {/* Portada */}
+        <div className="row">
+          <div className="card h-100 m-3 text-center">
+            <div className="card-header"><h5>Portada</h5></div>
+            <div className="card-body p-2">
+              <img
+                src={negocio.portada && negocio.portada.trim() !== '' 
+                  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
+                  : noimagen}
+                className="img-fluid rounded-4"
+                style={{ height: '250px', objectFit: 'cover', width: '100%' }}
+                alt="Portada"
+              />
+            </div>
+            <div className="card-footer">
+              <button className="btn btn-primary" onClick={() => setShowModalPortada(true)}>Editar Portada</button>
+            </div>
           </div>
         </div>
-
-
-
 
         <div className="row">
- {/* Información del negocio */}
-<div className="col-12 col-md-6">
-  <div
-    className="card shadow"
-    style={{
-      height: '80%',
-      padding: '20px',
-      margin: '15px',
-      fontSize: '1.4rem'
-    }}
-  >
-    {/* Título centrado */}
-    <h2 className="card-title text-center" style={{ fontSize: '1.8rem' }}>
-      {negocio.nombre_comercial}
-    </h2>
+          {/* Info negocio */}
+          <div className="col-12 col-md-6">
+            <div className="card shadow p-3 m-3">
+              <h2 className="text-center">{negocio.nombre_comercial}</h2>
+              <p><strong>Descripción:</strong> {negocio.descripcion}</p>
+              <p><strong>Promoción:</strong> {negocio.promocion}</p>
+              <p><strong>Condiciones:</strong> {negocio.condicion}</p>
+              <p>
+                <strong>Categoría:</strong> {categorias.find(c => c.idcategoria === negocio.categoria)?.descripcion || 'Sin categoría'}
+                <br/>
+                <strong>Subcategoría:</strong> {subcategorias.find(s => s.idsubcategoria === negocio.subcategoria)?.descripcion || 'Sin subcategoría'}
+              </p>
+              <p><strong>Teléfono:</strong> {negocio.telefono}</p>
+              <p><strong>Alta:</strong> {negocio.fecha_de_alta ? new Date(negocio.fecha_de_alta).toLocaleDateString() : 'No disponible'}</p>
 
-    {/* Cuerpo alineado a la izquierda */}
-    <div className="card-body text-start">
-      <p><strong>Descripción:</strong> {negocio.descripcion}</p>
-      <p><strong>Promoción o Descuento:</strong> {negocio.promocion}</p>
-      <p><strong>Condiciones:</strong> {negocio.condicion}</p>
+              {/* Activo/Patrocinado */}
+              <p>
+                <strong>Estado:</strong> <span className={negocio.activo ? 'text-success' : 'text-danger'}>{negocio.activo ? 'Activo' : 'Inactivo'}</span>
+                <div className="form-check form-switch">
+                  <input type="checkbox" className="form-check-input" checked={negocio.activo} onChange={toggleActivo} />
+                </div>
+              </p>
 
-      {negocio.categoria || negocio.subcategoria ? (
-        <p>
-          <strong>Categoría:</strong>{' '}
-          {categorias.find(c => c.idcategoria === negocio.categoria)?.descripcion || 'Sin categoría'}
-          <br />
-          <strong>Subcategoría:</strong>{' '}
-          {subcategorias.find(s => s.idsubcategoria === negocio.subcategoria)?.descripcion || 'Sin subcategoría'}
-        </p>
-      ) : (
-        <p>No tiene categorías asociadas</p>
-      )}
+              <p>
+                <strong>Patrocinado:</strong> <span className={negocio.patrocinado ? 'text-success' : 'text-danger'}>{negocio.patrocinado ? 'Sí' : 'No'}</span>
+                <div className="form-check form-switch">
+                  <input type="checkbox" className="form-check-input" checked={negocio.patrocinado} onChange={togglePatrocinado} />
+                </div>
+              </p>
 
-      <p><strong>Teléfono:</strong> {negocio.telefono}</p>
-      <p><strong>Fecha de alta:</strong> {negocio.fecha_de_alta ? new Date(negocio.fecha_de_alta).toLocaleDateString() : 'No disponible'}</p>
-     <p>
-  <strong>Estado:</strong>{' '}
-  <span className={negocio.activo ? 'text-success' : 'text-danger'}>
-    {negocio.activo ? 'Activo' : 'Inactivo'}
-  </span>
-  <div className="form-check form-switch">
-    <input
-      className="form-check-input"
-      type="checkbox"
-      checked={negocio.activo}
-      onChange={toggleActivo}
-    />
-  </div>
-</p>
+              {/* Suscripción */}
+              <p>
+                <strong>Suscripción:</strong> {negocio.suscripcion || 'Sin suscripción'}
+                <select className="form-select mt-2" value={negocio.suscripcion || ''} onChange={(e) => handleUpdateSuscripcion(Number(e.target.value))}>
+                  <option value="">-- Seleccionar suscripción --</option>
+                  {suscripciones.map(s => (
+                    <option key={s.idsuscripcion} value={s.idsuscripcion}>{s.descripcion} - ${s.precio}</option>
+                  ))}
+                </select>
+              </p>
 
-<p>
-  <strong>Patrocinado:</strong>{' '}
-  <span className={negocio.patrocinado ? 'text-success' : 'text-danger'}>
-    {negocio.patrocinado ? 'Sí' : 'No'}
-  </span>
-  <div className="form-check form-switch">
-    <input
-      className="form-check-input"
-      type="checkbox"
-      checked={negocio.patrocinado}
-      onChange={togglePatrocinado}
-    />
-  </div>
-</p>
-<p>
-  <strong>Suscripción:</strong>{' '}
-  <span className="text-primary">
-    {negocio.suscripcion ? negocio.suscripcion : 'Sin suscripción'}
-  </span>
+              <div className="text-center">
+                <button className="btn btn-primary m-1" onClick={() => setShowModalInfoNegocio(true)}>Editar Información</button>
+                <button className="btn btn-danger m-1" onClick={eliminarNegocio}>Eliminar Negocio</button>
+              </div>
+            </div>
+          </div>
 
-<select
-  className="form-select mt-2"
-  value={negocio.suscripcion || ''}
-  onChange={(e) => handleUpdateSuscripcion(Number(e.target.value))}
->
-  <option value="">-- Seleccionar suscripción --</option>
-  {Array.isArray(suscripciones) &&
-    suscripciones.map((s) => (
-      <option key={s.idsuscripcion} value={s.idsuscripcion}>
-        {s.descripcion} - ${s.precio}
-      </option>
-    ))}
-</select>
+          {/* Mapa y Logo */}
+          <div className="col-12 col-md-6">
+            <div className="shadow rounded-4 m-3" style={{ height: '350px', overflow: 'hidden' }}>
+              {hasValidPosition ? (
+                <MapContainer center={position} zoom={15} style={{ height: '100%', width: '100%' }}>
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors"/>
+                  <Marker position={position} icon={icon}>
+                    <Popup>{negocio.nombre_comercial}<br/></Popup>
+                  </Marker>
+                </MapContainer>
+              ) : <p className="text-center pt-5">No hay coordenadas disponibles</p>}
+            </div>
 
-</p>
-
-
-    </div>
-
-    <div className="card-footer text-center">
-      <button className="btn btn-primary mb-3" onClick={() => setShowModalInfoNegocio(true)}>
-        Editar Información
-      </button>
-      <button className="btn btn-danger mb-3 ms-3" onClick={eliminarNegocio}>
-        Eliminar Negocio
-      </button>
-    </div>
-  </div>
-</div>
-
-
-  {/* Mapa */}
-        <div className="col-12 col-md-6">
-  <div className="shadow rounded-4" style={{ height: '350px', width: '100%', margin: '15px 0', overflow: 'hidden' }}>
-    {hasValidPosition ? (
-      <MapContainer center={position} zoom={15} style={{ height: '100%', width: '100%' }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; OpenStreetMap contributors"
-        />
-        <Marker position={position} icon={icon}>
-          <Popup>
-            {negocio.nombre_comercial || 'Negocio'}<br />
-            {negocio.estado}, {negocio.municipio}
-          </Popup>
-        </Marker>
-      </MapContainer>
-    ) : (
-      <p className="text-center pt-5">No hay coordenadas disponibles para mostrar el mapa</p>
-    )}
-  </div>
- {/* Etiquetas debajo del mapa */}
-  <div className="text-center mt-3">
-    <div className="row">
-      
-    </div>
-  </div>
-<div className="shadow-lg rounded-4 bg-white p-3 mb-4" style={{ maxWidth: '400px', margin: '0 auto' }}>
-  <div className="text-center mb-3">
-    <h5 className="fw-bold text-primary">Logo del Negocio</h5>
-  </div>
-  <div className="d-flex justify-content-center align-items-center" style={{ height: '250px' }}>
-    <img
-      src={
-        negocio.logo && negocio.logo.trim() !== ''
-          ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.logo}`
-          : noimagen
-      }
-      alt="Logo del negocio"
-      className="img-fluid rounded-circle shadow"
-      style={{
-        width: '200px',
-        height: '200px',
-        objectFit: 'cover',
-        border: '4px solid #0d6efd',
-        backgroundColor: '#f8f9fa'
-      }}
-    />
-  </div>
-  <div className="text-center mt-4">
-    <button className="btn btn-outline-primary px-4" onClick={() => setMostrarModalLogo(true)}>
-      <i className="bi bi-pencil-square me-2"></i>Editar Logo
-    </button>
-  </div>
-</div>
-</div>
-
-</div>
-
-       
-      </div>
-      <div className="gallery">
-      <h2 className="text-center mb-4 titulo2">Galería</h2>
-      <button className="btn btn-primary mb-3"  onClick={() => setShowModalGaleria(true)}>
-              Agregar fotos
-            </button>
-      <div className="row">
-      {negocio.imagenes?.map((img: string, index: number) => {
-  const filename = img.split('/').pop(); // extraer el nombre del archivo
-
-  return (
-    <div key={index} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
-      <div className="card-galeria">
-        <div className="card-body">
-         <img src={`${API_URL}/uploads/${negocio.idnegocio}/${img}`}  alt={`Galería ${index + 1}`}  className="gallery-image shadow rounded-4"  style={{ width: '100%', height: '200px', objectFit: 'cover',margin: '15px' }}/>
+            {/* Logo */}
+            <div className="shadow-lg rounded-4 bg-white p-3 mb-4 text-center" style={{ maxWidth: '400px', margin: '0 auto' }}>
+              <h5 className="text-primary">Logo del Negocio</h5>
+              <img
+                src={negocio.logo && negocio.logo.trim() !== '' ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.logo}` : noimagen}
+                alt="Logo"
+                className="img-fluid rounded-circle shadow"
+                style={{ width: '200px', height: '200px', objectFit: 'cover', border: '4px solid #0d6efd', backgroundColor: '#f8f9fa' }}
+              />
+              <div className="mt-3">
+                <button className="btn btn-outline-primary" onClick={() => setMostrarModalLogo(true)}>Editar Logo</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="card-footer d-flex justify-content-between">
-          <button className='btn btn-warning me-2'  onClick={() => { setImagenAEditar(filename!); setShowModalEditar(true);}}>Editar</button>
-          <button className='btn btn-danger' onClick={() => eliminarImagen(filename!)}>Eliminar</button>
+
+        {/* Galería */}
+        <div className="gallery">
+          <h2 className="text-center mb-4 titulo2">Galería</h2>
+          <button className="btn btn-primary mb-3" onClick={() => setShowModalGaleria(true)}>Agregar fotos</button>
+          <div className="row">
+            {negocio.imagenes?.map((img, index) => {
+              const filename = img.split('/').pop();
+              return (
+                <div key={index} className="col-xl-3 col-md-4 col-sm-6 col-12 mb-3">
+                  <div className="card-galeria">
+                    <div className="card-body">
+                      <img src={`${API_URL}/uploads/${negocio.idnegocio}/${img}`} alt={`Galería ${index+1}`} className="gallery-image shadow rounded-4" style={{ width:'100%', height:'200px', objectFit:'cover', margin:'15px'}}/>
+                    </div>
+                    <div className="card-footer d-flex justify-content-between">
+                      <button className='btn btn-warning' onClick={() => { setImagenAEditar(filename!); setShowModalEditar(true); }}>Editar</button>
+                      <button className='btn btn-danger' onClick={() => eliminarImagen(filename!)}>Eliminar</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </div>
-  );
-})}
-
-      </div>
-      </div>
-
 
         {/* Modales */}
-        <ModalPortada
-          show={showModalPortada}
-          onClose={() => setShowModalPortada(false)}
-          onUpload={setPortada}
-          onSubmit={subirPortada}
-        />
-
-      <ModalGaleria
-  show={showModalGaleria}
-  onClose={() => setShowModalGaleria(false)}
-  onUpload={setGaleria}
-  onSubmit={subirGaleria}
->
-  {uploadProgress > 0 && (
-    <div className="progress mb-3">
-      <div
-        className="progress-bar"
-        role="progressbar"
-        style={{ width: `${uploadProgress}%` }}
-        aria-valuenow={uploadProgress}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        {uploadProgress}%
-      </div>
-    </div>
-  )}
-</ModalGaleria>
-
-        
-        {showModalEditar && (
-          <ModalEditarImagen
-            show={showModalEditar}
-            onClose={() => setShowModalEditar(false)}
-            onFileChange={setImagenNueva}
-            onSubmit={reemplazarImagen}
-          /> 
-        )}
-        <ModalEditarInfoNegocio
-          show={showModalInfoNegocio}
-          onClose={() => setShowModalInfoNegocio(false)}
-          editForm={editForm}
-          setEditForm={setEditForm}
-          categorias={categorias}
-          subcategorias={subcategorias}
-          setSubcategorias={setSubcategorias}
-          onSubmit={handleUpdate}
-        />
-        <ModalLogo
-        show={mostrarModalLogo}
-        onClose={() => setMostrarModalLogo(false)}
-        onFileChange={setArchivoLogo}
-        onSubmit={subirLogo}
-        />
-
+        <ModalPortada show={showModalPortada} onClose={() => setShowModalPortada(false)} onUpload={setPortada} onSubmit={subirPortada}/>
+        <ModalGaleria show={showModalGaleria} onClose={() => setShowModalGaleria(false)} onUpload={setGaleria} onSubmit={subirGaleria}>
+          {uploadProgress > 0 && <div className="progress mb-3"><div className="progress-bar" role="progressbar" style={{width:`${uploadProgress}%`}} aria-valuenow={uploadProgress} aria-valuemin={0} aria-valuemax={100}>{uploadProgress}%</div></div>}
+        </ModalGaleria>
+        {showModalEditar && <ModalEditarImagen show={showModalEditar} onClose={() => setShowModalEditar(false)} onFileChange={setImagenNueva} onSubmit={reemplazarImagen}/>}
+        <ModalEditarInfoNegocio show={showModalInfoNegocio} onClose={() => setShowModalInfoNegocio(false)} editForm={editForm} setEditForm={setEditForm} categorias={categorias} subcategorias={subcategorias} setSubcategorias={setSubcategorias} onSubmit={handleUpdate}/>
+        <ModalLogo show={mostrarModalLogo} onClose={() => setMostrarModalLogo(false)} onFileChange={setArchivoLogo} onSubmit={subirLogo}/>
       </div>
     </div>
   );
 };
 
 export default DatosNegocio;
-
-
-

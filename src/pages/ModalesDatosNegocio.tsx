@@ -88,22 +88,44 @@ export const ModalGaleria: React.FC<{
   onClose: () => void;
   onUpload: (files: File[]) => void;
   onSubmit: () => void;
-  children?: React.ReactNode; // <-- agregar children opcional
+  children?: React.ReactNode;
 }> = ({ show, onClose, onUpload, onSubmit, children }) => {
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+
+    // Limitar a máximo 10 archivos
+    if (files.length > 10) {
+      alert("Solo puedes seleccionar hasta 10 imágenes.");
+      e.target.value = ''; // Limpiar selección
+      return;
+    }
+
+    // Filtrar solo imágenes
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    const filtered = files.filter(f => allowedTypes.includes(f.type));
+
+    if (filtered.length !== files.length) {
+      alert("Se han eliminado archivos que no son imágenes válidas.");
+    }
+
+    onUpload(filtered);
+  };
+
   return (
     <Modal show={show} onClose={onClose} title="Agregar Fotos a la galería">
       <div className="mb-2">
-        <label>Galería (puedes seleccionar varias):</label>
+        <label>Galería (puedes seleccionar varias, máximo 10):</label>
         <input
           type="file"
           className="form-control"
-          name="galeria"  
+          name="galeria"
           multiple
-          onChange={e => onUpload(Array.from(e.target.files || []))}
+          accept=".jpg,.jpeg,.png,.webp,.gif" // evita que se puedan seleccionar otros tipos
+          onChange={handleFileChange}
         />
       </div>
 
-      {/* Renderizamos los children, que puede ser la barra de progreso */}
       {children}
 
       <div className="modal-footer">
@@ -117,6 +139,7 @@ export const ModalGaleria: React.FC<{
     </Modal>
   );
 };
+
 
 // Modal para editar info negocio (formulario)
 
