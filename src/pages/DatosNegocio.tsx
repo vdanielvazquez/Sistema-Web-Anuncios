@@ -162,37 +162,42 @@ const subirLogo = async () => {
 };
 
 
+
 // subir galería
 const subirGaleria = async () => {
   try {
     const formData = new FormData();
-    galeria.forEach((file) => formData.append('imagenes', file));
+    galeria.forEach((file) => formData.append("imagenes", file)); // 👈 importante: "imagenes"
 
-   await axios.post(
-  `${API_URL}/api/imagenes/galeria/${negocio.idnegocio}`,
-  formData,
-  {
-    onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-      if (progressEvent.total) {
-        const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        setUploadProgress(percent);
+    await axios.post(
+      `${API_URL}/api/imagenes/galeria/${negocio.idnegocio}`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" }, // 👈 importante mantenerlo
+        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+          if (progressEvent.total) {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percent);
+          }
+        },
       }
-    },
-  }
-);
+    );
 
-
+    // refrescar vista
     fetchNegocio();
     setShowModalGaleria(false);
     setUploadProgress(0);
     setGaleria([]);
-    alert('Imágenes subidas correctamente');
+    alert("Imágenes subidas correctamente");
   } catch (error) {
-    console.error('Error al subir galería:', error);
-    alert('Error al subir galería');
+    console.error("Error al subir galería:", error);
+    alert("Error al subir galería");
     setUploadProgress(0);
   }
 };
+
 
 
 
