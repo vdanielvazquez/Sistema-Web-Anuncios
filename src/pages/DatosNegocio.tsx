@@ -174,18 +174,18 @@ const subirGaleria = async () => {
       {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-          if (progressEvent.total) { // total puede ser undefined
-            const percent = Math.round((progressEvent.loaded! * 100) / progressEvent.total);
+          if (progressEvent.total) {
+            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
             setUploadProgress(percent);
           }
         },
       }
     );
 
-    fetchNegocio();           // refresca la galería
-    setShowModalGaleria(false); // cierra el modal
-    setUploadProgress(0);     // resetea barra
-    setGaleria([]);           // limpia archivos
+    fetchNegocio();
+    setShowModalGaleria(false);
+    setUploadProgress(0);
+    setGaleria([]);
     alert('Imágenes subidas correctamente');
   } catch (error) {
     console.error('Error al subir galería:', error);
@@ -193,6 +193,7 @@ const subirGaleria = async () => {
     setUploadProgress(0);
   }
 };
+
 
 
 //eliminar img
