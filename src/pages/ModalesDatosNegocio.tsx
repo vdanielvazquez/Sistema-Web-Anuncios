@@ -97,7 +97,7 @@ export const ModalGaleria: React.FC<{
         <input
           type="file"
           className="form-control"
-          name="imagenes"  
+          name="galeria"  
           multiple
           onChange={e => onUpload(Array.from(e.target.files || []))}
         />

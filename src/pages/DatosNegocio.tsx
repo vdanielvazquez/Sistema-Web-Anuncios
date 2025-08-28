@@ -167,7 +167,7 @@ const subirLogo = async () => {
 const subirGaleria = async () => {
   try {
     const formData = new FormData();
-    galeria.forEach((file) => formData.append("imagenes", file)); // 👈 importante: "imagenes"
+    galeria.forEach((file) => formData.append("galeria", file)); // 👈 importante: "imagenes"
 
     await axios.post(
       `${API_URL}/api/imagenes/galeria/${negocio.idnegocio}`,
