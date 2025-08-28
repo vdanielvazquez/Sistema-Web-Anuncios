@@ -154,6 +154,7 @@ const DatosNegocio: React.FC = () => {
       setShowModalPortada(false);
       fetchNegocio();
       alert('Portada subida');
+       window.location.reload(); 
     } catch (err) {
       console.error(err); alert('Error al subir portada');
     }
@@ -169,6 +170,7 @@ const DatosNegocio: React.FC = () => {
       setMostrarModalLogo(false);
       fetchNegocio();
       alert('Logo actualizado');
+       window.location.reload(); 
     } catch (err) {
       console.error(err); alert('Error al subir logo');
     }
@@ -220,6 +222,7 @@ const DatosNegocio: React.FC = () => {
       setShowModalEditar(false);
       fetchNegocio();
       alert('Imagen reemplazada');
+      window.location.reload(); 
     } catch (err) {
       console.error(err); alert('Error al reemplazar imagen');
     }
