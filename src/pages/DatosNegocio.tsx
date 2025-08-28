@@ -168,19 +168,19 @@ const subirGaleria = async () => {
     const formData = new FormData();
     galeria.forEach((file) => formData.append('imagenes', file));
 
-    await axios.post(
-      `${API_URL}/api/imagenes/galeria/${negocio.idnegocio}`,
-      formData,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-          if (progressEvent.total) {
-            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            setUploadProgress(percent);
-          }
-        },
+   await axios.post(
+  `${API_URL}/api/imagenes/galeria/${negocio.idnegocio}`,
+  formData,
+  {
+    onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+      if (progressEvent.total) {
+        const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setUploadProgress(percent);
       }
-    );
+    },
+  }
+);
+
 
     fetchNegocio();
     setShowModalGaleria(false);
