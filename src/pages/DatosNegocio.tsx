@@ -161,23 +161,25 @@ const DatosNegocio: React.FC = () => {
     }
   };
 // Subir logo
-
 const subirLogo = async () => {
   if (!archivoLogo) return;
   const formData = new FormData();
   formData.append('logo', archivoLogo);
   try {
-    await axios.post(`${API_URL}/api/imagenes/logo/${id}/?t=${Date.now()}`, formData, {
+    const { data } = await axios.post(`${API_URL}/api/imagenes/logo/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
+
+    // Actualiza el estado con la nueva URL
+    setNegocio(prev => prev ? { ...prev, logo: data.logo } : prev);
     setMostrarModalLogo(false);
-    fetchNegocio(); // refresca la información del negocio, incluyendo el logo
-    alert('Logo actualizado');
+    alert('Logo actualizado correctamente');
   } catch (err) {
-    console.error(err); 
+    console.error(err);
     alert('Error al subir logo');
   }
 };
+
 
 
   // Subir galería
@@ -356,8 +358,8 @@ const subirLogo = async () => {
             {/* Logo */}
             <div className="shadow-lg rounded-4 bg-white p-3 mb-4 text-center" style={{ maxWidth: '400px', margin: '0 auto' }}>
               <h5 className="text-primary">Logo del Negocio</h5>
-              <img
-                src={negocio.logo && negocio.logo.trim() !== '' ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.logo}` : noimagen}
+              <img  
+                src={negocio.logo && negocio.logo.trim() !== '' ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.logo}?t=${Date.now()}` : noimagen}
                 alt="Logo"
                 className="img-fluid rounded-circle shadow"
                 style={{ width: '200px', height: '200px', objectFit: 'cover', border: '4px solid #0d6efd', backgroundColor: '#f8f9fa' }}
