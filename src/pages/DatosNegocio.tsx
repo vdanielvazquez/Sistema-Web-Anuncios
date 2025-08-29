@@ -259,7 +259,8 @@ const subirLogo = async () => {
   };
 
   // Eliminar negocio
-  const eliminarNegocio = async () => {
+  /**
+   * const eliminarNegocio = async () => {
     if (!window.confirm('¿Eliminar negocio?')) return;
     try {
       await axios.delete(`${API_URL}/api/negocios/${id}`);
@@ -267,6 +268,7 @@ const subirLogo = async () => {
       window.location.href = '/negocios';
     } catch (err) { console.error(err); alert('Error al eliminar'); }
   };
+   */
 
   return (
     <div className="divprincipal">
@@ -337,7 +339,8 @@ const subirLogo = async () => {
 
               <div className="text-center">
                 <button className="btn btn-primary m-1" onClick={() => setShowModalInfoNegocio(true)}>Editar Información</button>
-                <button className="btn btn-danger m-1" onClick={eliminarNegocio}>Eliminar Negocio</button>
+                  {/* <button className="btn btn-danger m-1" onClick={eliminarNegocio}>Eliminar Negocio</button> */}
+               
               </div>
             </div>
           </div>
