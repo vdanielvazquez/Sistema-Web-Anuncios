@@ -150,7 +150,9 @@ const DatosNegocio: React.FC = () => {
     const formData = new FormData();
     formData.append('portada', portada);
     try {
-      await axios.post(`${API_URL}/api/imagenes/imagenes/portada/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      // Por ejemplo, en React
+
+      await axios.post(`${API_URL}/api/imagenes/imagenes/portada/${id}/?t=${Date.now()}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setShowModalPortada(false);
       fetchNegocio();
       alert('Portada subida');
