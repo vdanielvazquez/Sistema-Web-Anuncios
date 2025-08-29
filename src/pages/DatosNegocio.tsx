@@ -125,7 +125,7 @@ const DatosNegocio: React.FC = () => {
 
   if (!negocio) return <p>Cargando...</p>;
 
-  // Toggle activo/patrocinado sin perder galería
+  // Toggle activo/patrocinado 
   const toggleActivo = async () => {
     try {
       await axios.put(`${API_URL}/api/negocios/${negocio.idnegocio}/activo`, { activo: !negocio.activo });
@@ -161,20 +161,33 @@ const DatosNegocio: React.FC = () => {
     }
   };
 
-  // Subir logo
-  const subirLogo = async () => {
-    if (!archivoLogo) return;
-    const formData = new FormData();
-    formData.append('logo', archivoLogo);
-    try {
-      await axios.post(`${API_URL}/api/imagenes/imagenes/logo/${id}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      setMostrarModalLogo(false);
-      fetchNegocio();
-      alert('Logo actualizado');
-    } catch (err) {
-      console.error(err); alert('Error al subir logo');
-    }
-  };
+ // Subir portada
+
+// Subir logo
+const subirLogo = async () => {
+  if (!archivoLogo) return;
+  const formData = new FormData();
+  formData.append('logo', archivoLogo);
+
+  try {
+    const res = await axios.post(`${API_URL}/api/imagenes/logo/${id}`, formData, { 
+      headers: { 'Content-Type': 'multipart/form-data' } 
+    });
+
+    setMostrarModalLogo(false);
+
+    // Actualizar estado inmediatamente sin recargar
+   setNegocio(prev => {
+  if (!prev) return prev;
+  return { ...prev, logo: res.data.url };
+});
+    alert('Logo actualizado');
+  } catch (err) {
+    console.error(err);
+    alert('Error al subir logo');
+  }
+};
+
 
   // Subir galería
   const subirGaleria = async () => {
