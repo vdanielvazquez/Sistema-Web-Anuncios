@@ -282,7 +282,7 @@ const subirLogo = async () => {
             <div className="card-body p-2">
               <img
                 src={negocio.portada && negocio.portada.trim() !== '' 
-                  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}`
+                  ? `${API_URL}/uploads/${negocio.idnegocio}/${negocio.portada}?t=${Date.now()}`
                   : noimagen}
                 className="img-fluid rounded-4"
                 style={{ height: '250px', objectFit: 'cover', width: '100%' }}
