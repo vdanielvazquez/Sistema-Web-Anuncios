@@ -160,25 +160,21 @@ const DatosNegocio: React.FC = () => {
       console.error(err); alert('Error al subir portada');
     }
   };
-
- // Subir portada
-
 // Subir logo
+
 const subirLogo = async () => {
   if (!archivoLogo) return;
   const formData = new FormData();
   formData.append('logo', archivoLogo);
-
   try {
-    const res = await axios.post(`${API_URL}/api/imagenes/logo/${id}`, formData, { 
-      headers: { 'Content-Type': 'multipart/form-data' } 
+    await axios.post(`${API_URL}/api/imagenes/logo/${id}/?t=${Date.now()}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
     });
-
     setMostrarModalLogo(false);
-    setNegocio(prev => prev ? { ...prev, logo: res.data.url } : prev);
+    fetchNegocio(); // refresca la información del negocio, incluyendo el logo
     alert('Logo actualizado');
   } catch (err) {
-    console.error(err);
+    console.error(err); 
     alert('Error al subir logo');
   }
 };
