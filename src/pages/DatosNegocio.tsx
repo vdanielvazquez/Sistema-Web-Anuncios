@@ -175,12 +175,7 @@ const subirLogo = async () => {
     });
 
     setMostrarModalLogo(false);
-
-    // Actualizar estado inmediatamente sin recargar
-   setNegocio(prev => {
-  if (!prev) return prev;
-  return { ...prev, logo: res.data.url };
-});
+    setNegocio(prev => prev ? { ...prev, logo: res.data.url } : prev);
     alert('Logo actualizado');
   } catch (err) {
     console.error(err);
