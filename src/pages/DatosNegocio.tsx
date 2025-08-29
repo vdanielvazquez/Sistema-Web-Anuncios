@@ -152,7 +152,7 @@ const DatosNegocio: React.FC = () => {
     try {
       // Por ejemplo, en React
 
-      await axios.post(`${API_URL}/api/imagenes/imagenes/portada/${id}/?t=${Date.now()}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.post(`${API_URL}/api/imagenes/portada/${id}/?t=${Date.now()}`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       setShowModalPortada(false);
       fetchNegocio();
       alert('Portada subida');
