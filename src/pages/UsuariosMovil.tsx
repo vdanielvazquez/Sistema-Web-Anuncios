@@ -33,15 +33,15 @@ const UsuariosMovil = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // ✅ Traer usuarios
+        // Traer usuarios
         const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
-        setUsuarios(resUsuarios.data);
+        setUsuarios(resUsuarios.data || []);
 
-        // ✅ Traer catálogo de suscripciones
+        // Traer catálogo de suscripciones
         const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
-        setSuscripciones(resSuscripciones.data);
+        setSuscripciones(Array.isArray(resSuscripciones.data) ? resSuscripciones.data : []);
 
-        setTotalPaginas(Math.ceil(resUsuarios.data.length / registrosPorPagina));
+        setTotalPaginas(Math.ceil((resUsuarios.data?.length || 0) / registrosPorPagina));
       } catch (error) {
         console.error("Error al cargar usuarios:", error);
       }
@@ -75,9 +75,10 @@ const UsuariosMovil = () => {
       const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/suscripcion`, {
         idsuscripcion,
       });
+
       setUsuarios((prev) =>
         prev.map((u) =>
-          u.idusuariom === id ? { ...u, suscripcion: resp.data.usuario.suscripcion } : u
+          u.idusuariom === id ? { ...u, suscripcion: resp.data.usuario?.suscripcion || null } : u
         )
       );
       alert("Suscripción actualizada");
@@ -140,20 +141,22 @@ const UsuariosMovil = () => {
                   </select>
                 </td>
                 <td>
-                  <select
-                    className="form-select"
-                    value={usuario.suscripcion || ""}
-                    onChange={(e) =>
-                      handleUpdateSuscripcion(usuario.idusuariom, Number(e.target.value))
-                    }
-                  >
-                    <option value="">-- Seleccionar suscripción --</option>
-                    {suscripciones.map((s) => (
-                      <option key={s.idsuscripcion} value={s.idsuscripcion}>
-                        {s.descripcion} - ${s.precio}
-                      </option>
-                    ))}
-                  </select>
+                  {Array.isArray(suscripciones) && (
+                    <select
+                      className="form-select"
+                      value={usuario.suscripcion || ""}
+                      onChange={(e) =>
+                        handleUpdateSuscripcion(usuario.idusuariom, Number(e.target.value))
+                      }
+                    >
+                      <option value="">-- Seleccionar suscripción --</option>
+                      {suscripciones.map((s) => (
+                        <option key={s.idsuscripcion} value={s.idsuscripcion}>
+                          {s.descripcion} - ${s.precio}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </td>
                 <td>{usuario.pago || "-"}</td>
               </tr>
