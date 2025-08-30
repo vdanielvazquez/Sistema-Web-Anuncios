@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 
-const API_URL = "https://sistemawebpro.com"; // 👈 ajusta si tu endpoint es distinto
+const API_URL = "https://sistemawebpro.com"; // Ajusta si tu endpoint es distinto
 
 // Interfaces
 interface UsuarioMovil {
@@ -33,10 +33,12 @@ const UsuariosMovil = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resUsuarios = await axios.get(`${API_URL}/api/usuarios`);
+        // ✅ Traer usuarios
+        const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
         setUsuarios(resUsuarios.data);
 
-        const resSuscripciones = await axios.get(`${API_URL}/api/suscripciones`);
+        // ✅ Traer catálogo de suscripciones
+        const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
         setSuscripciones(resSuscripciones.data);
 
         setTotalPaginas(Math.ceil(resUsuarios.data.length / registrosPorPagina));
@@ -52,17 +54,14 @@ const UsuariosMovil = () => {
   const fin = inicio + registrosPorPagina;
   const usuariosPagina = usuarios.slice(inicio, fin);
 
-  // ✅ Cambiar estado activo en backend
+  // Cambiar estado activo
   const toggleActivo = async (id: number, currentActivo: boolean) => {
     try {
-      const resp = await axios.put(`${API_URL}/api/usuarios/${id}/activo`, {
+      const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/activo`, {
         activo: !currentActivo,
       });
-
       setUsuarios((prev) =>
-        prev.map((u) =>
-          u.idusuariom === id ? { ...u, activo: resp.data.activo } : u
-        )
+        prev.map((u) => (u.idusuariom === id ? { ...u, activo: resp.data.activo } : u))
       );
     } catch (err) {
       console.error("Error al actualizar activo:", err);
@@ -70,22 +69,17 @@ const UsuariosMovil = () => {
     }
   };
 
-  // ✅ Cambiar suscripción en backend
+  // Cambiar suscripción
   const handleUpdateSuscripcion = async (id: number, idsuscripcion: number) => {
     try {
-      const resp = await axios.put(
-        `${API_URL}/api/usuarios/${id}/suscripcion`,
-        { idsuscripcion }
-      );
-
+      const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/suscripcion`, {
+        idsuscripcion,
+      });
       setUsuarios((prev) =>
         prev.map((u) =>
-          u.idusuariom === id
-            ? { ...u, suscripcion: resp.data.usuario.suscripcion }
-            : u
+          u.idusuariom === id ? { ...u, suscripcion: resp.data.usuario.suscripcion } : u
         )
       );
-
       alert("Suscripción actualizada");
     } catch (err) {
       console.error("Error al actualizar suscripción:", err);
@@ -122,9 +116,7 @@ const UsuariosMovil = () => {
                       className="form-check-input"
                       type="checkbox"
                       checked={usuario.activo}
-                      onChange={() =>
-                        toggleActivo(usuario.idusuariom, usuario.activo)
-                      }
+                      onChange={() => toggleActivo(usuario.idusuariom, usuario.activo)}
                     />
                   </div>
                 </td>
@@ -152,10 +144,7 @@ const UsuariosMovil = () => {
                     className="form-select"
                     value={usuario.suscripcion || ""}
                     onChange={(e) =>
-                      handleUpdateSuscripcion(
-                        usuario.idusuariom,
-                        Number(e.target.value)
-                      )
+                      handleUpdateSuscripcion(usuario.idusuariom, Number(e.target.value))
                     }
                   >
                     <option value="">-- Seleccionar suscripción --</option>
@@ -189,19 +178,12 @@ const UsuariosMovil = () => {
               key={i + 1}
               className={`page-item ${paginaActual === i + 1 ? "active" : ""}`}
             >
-              <button
-                className="page-link"
-                onClick={() => setPaginaActual(i + 1)}
-              >
+              <button className="page-link" onClick={() => setPaginaActual(i + 1)}>
                 {i + 1}
               </button>
             </li>
           ))}
-          <li
-            className={`page-item ${
-              paginaActual === totalPaginas ? "disabled" : ""
-            }`}
-          >
+          <li className={`page-item ${paginaActual === totalPaginas ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => setPaginaActual(paginaActual + 1)}
