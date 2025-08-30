@@ -14,6 +14,7 @@ import NuevoNegocio from './pages/NuevoNegocio';
 import Ajustes from './pages/Ajustes';
 import DatosCliente from './pages/DatosCliente';
 import DatosNegocio from './pages/DatosNegocio';
+import UsuariosMovil from './pages/UsuariosMovil';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
                       <Route path="/Ajustes" element={<Ajustes />} />
                       <Route path="/DatosCliente/:id" element={<DatosCliente />} />
                       <Route path="/DatosNegocio/:id" element={<DatosNegocio />} />
+                      <Route path="/UsuariosMovil/" element={<UsuariosMovil />} />
                     </Routes>
                   </>
                 </PrivateRoute>
