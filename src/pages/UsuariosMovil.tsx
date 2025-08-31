@@ -12,7 +12,7 @@ interface UsuarioMovil {
   correo: string;
   activo: boolean;
   tarjeta?: string;
-  idsuscripcion?: number | null;
+  idsuscripcion?: number | null; // ⬅️ clave para suscripción
   pago?: string;
 }
 
@@ -35,29 +35,13 @@ const UsuariosMovil = () => {
       try {
         // Traer usuarios
         const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
-        const usuariosData: UsuarioMovil[] = resUsuarios.data || [];
-
-        // Traer suscripción activa de cada usuario
-        const usuariosConSuscripcion = await Promise.all(
-          usuariosData.map(async (u) => {
-            try {
-              const resSub = await axios.get(
-                `${API_URL}/api/usuariosmovil/${u.idusuariom}/suscripcion`
-              );
-              return { ...u, idsuscripcion: resSub.data.idsuscripcion || null };
-            } catch {
-              return { ...u, idsuscripcion: null };
-            }
-          })
-        );
-
-        setUsuarios(usuariosConSuscripcion);
+        setUsuarios(resUsuarios.data || []);
 
         // Traer catálogo de suscripciones
         const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
         setSuscripciones(Array.isArray(resSuscripciones.data) ? resSuscripciones.data : []);
 
-        setTotalPaginas(Math.ceil(usuariosConSuscripcion.length / registrosPorPagina));
+        setTotalPaginas(Math.ceil((resUsuarios.data?.length || 0) / registrosPorPagina));
       } catch (error) {
         console.error("Error al cargar usuarios:", error);
       }
@@ -95,7 +79,7 @@ const UsuariosMovil = () => {
       setUsuarios((prev) =>
         prev.map((u) =>
           u.idusuariom === id
-            ? { ...u, idsuscripcion: resp.data.usuario.idsuscripcion }
+            ? { ...u, idsuscripcion: resp.data.usuario.idsuscripcion } // ⬅️ actualizar correctamente
             : u
         )
       );
@@ -188,28 +172,19 @@ const UsuariosMovil = () => {
       <nav>
         <ul className="pagination justify-content-center">
           <li className={`page-item ${paginaActual === 1 ? "disabled" : ""}`}>
-            <button
-              className="page-link"
-              onClick={() => setPaginaActual(paginaActual - 1)}
-            >
+            <button className="page-link" onClick={() => setPaginaActual(paginaActual - 1)}>
               Anterior
             </button>
           </li>
           {Array.from({ length: totalPaginas }, (_, i) => (
-            <li
-              key={i + 1}
-              className={`page-item ${paginaActual === i + 1 ? "active" : ""}`}
-            >
+            <li key={i + 1} className={`page-item ${paginaActual === i + 1 ? "active" : ""}`}>
               <button className="page-link" onClick={() => setPaginaActual(i + 1)}>
                 {i + 1}
               </button>
             </li>
           ))}
           <li className={`page-item ${paginaActual === totalPaginas ? "disabled" : ""}`}>
-            <button
-              className="page-link"
-              onClick={() => setPaginaActual(paginaActual + 1)}
-            >
+            <button className="page-link" onClick={() => setPaginaActual(paginaActual + 1)}>
               Siguiente
             </button>
           </li>
