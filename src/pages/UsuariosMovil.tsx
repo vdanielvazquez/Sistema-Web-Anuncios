@@ -41,13 +41,27 @@ const UsuariosMovil = () => {
       try {
         // Traer usuarios
         const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
-        setUsuarios(resUsuarios.data || []);
+        const usuariosData: UsuarioMovil[] = resUsuarios.data || [];
 
-        // Traer catálogo de suscripciones
+        // Traer suscripciones disponibles
         const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
         setSuscripciones(Array.isArray(resSuscripciones.data) ? resSuscripciones.data : []);
 
-        setTotalPaginas(Math.ceil((resUsuarios.data?.length || 0) / registrosPorPagina));
+        // Traer suscripción actual de cada usuario
+        const usuariosConSuscripcion = await Promise.all(
+          usuariosData.map(async (usuario) => {
+            try {
+              const res = await axios.get(`${API_URL}/api/usuariosmovil/${usuario.idusuariom}/suscripcion`);
+              return { ...usuario, ...res.data };
+            } catch (err) {
+              console.error(`Error al traer suscripción de ${usuario.nombre}`, err);
+              return usuario;
+            }
+          })
+        );
+
+        setUsuarios(usuariosConSuscripcion);
+        setTotalPaginas(Math.ceil(usuariosConSuscripcion.length / registrosPorPagina));
       } catch (error) {
         console.error("Error al cargar usuarios:", error);
       }
@@ -94,7 +108,7 @@ const UsuariosMovil = () => {
                 precio: resp.data.usuario.precio,
                 fecha_inicio: resp.data.usuario.fecha_inicio,
                 fecha_fin: resp.data.usuario.fecha_fin,
-                estado_suscripcion: resp.data.usuario.estado,
+                estado_suscripcion: resp.data.usuario.estado_suscripcion,
               }
             : u
         )
