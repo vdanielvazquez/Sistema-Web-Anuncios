@@ -127,6 +127,7 @@ const UsuariosMovil = () => {
               <th>Activo</th>
               <th>Tarjeta</th>
               <th>Suscripción</th>
+              <th>Vigencia</th>
               <th>Pago</th>
             </tr>
           </thead>
@@ -169,7 +170,7 @@ const UsuariosMovil = () => {
                 <td>
                   <select
                     className="form-select mb-1"
-                    value={""}
+                    value={usuario.idsuscripcion || ""}
                     onChange={(e) => {
                       if (e.target.value)
                         handleUpdateSuscripcion(usuario.idusuariom, Number(e.target.value));
@@ -183,12 +184,17 @@ const UsuariosMovil = () => {
                     ))}
                   </select>
 
-                  {usuario.descripcion && usuario.fecha_inicio && usuario.fecha_fin && (
+                  {usuario.descripcion && (
                     <div style={{ fontSize: "0.85rem", color: "#555" }}>
-                      Activa: {usuario.descripcion} (${usuario.precio})<br />
-                      Vigencia: {formatDate(usuario.fecha_inicio)} → {formatDate(usuario.fecha_fin)}
+                      {usuario.descripcion} (${usuario.precio})
                     </div>
                   )}
+                </td>
+
+                <td>
+                  {usuario.fecha_inicio && usuario.fecha_fin
+                    ? `${formatDate(usuario.fecha_inicio)} → ${formatDate(usuario.fecha_fin)}`
+                    : "-"}
                 </td>
 
                 <td>{usuario.pago || "-"}</td>
