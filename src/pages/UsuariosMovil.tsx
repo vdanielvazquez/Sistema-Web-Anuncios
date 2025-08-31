@@ -12,8 +12,15 @@ interface UsuarioMovil {
   correo: string;
   activo: boolean;
   tarjeta?: string;
-  idsuscripcion?: number | null; // ⬅️ clave para suscripción
   pago?: string;
+  // Suscripción activa
+  idusuariosuscripcion?: number;
+  estado_suscripcion?: string;
+  fecha_inicio?: string;
+  fecha_fin?: string;
+  idsuscripcion?: number;
+  descripcion?: string;
+  precio?: number;
 }
 
 interface Suscripcion {
@@ -27,21 +34,32 @@ const UsuariosMovil = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [suscripciones, setSuscripciones] = useState<Suscripcion[]>([]);
-
   const registrosPorPagina = 5;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Traer usuarios
+        // Traer todos los usuarios
         const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
-        setUsuarios(resUsuarios.data || []);
+        const usuariosData: UsuarioMovil[] = [];
+
+        // Por cada usuario, traer su suscripción activa
+        for (const u of resUsuarios.data) {
+          try {
+            const resSubs = await axios.get(`${API_URL}/api/usuariosmovil/${u.idusuariom}/suscripcion`);
+            usuariosData.push({ ...u, ...resSubs.data });
+          } catch (err) {
+            // Si no tiene suscripción, agregar solo el usuario
+            usuariosData.push(u);
+          }
+        }
+
+        setUsuarios(usuariosData);
+        setTotalPaginas(Math.ceil(usuariosData.length / registrosPorPagina));
 
         // Traer catálogo de suscripciones
         const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
         setSuscripciones(Array.isArray(resSuscripciones.data) ? resSuscripciones.data : []);
-
-        setTotalPaginas(Math.ceil((resUsuarios.data?.length || 0) / registrosPorPagina));
       } catch (error) {
         console.error("Error al cargar usuarios:", error);
       }
@@ -76,10 +94,11 @@ const UsuariosMovil = () => {
         idsuscripcion,
       });
 
+      // Actualizar en el estado local
       setUsuarios((prev) =>
         prev.map((u) =>
           u.idusuariom === id
-            ? { ...u, idsuscripcion: resp.data.usuario.idsuscripcion } // ⬅️ actualizar correctamente
+            ? { ...u, ...resp.data.usuario } // ⬅️ incluir todos los datos actualizados de suscripción
             : u
         )
       );
@@ -159,6 +178,12 @@ const UsuariosMovil = () => {
                         </option>
                       ))}
                     </select>
+                  )}
+                  {/* Mostrar la suscripción actual */}
+                  {usuario.descripcion && usuario.idsuscripcion && (
+                    <div className="mt-1 text-muted">
+                      Activa: {usuario.descripcion} - ${usuario.precio}
+                    </div>
                   )}
                 </td>
                 <td>{usuario.pago || "-"}</td>
