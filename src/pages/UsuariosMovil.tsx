@@ -12,7 +12,7 @@ interface UsuarioMovil {
   correo: string;
   activo: boolean;
   tarjeta?: string;
-  suscripcion?: number | null;
+  idsuscripcion?: number | null;
   pago?: string;
 }
 
@@ -35,13 +35,29 @@ const UsuariosMovil = () => {
       try {
         // Traer usuarios
         const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
-        setUsuarios(resUsuarios.data || []);
+        const usuariosData: UsuarioMovil[] = resUsuarios.data || [];
+
+        // Traer suscripción activa de cada usuario
+        const usuariosConSuscripcion = await Promise.all(
+          usuariosData.map(async (u) => {
+            try {
+              const resSub = await axios.get(
+                `${API_URL}/api/usuariosmovil/${u.idusuariom}/suscripcion`
+              );
+              return { ...u, idsuscripcion: resSub.data.idsuscripcion || null };
+            } catch {
+              return { ...u, idsuscripcion: null };
+            }
+          })
+        );
+
+        setUsuarios(usuariosConSuscripcion);
 
         // Traer catálogo de suscripciones
         const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
         setSuscripciones(Array.isArray(resSuscripciones.data) ? resSuscripciones.data : []);
 
-        setTotalPaginas(Math.ceil((resUsuarios.data?.length || 0) / registrosPorPagina));
+        setTotalPaginas(Math.ceil(usuariosConSuscripcion.length / registrosPorPagina));
       } catch (error) {
         console.error("Error al cargar usuarios:", error);
       }
@@ -78,9 +94,12 @@ const UsuariosMovil = () => {
 
       setUsuarios((prev) =>
         prev.map((u) =>
-          u.idusuariom === id ? { ...u, suscripcion: resp.data.usuario?.suscripcion || null } : u
+          u.idusuariom === id
+            ? { ...u, idsuscripcion: resp.data.usuario.idsuscripcion }
+            : u
         )
       );
+
       alert("Suscripción actualizada");
     } catch (err) {
       console.error("Error al actualizar suscripción:", err);
@@ -144,7 +163,7 @@ const UsuariosMovil = () => {
                   {Array.isArray(suscripciones) && (
                     <select
                       className="form-select"
-                      value={usuario.suscripcion || ""}
+                      value={usuario.idsuscripcion || ""}
                       onChange={(e) =>
                         handleUpdateSuscripcion(usuario.idusuariom, Number(e.target.value))
                       }
