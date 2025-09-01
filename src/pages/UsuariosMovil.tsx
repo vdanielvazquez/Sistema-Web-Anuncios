@@ -248,21 +248,39 @@ const UsuariosMovil = () => {
                     ? `${formatDate(usuario.fecha_inicio)} → ${formatDate(usuario.fecha_fin)}`
                     : "-"}
                 </td>
-
                 {/* Pago */}
                 <td>
-                  <div className="form-check d-flex justify-content-center">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      checked={usuario.pago || false}
-                      onChange={() => handleUpdatePago(usuario.idusuariom, !usuario.pago)}
-                    />
-                  </div>
+                    <div className="form-check d-flex justify-content-center">
+                        <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={usuario.pago || false}
+                        disabled={usuario.pago || false} // deshabilita si ya está pagado
+                        onChange={async () => {
+                            try {
+                            // Marcar pago
+                            await handleUpdatePago(usuario.idusuariom, true);
+                            // Actualizar fecha de pago
+                            const resp = await axios.put(`${API_URL}/api/usuariosmovil/${usuario.idusuariom}/fecha_pago`);
+                            setUsuarios((prev) =>
+                                prev.map((u) =>
+                                u.idusuariom === usuario.idusuariom
+                                    ? { ...u, pago: true, fecha_pago: resp.data.fecha_pago }
+                                    : u
+                                )
+                            );
+                            } catch (err) {
+                            console.error("Error al marcar pago:", err);
+                            alert("No se pudo actualizar el pago");
+                            }
+                        }}
+                        />
+                    </div>
                 </td>
-
                 {/* Fecha de pago */}
-                <td>{usuario.fecha_pago ? formatDate(usuario.fecha_pago) : "-"}</td>
+                <td className="text-center">
+                {usuario.fecha_pago ? new Date(usuario.fecha_pago).toLocaleDateString() : "-"}
+                </td>
                 <td><button>Detalels</button></td>
               </tr>
             ))}
