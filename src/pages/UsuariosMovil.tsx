@@ -35,7 +35,6 @@ const UsuariosMovil = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [suscripciones, setSuscripciones] = useState<Suscripcion[]>([]);
-  const usuariosNuevos = usuarios.filter(u => !u.idusuariosuscripcion && !u.pago).length;
 
   // Filtros
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
@@ -43,7 +42,7 @@ const UsuariosMovil = () => {
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const [mostrarPendientes, setMostrarPendientes] = useState(false);
   const [mostrarTodos, setMostrarTodos] = useState(false);
-  const [mostrarNuevos, setMostrarNuevos] = useState(true);
+  const [mostrarNuevos, setMostrarNuevos] = useState(true); // Por defecto
 
   const registrosPorPagina = 15;
 
@@ -65,7 +64,7 @@ const UsuariosMovil = () => {
                 `${API_URL}/api/usuariosmovil/${usuario.idusuariom}/suscripcion`
               );
               return { ...usuario, ...res.data };
-            } catch (err) {
+            } catch {
               return usuario;
             }
           })
@@ -105,13 +104,14 @@ const UsuariosMovil = () => {
   const usuariosActivos = usuarios.filter((u) => u.activo).length;
   const usuariosInactivos = totalUsuarios - usuariosActivos;
   const usuariosPendientes = usuarios.filter((u) => !u.pago).length;
+  const usuariosNuevos = usuarios.filter((u) => !u.idusuariosuscripcion && !u.pago).length;
 
   const cardsData = [
     { title: totalUsuarios.toString(), description: "Total de Usuarios", filtro: "todos" },
     { title: usuariosActivos.toString(), description: "Usuarios Activos", filtro: "activos" },
     { title: usuariosInactivos.toString(), description: "Usuarios Inactivos", filtro: "inactivos" },
     { title: usuariosPendientes.toString(), description: "Pendiente de Pago", filtro: "pendientes" },
-     { title: usuariosNuevos.toString(), description: "Nuevos Usuarios", filtro: "nuevos" },
+    { title: usuariosNuevos.toString(), description: "Nuevos Usuarios", filtro: "nuevos" },
   ];
 
   const aplicarFiltro = (filtro: string) => {
@@ -132,8 +132,7 @@ const UsuariosMovil = () => {
       setUsuarios((prev) =>
         prev.map((u) => (u.idusuariom === id ? { ...u, activo: resp.data.activo } : u))
       );
-    } catch (err) {
-      console.error("Error al actualizar activo:", err);
+    } catch {
       alert("No se pudo cambiar el estado");
     }
   };
@@ -158,8 +157,7 @@ const UsuariosMovil = () => {
         )
       );
       alert("Suscripción actualizada");
-    } catch (err) {
-      console.error("Error al actualizar suscripción:", err);
+    } catch {
       alert("No se pudo actualizar suscripción");
     }
   };
@@ -170,8 +168,7 @@ const UsuariosMovil = () => {
       setUsuarios((prev) =>
         prev.map((u) => (u.idusuariom === id ? { ...u, tarjeta: resp.data.tarjeta } : u))
       );
-    } catch (err) {
-      console.error("Error al actualizar tarjeta:", err);
+    } catch {
       alert("No se pudo actualizar tarjeta");
     }
   };
@@ -186,8 +183,7 @@ const UsuariosMovil = () => {
             : u
         )
       );
-    } catch (err) {
-      console.error("Error al actualizar pago:", err);
+    } catch {
       alert("No se pudo actualizar pago");
     }
   };
@@ -199,42 +195,37 @@ const UsuariosMovil = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <h3 className="text-center mb-3">Usuarios Móvil</h3>
+    <div className="container-fluid px-2 mt-2">
+      <h3 className="text-center mb-2">Usuarios Móvil</h3>
 
       {/* Tarjetas de estadísticas */}
-      <div className="row row-cols-1 row-cols-md-4 g-3 mb-4">
+      <div className="row row-cols-1 row-cols-md-5 g-2 mb-3">
         {cardsData.map((card, i) => (
           <div className="col" key={i}>
             <div
-              className="card text-center p-3"
-              style={{ cursor: "pointer" }}
+              className="card text-center p-2"
+              style={{ cursor: "pointer", fontSize: "0.8rem" }}
               onClick={() => aplicarFiltro(card.filtro)}
             >
-              <h4>{card.title}</h4>
-              <p>{card.description}</p>
+              <h5>{card.title}</h5>
+              <p className="mb-0">{card.description}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Búsqueda y filtros */}
-      <div className="form-check form-switch">
+      {/* Checkbox para Nuevos Usuarios */}
+      <div className="form-check form-switch mb-2">
         <input
-            type="checkbox"
-            className="form-check-input"
-            checked={mostrarNuevos}
-            onChange={() => {
-            setMostrarNuevos(true);
-            setMostrarTodos(false);
-            setMostrarActivos(false);
-            setMostrarInactivos(false);
-            setMostrarPendientes(false);
-            }}
+          type="checkbox"
+          className="form-check-input"
+          checked={mostrarNuevos}
+          onChange={() => aplicarFiltro("nuevos")}
         />
         <label className="form-check-label">Nuevos Usuarios</label>
       </div>
 
+      {/* Búsqueda y filtros */}
       <div className="row mb-3 align-items-end">
         <div className="col-md-4 mb-2">
           <input
@@ -246,18 +237,13 @@ const UsuariosMovil = () => {
           />
         </div>
 
-        <div className="col-md-8 d-flex gap-3 flex-wrap align-items-center">
+        <div className="col-md-8 d-flex gap-2 flex-wrap align-items-center">
           <div className="form-check form-switch">
             <input
               type="checkbox"
               className="form-check-input"
               checked={mostrarTodos}
-              onChange={() => {
-                setMostrarTodos(true);
-                setMostrarActivos(false);
-                setMostrarInactivos(false);
-                setMostrarPendientes(false);
-              }}
+              onChange={() => aplicarFiltro("todos")}
             />
             <label className="form-check-label">Todos</label>
           </div>
@@ -267,12 +253,7 @@ const UsuariosMovil = () => {
               type="checkbox"
               className="form-check-input"
               checked={mostrarActivos}
-              onChange={() => {
-                setMostrarActivos(true);
-                setMostrarInactivos(false);
-                setMostrarPendientes(false);
-                setMostrarTodos(false);
-              }}
+              onChange={() => aplicarFiltro("activos")}
             />
             <label className="form-check-label">Activos</label>
           </div>
@@ -282,12 +263,7 @@ const UsuariosMovil = () => {
               type="checkbox"
               className="form-check-input"
               checked={mostrarInactivos}
-              onChange={() => {
-                setMostrarActivos(false);
-                setMostrarInactivos(true);
-                setMostrarPendientes(false);
-                setMostrarTodos(false);
-              }}
+              onChange={() => aplicarFiltro("inactivos")}
             />
             <label className="form-check-label">Inactivos</label>
           </div>
@@ -297,12 +273,7 @@ const UsuariosMovil = () => {
               type="checkbox"
               className="form-check-input"
               checked={mostrarPendientes}
-              onChange={() => {
-                setMostrarActivos(false);
-                setMostrarInactivos(false);
-                setMostrarPendientes(true);
-                setMostrarTodos(false);
-              }}
+              onChange={() => aplicarFiltro("pendientes")}
             />
             <label className="form-check-label">Pendiente de Pago</label>
           </div>
@@ -378,7 +349,7 @@ const UsuariosMovil = () => {
                   </select>
 
                   {usuario.descripcion && (
-                    <div style={{ fontSize: "0.85rem", color: "#555" }}>
+                    <div style={{ fontSize: "0.75rem", color: "#555" }}>
                       {usuario.descripcion} (${usuario.precio})
                     </div>
                   )}
