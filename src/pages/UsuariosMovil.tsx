@@ -35,15 +35,17 @@ const UsuariosMovil = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [suscripciones, setSuscripciones] = useState<Suscripcion[]>([]);
+  const usuariosNuevos = usuarios.filter(u => !u.idusuariosuscripcion && !u.pago).length;
 
   // Filtros
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
   const [mostrarActivos, setMostrarActivos] = useState(false);
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const [mostrarPendientes, setMostrarPendientes] = useState(false);
-  const [mostrarTodos, setMostrarTodos] = useState(true);
+  const [mostrarTodos, setMostrarTodos] = useState(false);
+  const [mostrarNuevos, setMostrarNuevos] = useState(true);
 
-  const registrosPorPagina = 5;
+  const registrosPorPagina = 15;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,6 +90,7 @@ const UsuariosMovil = () => {
       if (mostrarActivos) coincide = coincide && u.activo;
       if (mostrarInactivos) coincide = coincide && !u.activo;
       if (mostrarPendientes) coincide = coincide && !u.pago;
+      if (mostrarNuevos) coincide = coincide && !u.idusuariosuscripcion && !u.pago;
     }
 
     return coincide;
@@ -108,6 +111,7 @@ const UsuariosMovil = () => {
     { title: usuariosActivos.toString(), description: "Usuarios Activos", filtro: "activos" },
     { title: usuariosInactivos.toString(), description: "Usuarios Inactivos", filtro: "inactivos" },
     { title: usuariosPendientes.toString(), description: "Pendiente de Pago", filtro: "pendientes" },
+     { title: usuariosNuevos.toString(), description: "Nuevos Usuarios", filtro: "nuevos" },
   ];
 
   const aplicarFiltro = (filtro: string) => {
@@ -115,6 +119,7 @@ const UsuariosMovil = () => {
     setMostrarActivos(filtro === "activos");
     setMostrarInactivos(filtro === "inactivos");
     setMostrarPendientes(filtro === "pendientes");
+    setMostrarNuevos(filtro === "nuevos");
     setPaginaActual(1);
   };
 
@@ -214,6 +219,22 @@ const UsuariosMovil = () => {
       </div>
 
       {/* Búsqueda y filtros */}
+      <div className="form-check form-switch">
+        <input
+            type="checkbox"
+            className="form-check-input"
+            checked={mostrarNuevos}
+            onChange={() => {
+            setMostrarNuevos(true);
+            setMostrarTodos(false);
+            setMostrarActivos(false);
+            setMostrarInactivos(false);
+            setMostrarPendientes(false);
+            }}
+        />
+        <label className="form-check-label">Nuevos Usuarios</label>
+      </div>
+
       <div className="row mb-3 align-items-end">
         <div className="col-md-4 mb-2">
           <input
