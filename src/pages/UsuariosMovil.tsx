@@ -11,15 +11,15 @@ interface UsuarioMovil {
   telefono: string;
   correo: string;
   activo: boolean;
-  tarjeta?: string;
+  tarjeta?: "pendiente" | "enviada" | "entregada";
+  pago?: boolean;
   idusuariosuscripcion?: number;
   estado_suscripcion?: string;
   fecha_inicio?: string;
   fecha_fin?: string;
   idsuscripcion?: number | null;
   descripcion?: string;
-  precio?: string;
-  pago?: string;
+  precio?: string | number;
 }
 
 interface Suscripcion {
@@ -51,7 +51,9 @@ const UsuariosMovil = () => {
         const usuariosConSuscripcion = await Promise.all(
           usuariosData.map(async (usuario) => {
             try {
-              const res = await axios.get(`${API_URL}/api/usuariosmovil/${usuario.idusuariom}/suscripcion`);
+              const res = await axios.get(
+                `${API_URL}/api/usuariosmovil/${usuario.idusuariom}/suscripcion`
+              );
               return { ...usuario, ...res.data };
             } catch (err) {
               console.error(`Error al traer suscripción de ${usuario.nombre}`, err);
@@ -96,7 +98,6 @@ const UsuariosMovil = () => {
         idsuscripcion,
       });
 
-      // Actualizar usuario en el estado
       setUsuarios((prev) =>
         prev.map((u) =>
           u.idusuariom === id
@@ -118,6 +119,32 @@ const UsuariosMovil = () => {
     } catch (err) {
       console.error("Error al actualizar suscripción:", err);
       alert("No se pudo actualizar suscripción");
+    }
+  };
+
+  // Cambiar tarjeta
+  const handleUpdateTarjeta = async (id: number, tarjeta: "pendiente" | "enviada" | "entregada") => {
+    try {
+      const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/tarjeta`, { tarjeta });
+      setUsuarios((prev) =>
+        prev.map((u) => (u.idusuariom === id ? { ...u, tarjeta: resp.data.tarjeta } : u))
+      );
+    } catch (err) {
+      console.error("Error al actualizar tarjeta:", err);
+      alert("No se pudo actualizar tarjeta");
+    }
+  };
+
+  // Cambiar pago
+  const handleUpdatePago = async (id: number, pago: boolean) => {
+    try {
+      const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/pago`, { pago });
+      setUsuarios((prev) =>
+        prev.map((u) => (u.idusuariom === id ? { ...u, pago: resp.data.pago } : u))
+      );
+    } catch (err) {
+      console.error("Error al actualizar pago:", err);
+      alert("No se pudo actualizar pago");
     }
   };
 
@@ -161,26 +188,26 @@ const UsuariosMovil = () => {
                     />
                   </div>
                 </td>
+
+                {/* Tarjeta */}
                 <td>
                   <select
                     className="form-select"
-                    value={usuario.tarjeta || "Pendiente"}
+                    value={usuario.tarjeta || "pendiente"}
                     onChange={(e) =>
-                      setUsuarios((prev) =>
-                        prev.map((u) =>
-                          u.idusuariom === usuario.idusuariom
-                            ? { ...u, tarjeta: e.target.value }
-                            : u
-                        )
+                      handleUpdateTarjeta(
+                        usuario.idusuariom,
+                        e.target.value as "pendiente" | "enviada" | "entregada"
                       )
                     }
                   >
-                    <option>Pendiente</option>
-                    <option>Enviada</option>
-                    <option>Entregada</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="enviada">Enviada</option>
+                    <option value="entregada">Entregada</option>
                   </select>
                 </td>
 
+                {/* Suscripción */}
                 <td>
                   <select
                     className="form-select mb-1"
@@ -205,13 +232,24 @@ const UsuariosMovil = () => {
                   )}
                 </td>
 
+                {/* Vigencia */}
                 <td>
                   {usuario.fecha_inicio && usuario.fecha_fin
                     ? `${formatDate(usuario.fecha_inicio)} → ${formatDate(usuario.fecha_fin)}`
                     : "-"}
                 </td>
 
-                <td>{usuario.pago || "-"}</td>
+                {/* Pago */}
+                <td>
+                  <div className="form-check d-flex justify-content-center">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={usuario.pago || false}
+                      onChange={() => handleUpdatePago(usuario.idusuariom, !usuario.pago)}
+                    />
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
