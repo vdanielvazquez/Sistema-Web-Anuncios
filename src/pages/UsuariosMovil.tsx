@@ -39,40 +39,41 @@ const UsuariosMovil = () => {
   const registrosPorPagina = 5;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Traer usuarios
-        const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
-        const usuariosData: UsuarioMovil[] = resUsuarios.data || [];
+  const fetchData = async () => {
+    try {
+      // Traer usuarios
+      const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
+      const usuariosData: UsuarioMovil[] = resUsuarios.data || [];
 
-        // Traer suscripciones disponibles
-        const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
-        setSuscripciones(Array.isArray(resSuscripciones.data) ? resSuscripciones.data : []);
+      // Traer suscripciones disponibles
+      const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
+      setSuscripciones(Array.isArray(resSuscripciones.data.data) ? resSuscripciones.data.data : []);
 
-        // Traer suscripción actual de cada usuario
-        const usuariosConSuscripcion = await Promise.all(
-          usuariosData.map(async (usuario) => {
-            try {
-              const res = await axios.get(
-                `${API_URL}/api/usuariosmovil/${usuario.idusuariom}/suscripcion`
-              );
-              return { ...usuario, ...res.data };
-            } catch (err) {
-              console.error(`Error al traer suscripción de ${usuario.nombre}`, err);
-              return usuario;
-            }
-          })
-        );
+      // Traer suscripción actual de cada usuario
+      const usuariosConSuscripcion = await Promise.all(
+        usuariosData.map(async (usuario) => {
+          try {
+            const res = await axios.get(
+              `${API_URL}/api/usuariosmovil/${usuario.idusuariom}/suscripcion`
+            );
+            return { ...usuario, ...res.data };
+          } catch (err) {
+            // Si no hay suscripción activa, devolvemos el usuario sin suscripción
+            return usuario;
+          }
+        })
+      );
 
-        setUsuarios(usuariosConSuscripcion);
-        setTotalPaginas(Math.ceil(usuariosConSuscripcion.length / registrosPorPagina));
-      } catch (error) {
-        console.error("Error al cargar usuarios:", error);
-      }
-    };
+      setUsuarios(usuariosConSuscripcion);
+      setTotalPaginas(Math.ceil(usuariosConSuscripcion.length / registrosPorPagina));
+    } catch (error) {
+      console.error("Error al cargar usuarios:", error);
+    }
+  };
 
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
+
 
   const inicio = (paginaActual - 1) * registrosPorPagina;
   const fin = inicio + registrosPorPagina;
