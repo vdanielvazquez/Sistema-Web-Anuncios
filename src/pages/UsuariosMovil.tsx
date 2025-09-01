@@ -1,10 +1,10 @@
-// ... tus imports y interfaces siguen igual
 import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 
 const API_URL = "https://sistemawebpro.com";
 
+// Interfaces
 interface UsuarioMovil {
   idusuariom: number;
   nombre: string;
@@ -12,85 +12,200 @@ interface UsuarioMovil {
   telefono: string;
   correo: string;
   activo: boolean;
+  tarjeta?: "pendiente" | "enviada" | "entregada";
   pago?: boolean;
   fecha_pago?: string;
-  // otros campos que tengas
+  idusuariosuscripcion?: number;
+  estado_suscripcion?: string;
+  fecha_inicio?: string;
+  fecha_fin?: string;
+  idsuscripcion?: number | null;
+  descripcion?: string;
+  precio?: string | number;
+}
+
+interface Suscripcion {
+  idsuscripcion: number;
+  descripcion: string;
+  precio: number;
 }
 
 const UsuariosMovil = () => {
   const [usuarios, setUsuarios] = useState<UsuarioMovil[]>([]);
-  const [usuariosFiltrados, setUsuariosFiltrados] = useState<UsuarioMovil[]>([]);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [suscripciones, setSuscripciones] = useState<Suscripcion[]>([]);
+
+  // Filtros
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
   const [mostrarActivos, setMostrarActivos] = useState(false);
   const [mostrarInactivos, setMostrarInactivos] = useState(false);
   const [mostrarPendientes, setMostrarPendientes] = useState(false);
   const [mostrarTodos, setMostrarTodos] = useState(true);
 
-  // Paginación
-  const [paginaActual, setPaginaActual] = useState(1);
   const registrosPorPagina = 5;
 
   useEffect(() => {
-    const fetchUsuarios = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/usuariosmovil`);
-        setUsuarios(res.data);
-        setUsuariosFiltrados(res.data);
+        const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
+        const usuariosData: UsuarioMovil[] = resUsuarios.data || [];
+
+        const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
+        setSuscripciones(
+          Array.isArray(resSuscripciones.data.data) ? resSuscripciones.data.data : []
+        );
+
+        const usuariosConSuscripcion = await Promise.all(
+          usuariosData.map(async (usuario) => {
+            try {
+              const res = await axios.get(
+                `${API_URL}/api/usuariosmovil/${usuario.idusuariom}/suscripcion`
+              );
+              return { ...usuario, ...res.data };
+            } catch (err) {
+              return usuario;
+            }
+          })
+        );
+
+        setUsuarios(usuariosConSuscripcion);
+        setTotalPaginas(Math.ceil(usuariosConSuscripcion.length / registrosPorPagina));
       } catch (error) {
         console.error("Error al cargar usuarios:", error);
       }
     };
-    fetchUsuarios();
+    fetchData();
   }, []);
 
   // Filtrado
-  useEffect(() => {
-    let filtrados = usuarios;
-
-    if (terminoBusqueda.trim() !== "") {
-      filtrados = filtrados.filter(u =>
-        `${u.nombre} ${u.apellido || ""}`.toLowerCase().includes(terminoBusqueda.toLowerCase())
-      );
-    }
+  const usuariosFiltrados = usuarios.filter((u) => {
+    let coincide = `${u.nombre} ${u.apellido || ""}`
+      .toLowerCase()
+      .includes(terminoBusqueda.toLowerCase());
 
     if (!mostrarTodos) {
-      if (mostrarActivos) filtrados = filtrados.filter(u => u.activo);
-      if (mostrarInactivos) filtrados = filtrados.filter(u => !u.activo);
-      if (mostrarPendientes) filtrados = filtrados.filter(u => !u.pago);
+      if (mostrarActivos) coincide = coincide && u.activo;
+      if (mostrarInactivos) coincide = coincide && !u.activo;
+      if (mostrarPendientes) coincide = coincide && !u.pago;
     }
 
-    setUsuariosFiltrados(filtrados);
-    setPaginaActual(1);
-  }, [terminoBusqueda, mostrarActivos, mostrarInactivos, mostrarPendientes, mostrarTodos, usuarios]);
+    return coincide;
+  });
+
+  const inicio = (paginaActual - 1) * registrosPorPagina;
+  const fin = inicio + registrosPorPagina;
+  const usuariosPagina = usuariosFiltrados.slice(inicio, fin);
 
   // Estadísticas
   const totalUsuarios = usuarios.length;
-  const usuariosActivos = usuarios.filter(u => u.activo).length;
+  const usuariosActivos = usuarios.filter((u) => u.activo).length;
   const usuariosInactivos = totalUsuarios - usuariosActivos;
-  const usuariosPendientes = usuarios.filter(u => !u.pago).length;
+  const usuariosPendientes = usuarios.filter((u) => !u.pago).length;
 
   const cardsData = [
-    { title: totalUsuarios.toString(), description: "Total de Usuarios" },
-    { title: usuariosActivos.toString(), description: "Usuarios Activos" },
-    { title: usuariosInactivos.toString(), description: "Usuarios Inactivos" },
-    { title: usuariosPendientes.toString(), description: "Pendiente de Pago" },
+    { title: totalUsuarios.toString(), description: "Total de Usuarios", filtro: "todos" },
+    { title: usuariosActivos.toString(), description: "Usuarios Activos", filtro: "activos" },
+    { title: usuariosInactivos.toString(), description: "Usuarios Inactivos", filtro: "inactivos" },
+    { title: usuariosPendientes.toString(), description: "Pendiente de Pago", filtro: "pendientes" },
   ];
 
-  // Paginación para tabla
-  const totalPaginas = Math.ceil(usuariosFiltrados.length / registrosPorPagina);
-  const indexInicio = (paginaActual - 1) * registrosPorPagina;
-  const indexFin = indexInicio + registrosPorPagina;
-  const usuariosPaginados = usuariosFiltrados.slice(indexInicio, indexFin);
+  const aplicarFiltro = (filtro: string) => {
+    setMostrarTodos(filtro === "todos");
+    setMostrarActivos(filtro === "activos");
+    setMostrarInactivos(filtro === "inactivos");
+    setMostrarPendientes(filtro === "pendientes");
+    setPaginaActual(1);
+  };
+
+  // Funciones de actualización
+  const toggleActivo = async (id: number, currentActivo: boolean) => {
+    try {
+      const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/activo`, {
+        activo: !currentActivo,
+      });
+      setUsuarios((prev) =>
+        prev.map((u) => (u.idusuariom === id ? { ...u, activo: resp.data.activo } : u))
+      );
+    } catch (err) {
+      console.error("Error al actualizar activo:", err);
+      alert("No se pudo cambiar el estado");
+    }
+  };
+
+  const handleUpdateSuscripcion = async (id: number, idsuscripcion: number) => {
+    try {
+      const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/suscripcion`, { idsuscripcion });
+      setUsuarios((prev) =>
+        prev.map((u) =>
+          u.idusuariom === id
+            ? {
+                ...u,
+                idusuariosuscripcion: resp.data.usuario.idusuariosuscripcion,
+                idsuscripcion: resp.data.usuario.idsuscripcion,
+                descripcion: resp.data.usuario.descripcion,
+                precio: resp.data.usuario.precio,
+                fecha_inicio: resp.data.usuario.fecha_inicio,
+                fecha_fin: resp.data.usuario.fecha_fin,
+                estado_suscripcion: resp.data.usuario.estado_suscripcion,
+              }
+            : u
+        )
+      );
+      alert("Suscripción actualizada");
+    } catch (err) {
+      console.error("Error al actualizar suscripción:", err);
+      alert("No se pudo actualizar suscripción");
+    }
+  };
+
+  const handleUpdateTarjeta = async (id: number, tarjeta: "pendiente" | "enviada" | "entregada") => {
+    try {
+      const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/tarjeta`, { tarjeta });
+      setUsuarios((prev) =>
+        prev.map((u) => (u.idusuariom === id ? { ...u, tarjeta: resp.data.tarjeta } : u))
+      );
+    } catch (err) {
+      console.error("Error al actualizar tarjeta:", err);
+      alert("No se pudo actualizar tarjeta");
+    }
+  };
+
+  const handleUpdatePago = async (id: number, pago: boolean) => {
+    try {
+      const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/pago`, { pago });
+      setUsuarios((prev) =>
+        prev.map((u) =>
+          u.idusuariom === id
+            ? { ...u, pago: resp.data.pago, fecha_pago: resp.data.fecha_pago }
+            : u
+        )
+      );
+    } catch (err) {
+      console.error("Error al actualizar pago:", err);
+      alert("No se pudo actualizar pago");
+    }
+  };
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "-";
+    const d = new Date(dateStr);
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  };
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center mb-4">Usuarios Móvil</h2>
+      <h3 className="text-center mb-3">Usuarios Móvil</h3>
 
       {/* Tarjetas de estadísticas */}
       <div className="row row-cols-1 row-cols-md-4 g-3 mb-4">
         {cardsData.map((card, i) => (
           <div className="col" key={i}>
-            <div className="card text-center p-3">
+            <div
+              className="card text-center p-3"
+              style={{ cursor: "pointer" }}
+              onClick={() => aplicarFiltro(card.filtro)}
+            >
               <h4>{card.title}</h4>
               <p>{card.description}</p>
             </div>
@@ -173,7 +288,7 @@ const UsuariosMovil = () => {
         </div>
       </div>
 
-      {/* Tu tabla actual */}
+      {/* Tabla */}
       <div className="table-responsive">
         <table className="table table-striped table-bordered align-middle text-center">
           <thead className="table-dark">
@@ -191,18 +306,88 @@ const UsuariosMovil = () => {
             </tr>
           </thead>
           <tbody>
-            {usuariosPaginados.map((usuario) => (
+            {usuariosPagina.map((usuario) => (
               <tr key={usuario.idusuariom}>
                 <td>{`${usuario.nombre} ${usuario.apellido || ""}`}</td>
                 <td>{usuario.telefono}</td>
                 <td>{usuario.correo}</td>
-                <td>{usuario.activo ? "Sí" : "No"}</td>
-                <td>{usuario.pago ? "Sí" : "No"}</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>{usuario.fecha_pago ? new Date(usuario.fecha_pago).toLocaleDateString() : "-"}</td>
-                <td>-</td>
+                <td>
+                  <div className="form-check form-switch d-flex justify-content-center">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={usuario.activo}
+                      onChange={() => toggleActivo(usuario.idusuariom, usuario.activo)}
+                    />
+                  </div>
+                </td>
+
+                <td>
+                  <select
+                    className="form-select"
+                    value={usuario.tarjeta || "pendiente"}
+                    onChange={(e) =>
+                      handleUpdateTarjeta(
+                        usuario.idusuariom,
+                        e.target.value as "pendiente" | "enviada" | "entregada"
+                      )
+                    }
+                  >
+                    <option value="pendiente">Pendiente</option>
+                    <option value="enviada">Enviada</option>
+                    <option value="entregada">Entregada</option>
+                  </select>
+                </td>
+
+                <td>
+                  <select
+                    className="form-select mb-1"
+                    value={usuario.idsuscripcion || ""}
+                    onChange={(e) => {
+                      if (e.target.value)
+                        handleUpdateSuscripcion(usuario.idusuariom, Number(e.target.value));
+                    }}
+                  >
+                    <option value="">Cambiar suscripción</option>
+                    {suscripciones.map((s) => (
+                      <option key={s.idsuscripcion} value={s.idsuscripcion}>
+                        {s.descripcion} - ${s.precio}
+                      </option>
+                    ))}
+                  </select>
+
+                  {usuario.descripcion && (
+                    <div style={{ fontSize: "0.85rem", color: "#555" }}>
+                      {usuario.descripcion} (${usuario.precio})
+                    </div>
+                  )}
+                </td>
+
+                <td>
+                  {usuario.fecha_inicio && usuario.fecha_fin
+                    ? `${formatDate(usuario.fecha_inicio)} → ${formatDate(usuario.fecha_fin)}`
+                    : "-"}
+                </td>
+
+                <td>
+                  <div className="form-check d-flex justify-content-center">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={usuario.pago || false}
+                      disabled={usuario.pago || false}
+                      onChange={() => handleUpdatePago(usuario.idusuariom, true)}
+                    />
+                  </div>
+                </td>
+
+                <td className="text-center">
+                  {usuario.fecha_pago ? formatDate(usuario.fecha_pago) : "-"}
+                </td>
+
+                <td>
+                  <button>Detalles</button>
+                </td>
               </tr>
             ))}
           </tbody>
