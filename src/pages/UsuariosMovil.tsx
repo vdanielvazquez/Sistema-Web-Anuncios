@@ -39,36 +39,43 @@ const UsuariosMovil = () => {
   const registrosPorPagina = 5;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
-        const usuariosData: UsuarioMovil[] = resUsuarios.data || [];
+  const fetchData = async () => {
+    try {
+      // Traer todos los usuarios
+      const resUsuarios = await axios.get(`${API_URL}/api/usuariosmovil`);
+      const usuariosData: UsuarioMovil[] = resUsuarios.data || [];
 
-        const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
-        setSuscripciones(Array.isArray(resSuscripciones.data.data) ? resSuscripciones.data.data : []);
+      // Traer suscripciones disponibles (para el select)
+      const resSuscripciones = await axios.get(`${API_URL}/api/suscripcion`);
+      setSuscripciones(
+        Array.isArray(resSuscripciones.data.data) ? resSuscripciones.data.data : []
+      );
 
-        const usuariosConSuscripcion = await Promise.all(
-          usuariosData.map(async (usuario) => {
-            try {
-              const res = await axios.get(
-                `${API_URL}/api/usuariosmovil/${usuario.idusuariom}/suscripcion`
-              );
-              return { ...usuario, ...res.data };
-            } catch (err) {
-              return usuario;
-            }
-          })
-        );
+      // Traer suscripción activa (con pago y fecha_pago) de cada usuario
+      const usuariosConSuscripcion = await Promise.all(
+        usuariosData.map(async (usuario) => {
+          try {
+            const res = await axios.get(
+              `${API_URL}/api/usuariosmovil/${usuario.idusuariom}/suscripcion`
+            );
+            // Opción 1: simplemente unimos todo lo que devuelve la API
+            return { ...usuario, ...res.data };
+          } catch (err) {
+            // Si no tiene suscripción activa, devolvemos solo el usuario
+            return usuario;
+          }
+        })
+      );
 
-        setUsuarios(usuariosConSuscripcion);
-        setTotalPaginas(Math.ceil(usuariosConSuscripcion.length / registrosPorPagina));
-      } catch (error) {
-        console.error("Error al cargar usuarios:", error);
-      }
-    };
+      setUsuarios(usuariosConSuscripcion);
+      setTotalPaginas(Math.ceil(usuariosConSuscripcion.length / registrosPorPagina));
+    } catch (error) {
+      console.error("Error al cargar usuarios:", error);
+    }
+  };
 
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
 
   const inicio = (paginaActual - 1) * registrosPorPagina;
   const fin = inicio + registrosPorPagina;
