@@ -363,7 +363,8 @@ const guardarCambiosCategoria = async () => {
 };
 
 //eliminar suscripcion
-const handleEliminarSuscripcion = async (id: number) => {
+/**
+ * const handleEliminarSuscripcion = async (id: number) => {
   const confirmar = window.confirm('¿Estás seguro de que deseas eliminar esta suscripción?');
   if (!confirmar) return;
 
@@ -380,6 +381,7 @@ const handleEliminarSuscripcion = async (id: number) => {
 
   setTimeout(() => setMensaje(null), 3000);
 };
+ */
 /////
 // Eliminar categoría
 const handleEliminarCategoria = async (id: number) => {
@@ -566,7 +568,7 @@ const handleEliminarSubcategoria = async (id: number) => {
                         <td>${isNaN(Number(sus.precio)) ? '0.00' : Number(sus.precio).toFixed(2)}</td>
                         <td className="text-center">
                           <button className="btn btn-warning btn-sm me-2" onClick={() => abrirModalEditarSuscripcion(sus)}>Editar</button>
-                          <button className="btn btn-danger btn-sm" onClick={() => handleEliminarSuscripcion(sus.idsuscripcion)}>Eliminar</button>
+                           {/*  <button className="btn btn-danger btn-sm" onClick={() => handleEliminarSuscripcion(sus.idsuscripcion)}>Eliminar</button> */}
                         </td>
                       </tr>
                     ))
