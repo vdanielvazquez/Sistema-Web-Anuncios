@@ -8,11 +8,13 @@ const API_URL = "https://sistemawebpro.com"; // Ajusta si tu endpoint es distint
 interface UsuarioMovil {
   idusuariom: number;
   nombre: string;
+  apellido?: string; // 👈 añadimos apellido
   telefono: string;
   correo: string;
   activo: boolean;
   tarjeta?: "pendiente" | "enviada" | "entregada";
   pago?: boolean;
+  fecha_pago?: string; // 👈 nueva fecha de pago
   idusuariosuscripcion?: number;
   estado_suscripcion?: string;
   fecha_inicio?: string;
@@ -140,7 +142,11 @@ const UsuariosMovil = () => {
     try {
       const resp = await axios.put(`${API_URL}/api/usuariosmovil/${id}/pago`, { pago });
       setUsuarios((prev) =>
-        prev.map((u) => (u.idusuariom === id ? { ...u, pago: resp.data.pago } : u))
+        prev.map((u) =>
+          u.idusuariom === id
+            ? { ...u, pago: resp.data.pago, fecha_pago: resp.data.fecha_pago } // 👈 guardamos fecha_pago
+            : u
+        )
       );
     } catch (err) {
       console.error("Error al actualizar pago:", err);
@@ -170,12 +176,15 @@ const UsuariosMovil = () => {
               <th>Suscripción</th>
               <th>Vigencia</th>
               <th>Pago</th>
+              <th>Fecha de pago</th> 
+              <th>Dirección </th> 
             </tr>
           </thead>
           <tbody>
             {usuariosPagina.map((usuario) => (
               <tr key={usuario.idusuariom}>
-                <td>{usuario.nombre}</td>
+                {/* Nombre + Apellido */}
+                <td>{`${usuario.nombre} ${usuario.apellido || ""}`}</td>
                 <td>{usuario.telefono}</td>
                 <td>{usuario.correo}</td>
                 <td>
@@ -250,6 +259,10 @@ const UsuariosMovil = () => {
                     />
                   </div>
                 </td>
+
+                {/* Fecha de pago */}
+                <td>{usuario.fecha_pago ? formatDate(usuario.fecha_pago) : "-"}</td>
+                <td><button>Detalels</button></td>
               </tr>
             ))}
           </tbody>
