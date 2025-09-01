@@ -195,232 +195,232 @@ const UsuariosMovil = () => {
   };
 
   return (
-    <div className="container-fluid px-2 mt-2">
-      <h3 className="text-center mb-2">Usuarios Móvil</h3>
+  <div className="container my-3">
+    <h3 className="text-center mb-3">Usuarios Móvil</h3>
 
-      {/* Tarjetas de estadísticas */}
-      <div className="row row-cols-1 row-cols-md-5 g-2 mb-3">
-        {cardsData.map((card, i) => (
-          <div className="col" key={i}>
-            <div
-              className="card text-center p-2"
-              style={{ cursor: "pointer", fontSize: "0.8rem" }}
-              onClick={() => aplicarFiltro(card.filtro)}
-            >
-              <h5>{card.title}</h5>
-              <p className="mb-0">{card.description}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Checkbox para Nuevos Usuarios */}
-      <div className="form-check form-switch mb-2">
-        <input
-          type="checkbox"
-          className="form-check-input"
-          checked={mostrarNuevos}
-          onChange={() => aplicarFiltro("nuevos")}
-        />
-        <label className="form-check-label">Nuevos Usuarios</label>
-      </div>
-
-      {/* Búsqueda y filtros */}
-      <div className="row mb-3 align-items-end">
-        <div className="col-md-4 mb-2">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Buscar por nombre"
-            value={terminoBusqueda}
-            onChange={(e) => setTerminoBusqueda(e.target.value)}
-          />
-        </div>
-
-        <div className="col-md-8 d-flex gap-2 flex-wrap align-items-center">
-          <div className="form-check form-switch">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              checked={mostrarTodos}
-              onChange={() => aplicarFiltro("todos")}
-            />
-            <label className="form-check-label">Todos</label>
-          </div>
-
-          <div className="form-check form-switch">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              checked={mostrarActivos}
-              onChange={() => aplicarFiltro("activos")}
-            />
-            <label className="form-check-label">Activos</label>
-          </div>
-
-          <div className="form-check form-switch">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              checked={mostrarInactivos}
-              onChange={() => aplicarFiltro("inactivos")}
-            />
-            <label className="form-check-label">Inactivos</label>
-          </div>
-
-          <div className="form-check form-switch">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              checked={mostrarPendientes}
-              onChange={() => aplicarFiltro("pendientes")}
-            />
-            <label className="form-check-label">Pendiente de Pago</label>
+    {/* Tarjetas de estadísticas */}
+    <div className="row row-cols-1 row-cols-md-5 g-2 mb-3">
+      {cardsData.map((card, i) => (
+        <div className="col" key={i}>
+          <div
+            className="card text-center p-2"
+            style={{ cursor: "pointer", fontSize: "0.8rem" }}
+            onClick={() => aplicarFiltro(card.filtro)}
+          >
+            <h5>{card.title}</h5>
+            <p className="mb-0">{card.description}</p>
           </div>
         </div>
-      </div>
-
-      {/* Tabla */}
-      <div className="table-responsive">
-        <table className="table table-striped table-bordered align-middle text-center">
-          <thead className="table-dark">
-            <tr>
-              <th>Nombre</th>
-              <th>Teléfono</th>
-              <th>Correo</th>
-              <th>Activo</th>
-              <th>Tarjeta</th>
-              <th>Suscripción</th>
-              <th>Vigencia</th>
-              <th>Pago</th>
-              <th>Fecha de pago</th>
-              <th>Dirección</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuariosPagina.map((usuario) => (
-              <tr key={usuario.idusuariom}>
-                <td>{`${usuario.nombre} ${usuario.apellido || ""}`}</td>
-                <td>{usuario.telefono}</td>
-                <td>{usuario.correo}</td>
-                <td>
-                  <div className="form-check form-switch d-flex justify-content-center">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      checked={usuario.activo}
-                      onChange={() => toggleActivo(usuario.idusuariom, usuario.activo)}
-                    />
-                  </div>
-                </td>
-
-                <td>
-                  <select
-                    className="form-select"
-                    value={usuario.tarjeta || "pendiente"}
-                    onChange={(e) =>
-                      handleUpdateTarjeta(
-                        usuario.idusuariom,
-                        e.target.value as "pendiente" | "enviada" | "entregada"
-                      )
-                    }
-                  >
-                    <option value="pendiente">Pendiente</option>
-                    <option value="enviada">Enviada</option>
-                    <option value="entregada">Entregada</option>
-                  </select>
-                </td>
-
-                <td>
-                  <select
-                    className="form-select mb-1"
-                    value={usuario.idsuscripcion || ""}
-                    onChange={(e) => {
-                      if (e.target.value)
-                        handleUpdateSuscripcion(usuario.idusuariom, Number(e.target.value));
-                    }}
-                  >
-                    <option value="">Cambiar suscripción</option>
-                    {suscripciones.map((s) => (
-                      <option key={s.idsuscripcion} value={s.idsuscripcion}>
-                        {s.descripcion} - ${s.precio}
-                      </option>
-                    ))}
-                  </select>
-
-                  {usuario.descripcion && (
-                    <div style={{ fontSize: "0.75rem", color: "#555" }}>
-                      {usuario.descripcion} (${usuario.precio})
-                    </div>
-                  )}
-                </td>
-
-                <td>
-                  {usuario.fecha_inicio && usuario.fecha_fin
-                    ? `${formatDate(usuario.fecha_inicio)} → ${formatDate(usuario.fecha_fin)}`
-                    : "-"}
-                </td>
-
-                <td>
-                  <div className="form-check d-flex justify-content-center">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      checked={usuario.pago || false}
-                      disabled={usuario.pago || false}
-                      onChange={() => handleUpdatePago(usuario.idusuariom, true)}
-                    />
-                  </div>
-                </td>
-
-                <td className="text-center">
-                  {usuario.fecha_pago ? formatDate(usuario.fecha_pago) : "-"}
-                </td>
-
-                <td>
-                  <button>Detalles</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Paginación */}
-      {totalPaginas > 1 && (
-        <nav>
-          <ul className="pagination justify-content-center">
-            <li className={`page-item ${paginaActual === 1 ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => setPaginaActual(paginaActual - 1)}
-              >
-                Anterior
-              </button>
-            </li>
-            {Array.from({ length: totalPaginas }, (_, i) => (
-              <li
-                key={i + 1}
-                className={`page-item ${paginaActual === i + 1 ? "active" : ""}`}
-              >
-                <button className="page-link" onClick={() => setPaginaActual(i + 1)}>
-                  {i + 1}
-                </button>
-              </li>
-            ))}
-            <li className={`page-item ${paginaActual === totalPaginas ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => setPaginaActual(paginaActual + 1)}
-              >
-                Siguiente
-              </button>
-            </li>
-          </ul>
-        </nav>
-      )}
+      ))}
     </div>
-  );
+
+    {/* Búsqueda y filtros */}
+    <div className="row mb-3 align-items-end">
+      <div className="col-md-4 mb-2">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Buscar por nombre"
+          value={terminoBusqueda}
+          onChange={(e) => setTerminoBusqueda(e.target.value)}
+        />
+      </div>
+
+      <div className="col-md-8 d-flex gap-2 flex-wrap align-items-center">
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={mostrarTodos}
+            onChange={() => aplicarFiltro("todos")}
+          />
+          <label className="form-check-label">Todos</label>
+        </div>
+
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={mostrarActivos}
+            onChange={() => aplicarFiltro("activos")}
+          />
+          <label className="form-check-label">Activos</label>
+        </div>
+
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={mostrarInactivos}
+            onChange={() => aplicarFiltro("inactivos")}
+          />
+          <label className="form-check-label">Inactivos</label>
+        </div>
+
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={mostrarPendientes}
+            onChange={() => aplicarFiltro("pendientes")}
+          />
+          <label className="form-check-label">Pendiente de Pago</label>
+        </div>
+
+        <div className="form-check form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={mostrarNuevos}
+            onChange={() => aplicarFiltro("nuevos")}
+          />
+          <label className="form-check-label">Nuevos Usuarios</label>
+        </div>
+      </div>
+    </div>
+
+    {/* Tabla */}
+    <div className="table-responsive">
+      <table className="table table-striped table-bordered align-middle text-center">
+        <thead className="table-dark">
+          <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Activo</th>
+            <th>Tarjeta</th>
+            <th>Suscripción</th>
+            <th>Vigencia</th>
+            <th>Pago</th>
+            <th>Fecha de pago</th>
+            <th>Dirección</th>
+          </tr>
+        </thead>
+        <tbody>
+          {usuariosPagina.map((usuario) => (
+            <tr key={usuario.idusuariom}>
+              <td>{`${usuario.nombre} ${usuario.apellido || ""}`}</td>
+              <td>{usuario.telefono}</td>
+              <td>{usuario.correo}</td>
+              <td>
+                <div className="form-check form-switch d-flex justify-content-center">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    checked={usuario.activo}
+                    onChange={() => toggleActivo(usuario.idusuariom, usuario.activo)}
+                  />
+                </div>
+              </td>
+
+              <td>
+                <select
+                  className="form-select"
+                  value={usuario.tarjeta || "pendiente"}
+                  onChange={(e) =>
+                    handleUpdateTarjeta(
+                      usuario.idusuariom,
+                      e.target.value as "pendiente" | "enviada" | "entregada"
+                    )
+                  }
+                >
+                  <option value="pendiente">Pendiente</option>
+                  <option value="enviada">Enviada</option>
+                  <option value="entregada">Entregada</option>
+                </select>
+              </td>
+
+              <td>
+                <select
+                  className="form-select mb-1"
+                  value={usuario.idsuscripcion || ""}
+                  onChange={(e) => {
+                    if (e.target.value)
+                      handleUpdateSuscripcion(usuario.idusuariom, Number(e.target.value));
+                  }}
+                >
+                  <option value="">Cambiar suscripción</option>
+                  {suscripciones.map((s) => (
+                    <option key={s.idsuscripcion} value={s.idsuscripcion}>
+                      {s.descripcion} - ${s.precio}
+                    </option>
+                  ))}
+                </select>
+
+                {usuario.descripcion && (
+                  <div style={{ fontSize: "0.75rem", color: "#555" }}>
+                    {usuario.descripcion} (${usuario.precio})
+                  </div>
+                )}
+              </td>
+
+              <td>
+                {usuario.fecha_inicio && usuario.fecha_fin
+                  ? `${formatDate(usuario.fecha_inicio)} → ${formatDate(usuario.fecha_fin)}`
+                  : "-"}
+              </td>
+
+              <td>
+                <div className="form-check d-flex justify-content-center">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    checked={usuario.pago || false}
+                    disabled={usuario.pago || false}
+                    onChange={() => handleUpdatePago(usuario.idusuariom, true)}
+                  />
+                </div>
+              </td>
+
+              <td className="text-center">
+                {usuario.fecha_pago ? formatDate(usuario.fecha_pago) : "-"}
+              </td>
+
+              <td>
+                <button>Detalles</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    {/* Paginación */}
+    {totalPaginas > 1 && (
+      <nav>
+        <ul className="pagination justify-content-center">
+          <li className={`page-item ${paginaActual === 1 ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => setPaginaActual(paginaActual - 1)}
+            >
+              Anterior
+            </button>
+          </li>
+          {Array.from({ length: totalPaginas }, (_, i) => (
+            <li
+              key={i + 1}
+              className={`page-item ${paginaActual === i + 1 ? "active" : ""}`}
+            >
+              <button className="page-link" onClick={() => setPaginaActual(i + 1)}>
+                {i + 1}
+              </button>
+            </li>
+          ))}
+          <li className={`page-item ${paginaActual === totalPaginas ? "disabled" : ""}`}>
+            <button
+              className="page-link"
+              onClick={() => setPaginaActual(paginaActual + 1)}
+            >
+              Siguiente
+            </button>
+          </li>
+        </ul>
+      </nav>
+    )}
+  </div>
+);
+
 };
 
 export default UsuariosMovil;
